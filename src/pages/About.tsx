@@ -41,30 +41,23 @@ const values = [
 
 const team = [
   {
-    name: "Mohammed Al-Hassan",
+    name: "Sarvesh Todkari",
     role: "Founder & CEO",
     image:
       "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face",
-    bio: "20+ years in international trade. Visionary leader driving global expansion.",
+    bio: "Founder of Hindonix",
   },
   {
-    name: "Sarah Mitchell",
-    role: "Chief Operations Officer",
+    name: "Makrand Gangan",
+    role: "Sales Executive",
     image:
       "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face",
-    bio: "Supply chain expert with expertise in logistics optimization.",
-  },
-  {
-    name: "David Park",
-    role: "Head of Business Development",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
-    bio: "Strategic partnerships specialist expanding our global network.",
+    bio: "Sales executive of Hindonix",
   },
 ];
 
 const certifications = [
-  { name: "ISO 9001:2015", description: "Quality Management" },
+  { name: "ISO 9001:2025", description: "Quality Management" },
   { name: "ISO 14001", description: "Environmental Management" },
   { name: "AEO Certified", description: "Authorized Economic Operator" },
   { name: "FIATA Member", description: "International Freight Association" },
@@ -83,12 +76,12 @@ const About = () => {
               About Us
             </span>
             <h1 className="font-heading text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-              Your Trusted Partner in Global Trade
+              Your Partner in Architectural Hardware Excellence
             </h1>
             <p className="text-lg text-primary-foreground/80 mb-8">
-              Since 2010, GlobalTrade has been connecting businesses across
-              continents, delivering excellence in import-export solutions with
-              integrity and expertise.
+              Since 2025, Hindonix has been crafting premium architectural
+              hardware, delivering exceptional quality and design to UK & UAE
+              markets with integrity and expertise.
             </p>
           </div>
         </div>
@@ -143,9 +136,9 @@ const About = () => {
                 14+ Years of Excellence in International Trade
               </h2>
               <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
-                Founded in Dubai in 2010, GlobalTrade has grown from a small
-                trading company to a leading international import-export firm
-                serving clients across six continents.
+                Founded in 2025, Hindonix has grown from a passionate trading
+                company to a leading international import-export firm serving
+                clients across six continents.
               </p>
               <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
                 Our deep expertise in hardware products and industrial supplies,
@@ -259,7 +252,7 @@ const About = () => {
             </h2>
             <p className="text-muted-foreground text-lg">
               The principles that guide every decision and interaction at
-              GlobalTrade.
+              Hindonix.
             </p>
           </div>
 
@@ -326,8 +319,8 @@ const About = () => {
             Ready to Partner With Us?
           </h2>
           <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
-            Let's discuss how GlobalTrade can help you achieve your
-            international trade goals.
+            Let's discuss how Hindonix can help you achieve your international
+            trade goals.
           </p>
           <Button variant="hero" size="xl" asChild>
             <Link to="/contact" className="gap-2">

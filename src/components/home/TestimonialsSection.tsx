@@ -5,50 +5,46 @@ import { cn } from "@/lib/utils";
 const testimonials = [
   {
     id: 1,
-    name: "Ahmad Al-Rashid",
-    role: "CEO",
-    company: "Al-Rashid Industrial Supplies",
-    location: "Saudi Arabia",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face",
+    name: "David Richardson",
+    role: "Lead Architect",
+    company: "Richardson & Partners",
+    location: "London, UK",
+    image: "/images/testimonials/client-1.jpg",
     content:
-      "GlobalTrade has transformed our supply chain efficiency. Their expertise in hardware sourcing and logistics has reduced our lead times by 40%. Exceptional service and reliability.",
+      "Hindonix hardware has become our go-to specification for luxury residential projects. The PVD finishes are exceptional and the quality is consistently outstanding.",
     rating: 5,
   },
   {
     id: 2,
-    name: "Maria Santos",
-    role: "Procurement Director",
-    company: "Santos Construction Group",
-    location: "Brazil",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&crop=face",
+    name: "Sarah Mitchell",
+    role: "Interior Designer",
+    company: "Mitchell Design Studio",
+    location: "Dubai, UAE",
+    image: "/images/testimonials/client-2.jpg",
     content:
-      "Working with GlobalTrade for 5 years now. Their attention to documentation and compliance has made our international operations seamless. A true partner in growth.",
+      "The attention to detail in Hindonix products is remarkable. Their brass knobs and door handles add that perfect finishing touch to our high-end projects.",
     rating: 5,
   },
   {
     id: 3,
-    name: "James Chen",
-    role: "Operations Manager",
-    company: "Pacific Tools Ltd",
-    location: "Australia",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face",
+    name: "James Thompson",
+    role: "Project Manager",
+    company: "Thompson Construction",
+    location: "Manchester, UK",
+    image: "/images/testimonials/client-3.jpg",
     content:
-      "The team's knowledge of import regulations and their proactive communication sets them apart. They've become an integral extension of our operations team.",
+      "Reliable delivery and consistent quality. Hindonix has never let us down on our commercial projects. Their range of finishes meets all our specification needs.",
     rating: 5,
   },
   {
     id: 4,
-    name: "Elena Kowalski",
-    role: "Supply Chain Head",
-    company: "EuroHardware GmbH",
-    location: "Germany",
-    image:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face",
+    name: "Fatima Al-Mansoori",
+    role: "Procurement Director",
+    company: "Al-Mansoori Developments",
+    location: "Abu Dhabi, UAE",
+    image: "/images/testimonials/client-4.jpg",
     content:
-      "Quality, reliability, and professionalism define GlobalTrade. Their end-to-end solutions have streamlined our sourcing from Asia significantly.",
+      "Outstanding B2B partnership. Hindonix understands the demands of large-scale projects and delivers premium hardware that exceeds expectations every time.",
     rating: 5,
   },
 ];
@@ -78,8 +74,7 @@ export function TestimonialsSection() {
             Trusted by Businesses Worldwide
           </h2>
           <p className="text-muted-foreground text-lg">
-            Hear from our partners who have experienced the GlobalTrade
-            difference.
+            Hear from our partners who have experienced the Hindonix difference.
           </p>
         </div>
 
@@ -93,13 +88,6 @@ export function TestimonialsSection() {
             </div>
 
             <div className="relative z-10">
-              {/* Rating */}
-              <div className="flex gap-1 mb-6">
-                {[...Array(testimonials[activeIndex].rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-accent text-accent" />
-                ))}
-              </div>
-
               {/* Content */}
               <blockquote className="text-xl lg:text-2xl text-foreground font-medium leading-relaxed mb-8">
                 "{testimonials[activeIndex].content}"
@@ -107,11 +95,6 @@ export function TestimonialsSection() {
 
               {/* Author */}
               <div className="flex items-center gap-4">
-                <img
-                  src={testimonials[activeIndex].image}
-                  alt={testimonials[activeIndex].name}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-accent"
-                />
                 <div>
                   <div className="font-heading font-semibold text-foreground text-lg">
                     {testimonials[activeIndex].name}

@@ -11,35 +11,35 @@ import { cn } from "@/lib/utils";
 const reasons = [
   {
     icon: Award,
-    title: "14+ Years Experience",
+    title: "10+ Years Expertise",
     description:
-      "Deep expertise in international trade regulations, customs procedures, and market dynamics.",
+      "Decade of experience crafting premium architectural hardware for luxury projects.",
   },
   {
     icon: Globe,
-    title: "Global Network",
+    title: "UK & UAE Focus",
     description:
-      "Strategic partnerships with logistics providers, customs agents, and suppliers across 50+ countries.",
+      "Dedicated service to UK and UAE markets with local understanding and support.",
   },
   {
     icon: Handshake,
-    title: "Trusted Partnerships",
+    title: "B2B Partnership",
     description:
-      "Long-term relationships with certified manufacturers ensuring quality and reliability.",
+      "Tailored solutions for architects, designers, and construction professionals.",
   },
   {
     icon: Clock,
-    title: "24/7 Support",
+    title: "Responsive Service",
     description:
-      "Round-the-clock customer service to address your queries and track shipments in real-time.",
+      "Quick quotes, sample availability, and dedicated support for all your hardware needs.",
   },
 ];
 
 const stats = [
-  { value: "500+", label: "Global Partners", icon: Handshake },
-  { value: "15,000+", label: "Annual Shipments", icon: TrendingUp },
-  { value: "98%", label: "Satisfaction Rate", icon: CheckCircle },
-  { value: "50+", label: "Countries Served", icon: Globe },
+  { value: "200+", label: "Trade Partners", icon: Handshake },
+  { value: "5,000+", label: "Projects Completed", icon: TrendingUp },
+  { value: "99%", label: "Satisfaction Rate", icon: CheckCircle },
+  { value: "11+", label: "Premium Finishes", icon: Globe },
 ];
 
 export function WhyChooseUsSection() {
@@ -53,12 +53,12 @@ export function WhyChooseUsSection() {
               Why Choose Us
             </span>
             <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground mb-6">
-              Your Success is Our Priority
+              Craftsmanship Meets Design Excellence
             </h2>
             <p className="text-muted-foreground text-lg mb-10">
-              We combine industry expertise with personalized service to deliver
-              exceptional import-export solutions that drive your business
-              growth.
+              We combine traditional craftsmanship with modern design to deliver
+              architectural hardware that enhances every space with beauty,
+              function, and lasting quality.
             </p>
 
             <div className="grid sm:grid-cols-2 gap-6">

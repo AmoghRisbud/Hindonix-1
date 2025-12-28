@@ -15,8 +15,6 @@ const footerLinks = {
   company: [
     { name: "About Us", path: "/about" },
     { name: "Our Team", path: "/about#team" },
-    { name: "Careers", path: "/careers" },
-    { name: "News", path: "/news" },
   ],
   services: [
     { name: "Export Management", path: "/services" },
@@ -27,7 +25,6 @@ const footerLinks = {
   resources: [
     { name: "Case Studies", path: "/case-studies" },
     { name: "Products", path: "/products" },
-    { name: "FAQ", path: "/faq" },
     { name: "Contact", path: "/contact" },
   ],
 };
@@ -63,27 +60,24 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center">
-                <Globe className="w-6 h-6 text-accent-foreground" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-heading font-bold text-lg leading-tight">
-                  GlobalTrade
-                </span>
-                <span className="text-xs text-primary-foreground/60">
-                  Import & Export
-                </span>
-              </div>
+            <Link to="/" className="flex items-center mb-6">
+              <img
+                src="/images/logo/Logo_Without_Name_cropped.PNG"
+                alt="Hindonix Logo"
+                className="h-16 w-auto"
+              />
             </Link>
             <p className="text-primary-foreground/70 mb-6 max-w-sm">
-              Your trusted partner for seamless import and export solutions.
-              Connecting businesses to global markets since 2010.
+              Precision-crafted architectural hardware. Elevating spaces with
+              meticulously designed hardware solutions since 2025.
             </p>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-primary-foreground/70">
                 <MapPin className="w-5 h-5 text-accent" />
-                <span>123 Trade Center, Business Bay, Dubai, UAE</span>
+                <span>
+                  182/1/A/1, Shiv samarth nagar, Opp.ST Depot, Tal.Khed,
+                  Dis.Ratnagiri. 415709.
+                </span>
               </div>
               <div className="flex items-center gap-3 text-primary-foreground/70">
                 <Phone className="w-5 h-5 text-accent" />
@@ -91,16 +85,16 @@ export function Footer() {
                   href="tel:+971501234567"
                   className="hover:text-accent transition-colors"
                 >
-                  +971 50 123 4567
+                  +91 8850765050
                 </a>
               </div>
               <div className="flex items-center gap-3 text-primary-foreground/70">
                 <Mail className="w-5 h-5 text-accent" />
                 <a
-                  href="mailto:info@globaltrade.com"
+                  href="mailto:info@hindonix.com"
                   className="hover:text-accent transition-colors"
                 >
-                  info@globaltrade.com
+                  info@hindonix.com
                 </a>
               </div>
             </div>
@@ -168,7 +162,7 @@ export function Footer() {
         <div className="container mx-auto px-4 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-primary-foreground/60 text-sm text-center md:text-left">
-              © 2024 GlobalTrade. All rights reserved.
+              © 2025 Hindonix. All rights reserved.
             </p>
             <div className="flex items-center gap-4">
               <a

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Globe, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -42,28 +42,20 @@ export function Navbar() {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-              <Globe className="w-6 h-6 text-accent-foreground" />
-            </div>
-            <div className="flex flex-col">
-              <span
-                className={cn(
-                  "font-heading font-bold text-lg leading-tight transition-colors",
-                  isScrolled ? "text-foreground" : "text-primary"
-                )}
-              >
-                GlobalTrade
-              </span>
-              <span
-                className={cn(
-                  "text-xs font-medium transition-colors",
-                  isScrolled ? "text-muted-foreground" : "text-muted-foreground"
-                )}
-              >
-                Import & Export
-              </span>
-            </div>
+          <Link to="/" className="flex items-center gap-3 group">
+            <img
+              src="/images/logo/Logo_With_Name_cropped.PNG"
+              alt="Hindonix Logo"
+              className="h-16 w-auto transition-all group-hover:scale-105"
+            />
+            <span
+              className={cn(
+                "font-heading font-bold text-2xl tracking-wide transition-colors",
+                isScrolled ? "text-foreground" : "text-white"
+              )}
+            >
+              HINDONIX<sup className="text-xs ml-0.5">®</sup>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -75,10 +67,12 @@ export function Navbar() {
                 className={cn(
                   "px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200",
                   location.pathname === link.path
-                    ? "text-accent bg-accent/10"
+                    ? isScrolled
+                      ? "text-primary bg-primary/5 font-semibold"
+                      : "text-white bg-white/10 font-semibold"
                     : isScrolled
-                    ? "text-foreground hover:text-accent hover:bg-accent/5"
-                    : "text-foreground/80 hover:text-accent hover:bg-accent/5"
+                    ? "text-foreground hover:text-primary hover:bg-primary/5"
+                    : "text-white/90 hover:text-white hover:bg-white/10"
                 )}
               >
                 {link.name}
@@ -88,7 +82,14 @@ export function Navbar() {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-4">
-            <Button variant="accent" size="default" asChild>
+            <Button
+              variant={isScrolled ? "accent" : "default"}
+              size="default"
+              asChild
+              className={cn(
+                !isScrolled && "bg-white text-primary hover:bg-white/90"
+              )}
+            >
               <Link to="/contact">Get a Quote</Link>
             </Button>
           </div>
@@ -98,7 +99,7 @@ export function Navbar() {
             onClick={() => setIsOpen(!isOpen)}
             className={cn(
               "lg:hidden p-2 rounded-lg transition-colors",
-              isScrolled ? "text-foreground" : "text-foreground"
+              isScrolled ? "text-foreground" : "text-white"
             )}
             aria-label="Toggle menu"
           >

@@ -1,138 +1,22 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { ImageDisplay } from "@/components/ImageDisplay";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, TrendingUp, Clock, Package, MapPin } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { getCaseStudies, type CaseStudy } from "@/lib/data";
 
 const filters = ["All", "Export", "Import", "Logistics", "Consulting"];
 
-const caseStudies = [
-  {
-    id: 1,
-    title: "Scaling Hardware Exports to the Middle East",
-    client: "European Tool Manufacturer",
-    category: "Export",
-    location: "Germany → UAE, Saudi Arabia",
-    image:
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&h=400&fit=crop",
-    problem:
-      "A German tool manufacturer struggled to penetrate Middle Eastern markets due to complex regulations and lack of local distribution networks.",
-    solution:
-      "We established strategic partnerships with regional distributors, streamlined documentation processes, and set up efficient logistics routes.",
-    outcome:
-      "300% increase in Middle East sales within 18 months, with distribution now covering 8 countries.",
-    stats: [
-      { label: "Sales Increase", value: "300%" },
-      { label: "Countries Covered", value: "8" },
-      { label: "Time to Market", value: "-40%" },
-    ],
-  },
-  {
-    id: 2,
-    title: "Optimizing Import Costs for Construction Supplies",
-    client: "Santos Construction Group",
-    category: "Import",
-    location: "China → Brazil",
-    image:
-      "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&h=400&fit=crop",
-    problem:
-      "High import duties and lengthy customs clearance were significantly impacting profit margins and project timelines.",
-    solution:
-      "Implemented duty optimization strategies, streamlined customs procedures, and established bonded warehouse solutions.",
-    outcome:
-      "Reduced import costs by 25% and cut average clearance time from 15 days to 5 days.",
-    stats: [
-      { label: "Cost Reduction", value: "25%" },
-      { label: "Clearance Time", value: "5 days" },
-      { label: "Annual Savings", value: "$2M" },
-    ],
-  },
-  {
-    id: 3,
-    title: "Multi-Country Logistics Consolidation",
-    client: "Pacific Tools Ltd",
-    category: "Logistics",
-    location: "Asia → Australia",
-    image:
-      "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=600&h=400&fit=crop",
-    problem:
-      "Managing shipments from multiple Asian suppliers resulted in high freight costs and inventory management challenges.",
-    solution:
-      "Established a consolidation hub in Singapore, implemented inventory management systems, and optimized shipping routes.",
-    outcome:
-      "Reduced logistics costs by 35% and improved inventory turnover by 50%.",
-    stats: [
-      { label: "Freight Savings", value: "35%" },
-      { label: "Inventory Turnover", value: "+50%" },
-      { label: "Suppliers Managed", value: "25+" },
-    ],
-  },
-  {
-    id: 4,
-    title: "Market Entry Strategy for Industrial Equipment",
-    client: "Nordic Machinery Co",
-    category: "Consulting",
-    location: "Sweden → South Asia",
-    image:
-      "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&h=400&fit=crop",
-    problem:
-      "Lacked market intelligence and local partnerships to enter the growing South Asian industrial equipment market.",
-    solution:
-      "Conducted comprehensive market research, identified key partners, and developed a phased market entry strategy.",
-    outcome:
-      "Successfully launched in 3 countries within 12 months, securing $5M in first-year orders.",
-    stats: [
-      { label: "First Year Orders", value: "$5M" },
-      { label: "Markets Entered", value: "3" },
-      { label: "Local Partners", value: "12" },
-    ],
-  },
-  {
-    id: 5,
-    title: "Quality Control System Implementation",
-    client: "EuroHardware GmbH",
-    category: "Export",
-    location: "China → Europe",
-    image:
-      "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=600&h=400&fit=crop",
-    problem:
-      "Inconsistent product quality from Asian suppliers was causing returns and damaging brand reputation.",
-    solution:
-      "Implemented comprehensive QC protocols, established on-site inspection teams, and created supplier scorecards.",
-    outcome:
-      "Reduced defect rate from 8% to 0.5%, significantly improving customer satisfaction.",
-    stats: [
-      { label: "Defect Rate", value: "0.5%" },
-      { label: "Customer Satisfaction", value: "98%" },
-      { label: "Suppliers Audited", value: "50+" },
-    ],
-  },
-  {
-    id: 6,
-    title: "Emergency Logistics Response",
-    client: "Construction Consortium",
-    category: "Logistics",
-    location: "Multiple Origins → Qatar",
-    image:
-      "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&h=400&fit=crop",
-    problem:
-      "Critical equipment shortage threatened major project timeline with potential penalties of $100K per day.",
-    solution:
-      "Activated emergency logistics network, coordinated air freight from multiple origins, and expedited customs clearance.",
-    outcome:
-      "Delivered all equipment within 72 hours, saving the project from $2M in potential penalties.",
-    stats: [
-      { label: "Delivery Time", value: "72 hrs" },
-      { label: "Penalties Saved", value: "$2M" },
-      { label: "Sources Coordinated", value: "5" },
-    ],
-  },
-];
-
 const CaseStudies = () => {
+  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
   const [activeFilter, setActiveFilter] = useState("All");
+
+  useEffect(() => {
+    setCaseStudies(getCaseStudies());
+  }, []);
 
   const filteredCases = caseStudies.filter(
     (study) => activeFilter === "All" || study.category === activeFilter
@@ -189,7 +73,7 @@ const CaseStudies = () => {
                 className="bg-card rounded-2xl overflow-hidden shadow-card border border-border/50 group hover:shadow-card-hover transition-all duration-300"
               >
                 <div className="aspect-[16/9] overflow-hidden">
-                  <img
+                  <ImageDisplay
                     src={study.image}
                     alt={study.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -267,8 +151,8 @@ const CaseStudies = () => {
             Ready to Write Your Success Story?
           </h2>
           <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-            Let's discuss how GlobalTrade can help you achieve similar results
-            for your business.
+            Let's discuss how Hindonix can help you achieve similar results for
+            your business.
           </p>
           <Button variant="accent" size="xl" asChild>
             <Link to="/contact" className="gap-2">

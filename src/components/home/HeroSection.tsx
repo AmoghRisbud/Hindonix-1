@@ -26,28 +26,20 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
           <div className="text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 bg-primary-foreground/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6 animate-fade-in">
-              <Globe className="w-4 h-4 text-accent" />
-              <span className="text-primary-foreground/90 text-sm font-medium">
-                Trusted by 500+ Global Partners
-              </span>
-            </div>
-
             <h1
               className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight mb-6 animate-fade-in"
               style={{ animationDelay: "0.1s" }}
             >
-              Reliable Import & Export Solutions for{" "}
-              <span className="text-accent">Global Trade</span>
+              Precision-Crafted{" "}
+              <span className="text-accent">Architectural Hardware</span>
             </h1>
 
             <p
               className="text-lg lg:text-xl text-primary-foreground/80 mb-8 max-w-xl mx-auto lg:mx-0 animate-fade-in"
               style={{ animationDelay: "0.2s" }}
             >
-              Connecting businesses worldwide with seamless logistics,
-              documentation, and expert guidance for hardware products and
-              industrial supplies.
+              Elevating spaces with meticulously designed knobs, door handles,
+              and pull handles. Where functionality meets timeless aesthetics.
             </p>
 
             <div
@@ -56,12 +48,12 @@ export function HeroSection() {
             >
               <Button variant="hero" size="xl" asChild>
                 <Link to="/contact" className="gap-2">
-                  Let's Export Your Product
+                  Request a Quote
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>
               <Button variant="hero-outline" size="xl" asChild>
-                <Link to="/services">Explore Our Services</Link>
+                <Link to="/products">View Collection</Link>
               </Button>
             </div>
 
@@ -71,26 +63,26 @@ export function HeroSection() {
               style={{ animationDelay: "0.4s" }}
             >
               <p className="text-primary-foreground/60 text-sm mb-4">
-                Certified & Trusted Worldwide
+                Premium Finishes & Materials
               </p>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6">
                 <div className="flex items-center gap-2 text-primary-foreground/80">
                   <div className="w-8 h-8 rounded bg-primary-foreground/10 flex items-center justify-center">
-                    <span className="font-bold text-xs">ISO</span>
+                    <span className="font-bold text-xs">PVD</span>
                   </div>
-                  <span className="text-sm">ISO 9001</span>
+                  <span className="text-sm">PVD Finishes</span>
                 </div>
                 <div className="flex items-center gap-2 text-primary-foreground/80">
                   <div className="w-8 h-8 rounded bg-primary-foreground/10 flex items-center justify-center">
-                    <span className="font-bold text-xs">AEO</span>
+                    <span className="font-bold text-xs">B2B</span>
                   </div>
-                  <span className="text-sm">AEO Certified</span>
+                  <span className="text-sm">Trade Only</span>
                 </div>
                 <div className="flex items-center gap-2 text-primary-foreground/80">
                   <div className="w-8 h-8 rounded bg-primary-foreground/10 flex items-center justify-center">
-                    <span className="font-bold text-xs">WTO</span>
+                    <span className="font-bold text-xs">UK</span>
                   </div>
-                  <span className="text-sm">WTO Compliant</span>
+                  <span className="text-sm">UK & UAE</span>
                 </div>
               </div>
             </div>

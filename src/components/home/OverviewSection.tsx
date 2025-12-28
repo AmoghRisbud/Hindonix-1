@@ -4,35 +4,35 @@ import { cn } from "@/lib/utils";
 const overviewCards = [
   {
     icon: Package,
-    title: "Premium Products",
+    title: "Premium Hardware",
     description:
-      "Quality hardware and industrial supplies sourced from certified global manufacturers.",
-    stat: "10,000+",
+      "Precision-crafted architectural hardware with exceptional quality and attention to detail.",
+    stat: "1000+",
     statLabel: "Products",
   },
   {
     icon: Truck,
-    title: "Delivery Network",
+    title: "UK & UAE Delivery",
     description:
-      "Extensive logistics partnerships ensuring timely delivery to any destination worldwide.",
+      "Reliable logistics ensuring timely delivery to UK and UAE markets with careful handling.",
     stat: "98%",
     statLabel: "On-Time Delivery",
   },
   {
     icon: Users,
-    title: "Trusted Clients",
+    title: "B2B Partners",
     description:
-      "Building lasting relationships with businesses across industries and continents.",
-    stat: "500+",
-    statLabel: "Happy Clients",
+      "Building lasting relationships with architects, designers, and construction professionals.",
+    stat: "200+",
+    statLabel: "Trade Partners",
   },
   {
     icon: Globe,
-    title: "Global Reach",
+    title: "Premium Finishes",
     description:
-      "Operating across six continents with local expertise and global standards.",
-    stat: "50+",
-    statLabel: "Countries",
+      "Extensive range of finishes including PVD, brass, and premium metal options.",
+    stat: "11+",
+    statLabel: "Finish Options",
   },
 ];
 
@@ -43,14 +43,14 @@ export function OverviewSection() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-4">
-            Why Global Businesses Choose Us
+            Why Design Professionals Choose Us
           </span>
           <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground mb-6">
-            Your Complete Import–Export Partner
+            Exceptional Architectural Hardware
           </h2>
           <p className="text-muted-foreground text-lg">
-            From sourcing to delivery, we handle every aspect of international
-            trade with precision, transparency, and unwavering commitment.
+            From concept to installation, we provide premium hardware solutions
+            with uncompromising quality, elegant design, and lasting durability.
           </p>
         </div>
 
@@ -97,23 +97,22 @@ export function OverviewSection() {
                 Industry Expertise
               </span>
               <h3 className="font-heading text-2xl lg:text-3xl font-bold text-foreground mb-4">
-                Specialized in Hardware & Industrial Products
+                Specialized in Architectural Hardware
               </h3>
               <p className="text-muted-foreground mb-6">
-                With over 14 years of experience, we've developed deep expertise
-                in sourcing, quality control, and logistics for hardware
-                products and industrial supplies. Our specialized knowledge
-                ensures your products meet international standards and reach
-                their destination safely.
+                Since 2025, we've been crafting premium architectural hardware
+                for luxury residential and commercial projects. Our expertise in
+                material selection, finish quality, and ergonomic design ensures
+                hardware that performs beautifully for decades.
               </p>
               <div className="flex flex-wrap gap-3">
                 {[
-                  "Hand Tools",
-                  "Power Tools",
-                  "Fasteners",
-                  "Fittings",
-                  "Valves",
-                  "Machinery Parts",
+                  "Brass Knobs",
+                  "Wooden Knobs",
+                  "Door Handles",
+                  "Pull Handles",
+                  "PVD Finishes",
+                  "Custom Solutions",
                 ].map((tag) => (
                   <span
                     key={tag}
@@ -129,10 +128,10 @@ export function OverviewSection() {
               <div className="bg-secondary rounded-2xl p-6 text-center">
                 <Factory className="w-10 h-10 text-accent mx-auto mb-3" />
                 <div className="text-2xl font-heading font-bold text-foreground">
-                  200+
+                  10+
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Verified Suppliers
+                  Years Experience
                 </div>
               </div>
               <div className="bg-secondary rounded-2xl p-6 text-center">
@@ -146,10 +145,10 @@ export function OverviewSection() {
               </div>
               <div className="bg-primary rounded-2xl p-6 text-center col-span-2">
                 <div className="text-xl font-heading font-bold text-primary-foreground mb-1">
-                  Engineering & Industrial Supplies
+                  UK & UAE Markets
                 </div>
                 <div className="text-sm text-primary-foreground/70">
-                  Coming Soon
+                  Serving B2B Partners Across Two Regions
                 </div>
               </div>
             </div>

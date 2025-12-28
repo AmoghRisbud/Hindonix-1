@@ -274,7 +274,7 @@ const Services = () => {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="font-heading text-3xl lg:text-4xl font-bold text-primary-foreground mb-6">
-                  Why Partner With GlobalTrade?
+                  Why Partner With Hindonix?
                 </h2>
                 <div className="space-y-6">
                   {[

@@ -1,116 +1,38 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { ImageDisplay } from "@/components/ImageDisplay";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Search, Filter, Package } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { getProducts, type Product } from "@/lib/data";
 
-const categories = [
-  "All Products",
-  "Hand Tools",
-  "Power Tools",
-  "Fasteners",
-  "Fittings",
-  "Valves",
-  "Machinery Parts",
-];
+const categories = ["All Products", "Knobs", "Door Handles", "Pull Handles"];
 
-const products = [
-  {
-    id: 1,
-    name: "Industrial Drill Set",
-    category: "Power Tools",
-    description:
-      "Professional-grade drill set with 50+ attachments for industrial applications.",
-    image:
-      "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400&h=300&fit=crop",
-    origin: "Germany",
-  },
-  {
-    id: 2,
-    name: "Stainless Steel Fasteners Kit",
-    category: "Fasteners",
-    description:
-      "Comprehensive kit of corrosion-resistant fasteners in various sizes.",
-    image:
-      "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop",
-    origin: "Japan",
-  },
-  {
-    id: 3,
-    name: "Precision Hand Tool Set",
-    category: "Hand Tools",
-    description:
-      "Ergonomic hand tools crafted for precision work and durability.",
-    image:
-      "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=400&h=300&fit=crop",
-    origin: "USA",
-  },
-  {
-    id: 4,
-    name: "Industrial Ball Valves",
-    category: "Valves",
-    description:
-      "High-pressure ball valves for chemical and petroleum industries.",
-    image:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
-    origin: "Italy",
-  },
-  {
-    id: 5,
-    name: "Brass Pipe Fittings",
-    category: "Fittings",
-    description:
-      "Premium brass fittings for plumbing and industrial piping systems.",
-    image:
-      "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=300&fit=crop",
-    origin: "China",
-  },
-  {
-    id: 6,
-    name: "CNC Machinery Components",
-    category: "Machinery Parts",
-    description:
-      "Precision-manufactured components for CNC machines and automation.",
-    image:
-      "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400&h=300&fit=crop",
-    origin: "Taiwan",
-  },
-  {
-    id: 7,
-    name: "Hydraulic Power Tools",
-    category: "Power Tools",
-    description:
-      "Heavy-duty hydraulic tools for construction and manufacturing.",
-    image:
-      "https://images.unsplash.com/photo-1580889192556-fb4b8ab3d63b?w=400&h=300&fit=crop",
-    origin: "Sweden",
-  },
-  {
-    id: 8,
-    name: "Metric Bolt Assortment",
-    category: "Fasteners",
-    description:
-      "Complete metric bolt collection with nuts and washers included.",
-    image:
-      "https://images.unsplash.com/photo-1558618047-f4b511b10a74?w=400&h=300&fit=crop",
-    origin: "Germany",
-  },
-  {
-    id: 9,
-    name: "Professional Wrench Set",
-    category: "Hand Tools",
-    description: "Chrome vanadium wrench set covering all standard sizes.",
-    image:
-      "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop",
-    origin: "USA",
-  },
+const finishes = [
+  "All Finishes",
+  "Brass",
+  "Polished Stainless Steel",
+  "PVD Satin Black",
+  "PVD Satin Gold",
+  "PVD Satin Bronze",
+  "PVD Satin Nickel",
+  "PVD Polished Copper",
+  "PVD Satin Stainless Steel",
+  "Satin Black",
+  "Satin Stainless Steel",
+  "Satin Nickel",
 ];
 
 const Products = () => {
+  const [products, setProducts] = useState<Product[]>([]);
   const [activeCategory, setActiveCategory] = useState("All Products");
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    setProducts(getProducts());
+  }, []);
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory =
@@ -130,14 +52,14 @@ const Products = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <span className="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-4">
-              Our Products
+              Our Collection
             </span>
             <h1 className="font-heading text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-              Premium Hardware Products
+              Architectural Hardware
             </h1>
             <p className="text-lg text-primary-foreground/80">
-              Quality hardware and industrial supplies sourced from certified
-              manufacturers worldwide.
+              Discover our curated collection of precision-crafted hardware
+              product options.
             </p>
           </div>
         </div>
@@ -182,16 +104,17 @@ const Products = () => {
           {/* Products Grid */}
           {filteredProducts.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProducts.map((product) => (
+              {filteredProducts.map((product, index) => (
                 <div
                   key={product.id}
                   className="bg-card rounded-2xl overflow-hidden shadow-card border border-border/50 group hover:shadow-card-hover transition-all duration-300"
                 >
                   <div className="aspect-[4/3] overflow-hidden">
-                    <img
+                    <ImageDisplay
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 animate-slide-in-left"
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     />
                   </div>
                   <div className="p-6">
@@ -199,16 +122,33 @@ const Products = () => {
                       <span className="px-3 py-1 bg-secondary rounded-full text-xs font-medium text-secondary-foreground">
                         {product.category}
                       </span>
-                      <span className="px-3 py-1 bg-accent/10 rounded-full text-xs font-medium text-accent">
-                        {product.origin}
-                      </span>
                     </div>
                     <h3 className="font-heading text-xl font-semibold text-foreground mb-2">
                       {product.name}
                     </h3>
-                    <p className="text-muted-foreground text-sm mb-4">
+                    <p className="text-muted-foreground text-sm mb-3">
                       {product.description}
                     </p>
+                    <div className="mb-4">
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Available Finishes:
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {product.finishes.slice(0, 3).map((finish, index) => (
+                          <span
+                            key={index}
+                            className="text-xs px-2 py-1 bg-muted rounded text-muted-foreground"
+                          >
+                            {finish}
+                          </span>
+                        ))}
+                        {product.finishes.length > 3 && (
+                          <span className="text-xs px-2 py-1 bg-muted rounded text-muted-foreground">
+                            +{product.finishes.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
                     <Button
                       variant="outline"
                       size="sm"
@@ -243,16 +183,16 @@ const Products = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="bg-primary rounded-3xl p-8 lg:p-12 text-center">
             <h2 className="font-heading text-3xl lg:text-4xl font-bold text-primary-foreground mb-4">
-              Can't Find What You Need?
+              Looking for Custom Solutions?
             </h2>
             <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
-              We specialize in custom sourcing. Tell us your requirements, and
-              our team will find the perfect products from our network of
-              verified suppliers.
+              We offer bespoke architectural hardware tailored to your project
+              specifications. Contact our team to discuss custom finishes,
+              sizes, and designs.
             </p>
             <Button variant="hero" size="xl" asChild>
               <Link to="/contact" className="gap-2">
-                Request Custom Sourcing
+                Request Custom Quote
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>

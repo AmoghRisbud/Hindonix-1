@@ -3,74 +3,16 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import {
-  ArrowRight,
-  ArrowLeft,
-  MapPin,
-  Phone,
-  Mail,
-  Clock,
-  CheckCircle,
-  MessageCircle,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { MapPin, Phone, Mail, Clock, Send, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const serviceTypes = [
-  {
-    id: "export",
-    label: "Export Management",
-    description: "Help with exporting products",
-  },
-  {
-    id: "import",
-    label: "Import Consulting",
-    description: "Guidance on import operations",
-  },
-  {
-    id: "logistics",
-    label: "Logistics Coordination",
-    description: "Freight and delivery solutions",
-  },
-  {
-    id: "documentation",
-    label: "Documentation & Compliance",
-    description: "Paperwork and regulatory support",
-  },
-  {
-    id: "sourcing",
-    label: "Product Sourcing",
-    description: "Finding specific products",
-  },
-  { id: "other", label: "Other", description: "Something else" },
-];
-
-const budgetRanges = [
-  { id: "under-10k", label: "Under $10,000" },
-  { id: "10k-50k", label: "$10,000 - $50,000" },
-  { id: "50k-100k", label: "$50,000 - $100,000" },
-  { id: "100k-500k", label: "$100,000 - $500,000" },
-  { id: "over-500k", label: "Over $500,000" },
-];
-
-const timelines = [
-  { id: "asap", label: "As soon as possible" },
-  { id: "1-month", label: "Within 1 month" },
-  { id: "1-3-months", label: "1-3 months" },
-  { id: "3-6-months", label: "3-6 months" },
-  { id: "flexible", label: "Flexible / Not sure" },
-];
-
 const Contact = () => {
-  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    serviceType: "",
-    budget: "",
-    timeline: "",
     name: "",
     email: "",
     phone: "",
     company: "",
+    subject: "",
     message: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -78,46 +20,25 @@ const Contact = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const totalSteps = 4;
-
-  const validateStep = (currentStep: number): boolean => {
+  const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (currentStep === 1 && !formData.serviceType) {
-      newErrors.serviceType = "Please select a service type";
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email";
     }
-    if (currentStep === 2 && !formData.budget) {
-      newErrors.budget = "Please select a budget range";
-    }
-    if (currentStep === 3 && !formData.timeline) {
-      newErrors.timeline = "Please select a timeline";
-    }
-    if (currentStep === 4) {
-      if (!formData.name.trim()) newErrors.name = "Name is required";
-      if (!formData.email.trim()) {
-        newErrors.email = "Email is required";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        newErrors.email = "Please enter a valid email";
-      }
-      if (!formData.phone.trim()) newErrors.phone = "Phone is required";
-    }
+    if (!formData.phone.trim()) newErrors.phone = "Phone is required";
+    if (!formData.message.trim()) newErrors.message = "Message is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const nextStep = () => {
-    if (validateStep(step)) {
-      setStep((prev) => Math.min(prev + 1, totalSteps));
-    }
-  };
-
-  const prevStep = () => {
-    setStep((prev) => Math.max(prev - 1, 1));
-  };
-
-  const handleSubmit = async () => {
-    if (!validateStep(4)) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
 
@@ -125,11 +46,22 @@ const Contact = () => {
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     toast({
-      title: "Quote Request Submitted!",
+      title: "Inquiry Submitted!",
       description: "We'll get back to you within 24 hours.",
     });
 
+    setIsSubmitting(false);
     navigate("/thank-you");
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   return (
@@ -144,11 +76,11 @@ const Contact = () => {
               Contact Us
             </span>
             <h1 className="font-heading text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-              Let's Start Your Journey
+              Get in Touch
             </h1>
             <p className="text-lg text-primary-foreground/80">
-              Fill out the form below and our team will get back to you within
-              24 hours.
+              Have a question about our architectural hardware? We're here to
+              help.
             </p>
           </div>
         </div>
@@ -158,326 +90,166 @@ const Contact = () => {
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-12">
-            {/* Multi-Step Form */}
+            {/* Contact Form */}
             <div className="lg:col-span-2">
               <div className="bg-card rounded-3xl p-6 lg:p-10 shadow-card border border-border/50">
-                {/* Progress Bar */}
-                <div className="mb-10">
-                  <div className="flex items-center justify-between mb-4">
-                    {[1, 2, 3, 4].map((s) => (
-                      <div key={s} className="flex items-center">
-                        <div
-                          className={cn(
-                            "w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all",
-                            step >= s
-                              ? "bg-accent text-accent-foreground"
-                              : "bg-secondary text-muted-foreground"
-                          )}
-                        >
-                          {step > s ? <CheckCircle className="w-5 h-5" /> : s}
-                        </div>
-                        {s < 4 && (
-                          <div
-                            className={cn(
-                              "w-16 lg:w-24 h-1 mx-2 rounded transition-all",
-                              step > s ? "bg-accent" : "bg-secondary"
-                            )}
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Service</span>
-                    <span>Budget</span>
-                    <span>Timeline</span>
-                    <span>Details</span>
-                  </div>
-                </div>
-
-                {/* Step 1: Service Type */}
-                {step === 1 && (
-                  <div className="animate-fade-in">
-                    <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
-                      What service are you interested in?
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      Select the service that best describes your needs.
-                    </p>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {serviceTypes.map((service) => (
-                        <button
-                          key={service.id}
-                          onClick={() =>
-                            setFormData({
-                              ...formData,
-                              serviceType: service.id,
-                            })
-                          }
-                          className={cn(
-                            "p-4 rounded-xl border-2 text-left transition-all",
-                            formData.serviceType === service.id
-                              ? "border-accent bg-accent/5"
-                              : "border-border hover:border-accent/50"
-                          )}
-                        >
-                          <div className="font-semibold text-foreground">
-                            {service.label}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {service.description}
-                          </div>
-                        </button>
-                      ))}
+                <h2 className="font-heading text-2xl font-bold text-foreground mb-6">
+                  Send us a message
+                </h2>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Name & Email Row */}
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-foreground mb-2"
+                      >
+                        Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
+                        placeholder="John Doe"
+                      />
+                      {errors.name && (
+                        <p className="text-destructive text-sm mt-1">
+                          {errors.name}
+                        </p>
+                      )}
                     </div>
-                    {errors.serviceType && (
-                      <p className="text-destructive text-sm mt-4">
-                        {errors.serviceType}
-                      </p>
-                    )}
-                  </div>
-                )}
 
-                {/* Step 2: Budget */}
-                {step === 2 && (
-                  <div className="animate-fade-in">
-                    <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
-                      What's your estimated budget?
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      This helps us tailor our recommendations to your needs.
-                    </p>
-                    <div className="space-y-3">
-                      {budgetRanges.map((range) => (
-                        <button
-                          key={range.id}
-                          onClick={() =>
-                            setFormData({ ...formData, budget: range.id })
-                          }
-                          className={cn(
-                            "w-full p-4 rounded-xl border-2 text-left transition-all flex items-center justify-between",
-                            formData.budget === range.id
-                              ? "border-accent bg-accent/5"
-                              : "border-border hover:border-accent/50"
-                          )}
-                        >
-                          <span className="font-medium text-foreground">
-                            {range.label}
-                          </span>
-                          {formData.budget === range.id && (
-                            <CheckCircle className="w-5 h-5 text-accent" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                    {errors.budget && (
-                      <p className="text-destructive text-sm mt-4">
-                        {errors.budget}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {/* Step 3: Timeline */}
-                {step === 3 && (
-                  <div className="animate-fade-in">
-                    <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
-                      What's your timeline?
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      When do you need to get started?
-                    </p>
-                    <div className="space-y-3">
-                      {timelines.map((timeline) => (
-                        <button
-                          key={timeline.id}
-                          onClick={() =>
-                            setFormData({ ...formData, timeline: timeline.id })
-                          }
-                          className={cn(
-                            "w-full p-4 rounded-xl border-2 text-left transition-all flex items-center justify-between",
-                            formData.timeline === timeline.id
-                              ? "border-accent bg-accent/5"
-                              : "border-border hover:border-accent/50"
-                          )}
-                        >
-                          <span className="font-medium text-foreground">
-                            {timeline.label}
-                          </span>
-                          {formData.timeline === timeline.id && (
-                            <CheckCircle className="w-5 h-5 text-accent" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                    {errors.timeline && (
-                      <p className="text-destructive text-sm mt-4">
-                        {errors.timeline}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {/* Step 4: Contact Details */}
-                {step === 4 && (
-                  <div className="animate-fade-in">
-                    <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
-                      Your Contact Details
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      Tell us how to reach you.
-                    </p>
-                    <div className="space-y-5">
-                      <div className="grid sm:grid-cols-2 gap-5">
-                        <div>
-                          <label className="block text-sm font-medium text-foreground mb-2">
-                            Full Name *
-                          </label>
-                          <input
-                            type="text"
-                            value={formData.name}
-                            onChange={(e) =>
-                              setFormData({ ...formData, name: e.target.value })
-                            }
-                            className={cn(
-                              "w-full px-4 py-3 rounded-xl border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all",
-                              errors.name
-                                ? "border-destructive"
-                                : "border-border"
-                            )}
-                            placeholder="John Doe"
-                          />
-                          {errors.name && (
-                            <p className="text-destructive text-sm mt-1">
-                              {errors.name}
-                            </p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-foreground mb-2">
-                            Company
-                          </label>
-                          <input
-                            type="text"
-                            value={formData.company}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                company: e.target.value,
-                              })
-                            }
-                            className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
-                            placeholder="Your Company"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid sm:grid-cols-2 gap-5">
-                        <div>
-                          <label className="block text-sm font-medium text-foreground mb-2">
-                            Email *
-                          </label>
-                          <input
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                email: e.target.value,
-                              })
-                            }
-                            className={cn(
-                              "w-full px-4 py-3 rounded-xl border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all",
-                              errors.email
-                                ? "border-destructive"
-                                : "border-border"
-                            )}
-                            placeholder="john@example.com"
-                          />
-                          {errors.email && (
-                            <p className="text-destructive text-sm mt-1">
-                              {errors.email}
-                            </p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-foreground mb-2">
-                            Phone *
-                          </label>
-                          <input
-                            type="tel"
-                            value={formData.phone}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                phone: e.target.value,
-                              })
-                            }
-                            className={cn(
-                              "w-full px-4 py-3 rounded-xl border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all",
-                              errors.phone
-                                ? "border-destructive"
-                                : "border-border"
-                            )}
-                            placeholder="+1 234 567 8900"
-                          />
-                          {errors.phone && (
-                            <p className="text-destructive text-sm mt-1">
-                              {errors.phone}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-foreground mb-2">
-                          Additional Details
-                        </label>
-                        <textarea
-                          value={formData.message}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              message: e.target.value,
-                            })
-                          }
-                          rows={4}
-                          className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all resize-none"
-                          placeholder="Tell us more about your requirements..."
-                        />
-                      </div>
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-foreground mb-2"
+                      >
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
+                        placeholder="john@example.com"
+                      />
+                      {errors.email && (
+                        <p className="text-destructive text-sm mt-1">
+                          {errors.email}
+                        </p>
+                      )}
                     </div>
                   </div>
-                )}
 
-                {/* Navigation Buttons */}
-                <div className="flex justify-between mt-10 pt-6 border-t border-border">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    onClick={prevStep}
-                    disabled={step === 1}
-                    className={cn(step === 1 && "invisible")}
-                  >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back
-                  </Button>
+                  {/* Phone & Company Row */}
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    <div>
+                      <label
+                        htmlFor="phone"
+                        className="block text-sm font-medium text-foreground mb-2"
+                      >
+                        Phone Number *
+                      </label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
+                        placeholder="+44 20 1234 5678"
+                      />
+                      {errors.phone && (
+                        <p className="text-destructive text-sm mt-1">
+                          {errors.phone}
+                        </p>
+                      )}
+                    </div>
 
-                  {step < 4 ? (
-                    <Button variant="accent" size="lg" onClick={nextStep}>
-                      Continue
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="accent"
-                      size="lg"
-                      onClick={handleSubmit}
-                      disabled={isSubmitting}
+                    <div>
+                      <label
+                        htmlFor="company"
+                        className="block text-sm font-medium text-foreground mb-2"
+                      >
+                        Company Name
+                      </label>
+                      <input
+                        type="text"
+                        id="company"
+                        name="company"
+                        value={formData.company}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
+                        placeholder="Your Company"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Subject */}
+                  <div>
+                    <label
+                      htmlFor="subject"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
-                      {isSubmitting ? "Submitting..." : "Submit Request"}
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  )}
-                </div>
+                      Subject
+                    </label>
+                    <input
+                      type="text"
+                      id="subject"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
+                      placeholder="Product inquiry, quote request, etc."
+                    />
+                  </div>
+
+                  {/* Message */}
+                  <div>
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-medium text-foreground mb-2"
+                    >
+                      Message *
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      rows={6}
+                      className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all resize-none"
+                      placeholder="Tell us about your project and requirements..."
+                    />
+                    {errors.message && (
+                      <p className="text-destructive text-sm mt-1">
+                        {errors.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full sm:w-auto"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      "Sending..."
+                    ) : (
+                      <>
+                        Send Message
+                        <Send className="w-4 h-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                </form>
               </div>
             </div>
 
@@ -498,9 +270,9 @@ const Contact = () => {
                         Address
                       </h4>
                       <p className="text-muted-foreground text-sm">
-                        123 Trade Center, Business Bay
+                        182/1/A/1, Shiv samarth nagar, Opp.ST Depot,
                         <br />
-                        Dubai, UAE
+                        Tal.Khed, Dis.Ratnagiri. Pin code : 415709.
                       </p>
                     </div>
                   </div>
@@ -513,10 +285,10 @@ const Contact = () => {
                         Phone
                       </h4>
                       <a
-                        href="tel:+971501234567"
+                        href="tel:+91 8850765050"
                         className="text-muted-foreground text-sm hover:text-accent transition-colors"
                       >
-                        +971 50 123 4567
+                        +91 8850765050
                       </a>
                     </div>
                   </div>
@@ -529,10 +301,10 @@ const Contact = () => {
                         Email
                       </h4>
                       <a
-                        href="mailto:info@globaltrade.com"
-                        className="text-muted-foreground text-sm hover:text-accent transition-colors"
+                        href="mailto:info@hindonix.com"
+                        className="text-foreground hover:text-accent transition-colors"
                       >
-                        info@globaltrade.com
+                        info@hindonix.com
                       </a>
                     </div>
                   </div>
@@ -561,7 +333,7 @@ const Contact = () => {
                 </h3>
                 <div className="space-y-3">
                   <a
-                    href="tel:+971501234567"
+                    href="tel:+918850765050"
                     className="flex items-center gap-3 bg-primary-foreground/10 rounded-xl p-4 hover:bg-primary-foreground/20 transition-colors"
                   >
                     <Phone className="w-5 h-5 text-accent" />
@@ -570,7 +342,7 @@ const Contact = () => {
                     </span>
                   </a>
                   <a
-                    href="https://wa.me/971501234567"
+                    href="https://wa.me/+918850765050"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 bg-primary-foreground/10 rounded-xl p-4 hover:bg-primary-foreground/20 transition-colors"

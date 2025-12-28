@@ -16,26 +16,25 @@ export function CTASection() {
           <div className="relative z-10 px-8 py-16 lg:px-16 lg:py-24">
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="font-heading text-3xl lg:text-5xl font-bold text-primary-foreground mb-6">
-                Start Your Import/Export Journey With Us
+                Ready to Elevate Your Next Project?
               </h2>
               <p className="text-lg lg:text-xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto">
-                Whether you're looking to expand into new markets or streamline
-                your supply chain, our expert team is ready to guide you every
-                step of the way.
+                Discover how our premium architectural hardware can bring
+                sophistication and functionality to your residential or
+                commercial space.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
                 <Button variant="hero" size="xl" asChild>
                   <Link to="/contact" className="gap-2">
-                    Request a Free Quote
+                    Request a Quote
                     <ArrowRight className="w-5 h-5" />
                   </Link>
                 </Button>
                 <Button variant="hero-outline" size="xl" asChild>
-                  <a href="tel:+971501234567" className="gap-2">
-                    <Phone className="w-5 h-5" />
-                    Schedule a Call
-                  </a>
+                  <Link to="/products" className="gap-2">
+                    View Collection
+                  </Link>
                 </Button>
               </div>
 
@@ -46,15 +45,15 @@ export function CTASection() {
                   className="flex items-center gap-2 hover:text-accent transition-colors"
                 >
                   <Phone className="w-5 h-5 text-accent" />
-                  <span>+971 50 123 4567</span>
+                  <span>+91 8850765050</span>
                 </a>
                 <span className="hidden sm:block w-1.5 h-1.5 rounded-full bg-primary-foreground/40" />
                 <a
-                  href="mailto:info@globaltrade.com"
+                  href="mailto:info@hindonix.com"
                   className="flex items-center gap-2 hover:text-accent transition-colors"
                 >
                   <Mail className="w-5 h-5 text-accent" />
-                  <span>info@globaltrade.com</span>
+                  <span>info@hindonix.com</span>
                 </a>
               </div>
             </div>
