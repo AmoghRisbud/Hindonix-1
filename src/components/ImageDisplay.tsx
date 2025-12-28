@@ -7,13 +7,21 @@ interface ImageDisplayProps {
   style?: React.CSSProperties;
 }
 
-export const ImageDisplay = ({ src, alt, className, style }: ImageDisplayProps) => {
+export const ImageDisplay = ({
+  src,
+  alt,
+  className,
+  style,
+}: ImageDisplayProps) => {
   const [imageSrc, setImageSrc] = useState<string>("");
 
   useEffect(() => {
     // Check if it's a localStorage key (starts with product_image_ or casestudy_image_)
-    if (src.startsWith("product_image_") || src.startsWith("casestudy_image_")) {
-      if (typeof window !== 'undefined') {
+    if (
+      src.startsWith("product_image_") ||
+      src.startsWith("casestudy_image_")
+    ) {
+      if (typeof window !== "undefined") {
         const storedImage = localStorage.getItem(src);
         if (storedImage) {
           setImageSrc(storedImage);
@@ -29,7 +37,11 @@ export const ImageDisplay = ({ src, alt, className, style }: ImageDisplayProps) 
   }, [src]);
 
   if (!imageSrc) {
-    return <div className={className} style={style}>Loading...</div>;
+    return (
+      <div className={className} style={style}>
+        Loading...
+      </div>
+    );
   }
 
   return <img src={imageSrc} alt={alt} className={className} style={style} />;

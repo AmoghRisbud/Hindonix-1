@@ -179,28 +179,28 @@ const defaultCaseStudies: CaseStudy[] = [
 
 // Initialize data from localStorage or use defaults
 const loadProducts = (): Product[] => {
-  if (typeof window === 'undefined') return defaultProducts;
-  const stored = localStorage.getItem('hindonix_products');
+  if (typeof window === "undefined") return defaultProducts;
+  const stored = localStorage.getItem("hindonix_products");
   return stored ? JSON.parse(stored) : defaultProducts;
 };
 
 const loadCaseStudies = (): CaseStudy[] => {
-  if (typeof window === 'undefined') return defaultCaseStudies;
-  const stored = localStorage.getItem('hindonix_case_studies');
+  if (typeof window === "undefined") return defaultCaseStudies;
+  const stored = localStorage.getItem("hindonix_case_studies");
   return stored ? JSON.parse(stored) : defaultCaseStudies;
 };
 
 const saveProducts = (products: Product[]) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('hindonix_products', JSON.stringify(products));
-    window.dispatchEvent(new Event('dataUpdated'));
+  if (typeof window !== "undefined") {
+    localStorage.setItem("hindonix_products", JSON.stringify(products));
+    window.dispatchEvent(new Event("dataUpdated"));
   }
 };
 
 const saveCaseStudies = (caseStudies: CaseStudy[]) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('hindonix_case_studies', JSON.stringify(caseStudies));
-    window.dispatchEvent(new Event('dataUpdated'));
+  if (typeof window !== "undefined") {
+    localStorage.setItem("hindonix_case_studies", JSON.stringify(caseStudies));
+    window.dispatchEvent(new Event("dataUpdated"));
   }
 };
 
@@ -220,7 +220,10 @@ export const addProduct = (product: Omit<Product, "id">): Product => {
   return newProduct;
 };
 
-export const updateProduct = (id: number, updates: Partial<Product>): Product | null => {
+export const updateProduct = (
+  id: number,
+  updates: Partial<Product>
+): Product | null => {
   const index = products.findIndex((p) => p.id === id);
   if (index === -1) return null;
   products[index] = { ...products[index], ...updates };
@@ -248,7 +251,10 @@ export const addCaseStudy = (caseStudy: Omit<CaseStudy, "id">): CaseStudy => {
   return newCaseStudy;
 };
 
-export const updateCaseStudy = (id: number, updates: Partial<CaseStudy>): CaseStudy | null => {
+export const updateCaseStudy = (
+  id: number,
+  updates: Partial<CaseStudy>
+): CaseStudy | null => {
   const index = caseStudies.findIndex((cs) => cs.id === id);
   if (index === -1) return null;
   caseStudies[index] = { ...caseStudies[index], ...updates };

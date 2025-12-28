@@ -45,9 +45,13 @@ const Admin = () => {
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [caseStudyDialogOpen, setCaseStudyDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [editingCaseStudy, setEditingCaseStudy] = useState<CaseStudy | null>(null);
+  const [editingCaseStudy, setEditingCaseStudy] = useState<CaseStudy | null>(
+    null
+  );
   const [productImageFile, setProductImageFile] = useState<File | null>(null);
-  const [caseStudyImageFile, setCaseStudyImageFile] = useState<File | null>(null);
+  const [caseStudyImageFile, setCaseStudyImageFile] = useState<File | null>(
+    null
+  );
   const { toast } = useToast();
 
   // Reload data on component mount and when localStorage changes
@@ -61,14 +65,14 @@ const Admin = () => {
     reloadData();
 
     // Listen for storage changes from other tabs/windows
-    window.addEventListener('storage', reloadData);
-    
+    window.addEventListener("storage", reloadData);
+
     // Custom event for same-tab updates
-    window.addEventListener('dataUpdated', reloadData);
+    window.addEventListener("dataUpdated", reloadData);
 
     return () => {
-      window.removeEventListener('storage', reloadData);
-      window.removeEventListener('dataUpdated', reloadData);
+      window.removeEventListener("storage", reloadData);
+      window.removeEventListener("dataUpdated", reloadData);
     };
   }, []);
 
@@ -96,18 +100,20 @@ const Admin = () => {
   });
 
   // Image upload handlers
-  const handleProductImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProductImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       setProductImageFile(file);
-      
+
       // Convert image to base64
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
         // Store with unique key
         const imageKey = `product_image_${Date.now()}_${file.name}`;
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
           localStorage.setItem(imageKey, base64String);
         }
         setProductForm({ ...productForm, image: imageKey });
@@ -116,18 +122,20 @@ const Admin = () => {
     }
   };
 
-  const handleCaseStudyImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCaseStudyImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       setCaseStudyImageFile(file);
-      
+
       // Convert image to base64
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
         // Store with unique key
         const imageKey = `casestudy_image_${Date.now()}_${file.name}`;
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
           localStorage.setItem(imageKey, base64String);
         }
         setCaseStudyForm({ ...caseStudyForm, image: imageKey });
@@ -181,7 +189,11 @@ const Admin = () => {
       .map((f) => f.trim())
       .filter((f) => f);
 
-    if (!productForm.name || !productForm.category || !productForm.description) {
+    if (
+      !productForm.name ||
+      !productForm.category ||
+      !productForm.description
+    ) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields.",
@@ -390,7 +402,9 @@ const Admin = () => {
                         {product.category}
                         {product.subcategory && ` • ${product.subcategory}`}
                       </p>
-                      <p className="text-sm text-foreground">{product.description}</p>
+                      <p className="text-sm text-foreground">
+                        {product.description}
+                      </p>
                       <div className="flex flex-wrap gap-1 mt-2">
                         {product.finishes.map((finish, idx) => (
                           <span
@@ -530,7 +544,10 @@ const Admin = () => {
                   id="subcategory"
                   value={productForm.subcategory}
                   onChange={(e) =>
-                    setProductForm({ ...productForm, subcategory: e.target.value })
+                    setProductForm({
+                      ...productForm,
+                      subcategory: e.target.value,
+                    })
                   }
                   placeholder="Brass Knobs"
                 />
@@ -542,7 +559,10 @@ const Admin = () => {
                 id="description"
                 value={productForm.description}
                 onChange={(e) =>
-                  setProductForm({ ...productForm, description: e.target.value })
+                  setProductForm({
+                    ...productForm,
+                    description: e.target.value,
+                  })
                 }
                 placeholder="Product description..."
                 rows={3}
@@ -577,7 +597,10 @@ const Admin = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setProductDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setProductDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handleSaveProduct}>
@@ -614,7 +637,10 @@ const Admin = () => {
                   id="client"
                   value={caseStudyForm.client}
                   onChange={(e) =>
-                    setCaseStudyForm({ ...caseStudyForm, client: e.target.value })
+                    setCaseStudyForm({
+                      ...caseStudyForm,
+                      client: e.target.value,
+                    })
                   }
                   placeholder="Client Name"
                 />
@@ -646,7 +672,10 @@ const Admin = () => {
                 id="location"
                 value={caseStudyForm.location}
                 onChange={(e) =>
-                  setCaseStudyForm({ ...caseStudyForm, location: e.target.value })
+                  setCaseStudyForm({
+                    ...caseStudyForm,
+                    location: e.target.value,
+                  })
                 }
                 placeholder="Country A → Country B"
               />
@@ -672,7 +701,10 @@ const Admin = () => {
                 id="problem"
                 value={caseStudyForm.problem}
                 onChange={(e) =>
-                  setCaseStudyForm({ ...caseStudyForm, problem: e.target.value })
+                  setCaseStudyForm({
+                    ...caseStudyForm,
+                    problem: e.target.value,
+                  })
                 }
                 placeholder="Describe the problem..."
                 rows={3}
@@ -684,7 +716,10 @@ const Admin = () => {
                 id="solution"
                 value={caseStudyForm.solution}
                 onChange={(e) =>
-                  setCaseStudyForm({ ...caseStudyForm, solution: e.target.value })
+                  setCaseStudyForm({
+                    ...caseStudyForm,
+                    solution: e.target.value,
+                  })
                 }
                 placeholder="Describe the solution..."
                 rows={3}
@@ -696,14 +731,19 @@ const Admin = () => {
                 id="outcome"
                 value={caseStudyForm.outcome}
                 onChange={(e) =>
-                  setCaseStudyForm({ ...caseStudyForm, outcome: e.target.value })
+                  setCaseStudyForm({
+                    ...caseStudyForm,
+                    outcome: e.target.value,
+                  })
                 }
                 placeholder="Describe the outcome..."
                 rows={2}
               />
             </div>
             <div>
-              <Label htmlFor="stats">Stats (format: Label:Value, Label:Value)</Label>
+              <Label htmlFor="stats">
+                Stats (format: Label:Value, Label:Value)
+              </Label>
               <Textarea
                 id="stats"
                 value={caseStudyForm.stats}

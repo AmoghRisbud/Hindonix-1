@@ -11,6 +11,7 @@ const navLinks = [
   { name: "Products", path: "/products" },
   { name: "Case Studies", path: "/case-studies" },
   { name: "Contact", path: "/contact" },
+  { name: "Admin", path: "/admin" },
 ];
 
 export function Navbar() {
