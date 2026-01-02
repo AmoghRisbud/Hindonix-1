@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { name: "Home", path: "/" },
   { name: "About", path: "/about" },
-  { name: "Services", path: "/services" },
   { name: "Products", path: "/products" },
   { name: "Case Studies", path: "/case-studies" },
   { name: "Contact", path: "/contact" },
@@ -52,7 +51,7 @@ export function Navbar() {
             <span
               className={cn(
                 "font-heading font-bold text-2xl tracking-wide transition-colors",
-                isScrolled ? "text-foreground" : "text-white"
+                isScrolled ? "text-foreground" : "text-foreground"
               )}
             >
               HINDONIX<sup className="text-xs ml-0.5">®</sup>
@@ -69,11 +68,11 @@ export function Navbar() {
                   "px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200",
                   location.pathname === link.path
                     ? isScrolled
-                      ? "text-primary bg-primary/5 font-semibold"
-                      : "text-white bg-white/10 font-semibold"
+                      ? "text-foreground bg-accent/10 font-semibold"
+                      : "text-foreground bg-accent/10 font-semibold"
                     : isScrolled
-                    ? "text-foreground hover:text-primary hover:bg-primary/5"
-                    : "text-white/90 hover:text-white hover:bg-white/10"
+                    ? "text-foreground hover:text-foreground hover:bg-accent/5"
+                    : "text-foreground/70 hover:text-foreground hover:bg-accent/5"
                 )}
               >
                 {link.name}
@@ -88,7 +87,7 @@ export function Navbar() {
               size="default"
               asChild
               className={cn(
-                !isScrolled && "bg-white text-primary hover:bg-white/90"
+                !isScrolled && "bg-foreground text-background hover:bg-foreground/90"
               )}
             >
               <Link to="/contact">Get a Quote</Link>
@@ -100,7 +99,7 @@ export function Navbar() {
             onClick={() => setIsOpen(!isOpen)}
             className={cn(
               "lg:hidden p-2 rounded-lg transition-colors",
-              isScrolled ? "text-foreground" : "text-white"
+              isScrolled ? "text-foreground" : "text-foreground"
             )}
             aria-label="Toggle menu"
           >

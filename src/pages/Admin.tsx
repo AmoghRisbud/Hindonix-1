@@ -39,6 +39,20 @@ import {
 const productCategories = ["Knobs", "Door Handles", "Pull Handles"];
 const caseStudyCategories = ["Export", "Import", "Logistics", "Consulting"];
 
+const availableFinishes = [
+  "Brass",
+  "Polished Stainless Steel",
+  "PVD Satin Black",
+  "PVD Satin Gold",
+  "PVD Satin Bronze",
+  "PVD Satin Nickel",
+  "PVD Polished Copper",
+  "PVD Satin Stainless Steel",
+  "Satin Black",
+  "Satin Stainless Steel",
+  "Satin Nickel",
+];
+
 const Admin = () => {
   const [products, setProducts] = useState<Product[]>(getProducts());
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>(getCaseStudies());
@@ -83,7 +97,7 @@ const Admin = () => {
     subcategory: "",
     description: "",
     image: "",
-    finishes: "",
+    finishes: [] as string[],
   });
 
   // Case Study form state
@@ -154,7 +168,7 @@ const Admin = () => {
       subcategory: "",
       description: "",
       image: "",
-      finishes: "",
+      finishes: [],
     });
     setProductDialogOpen(true);
   };
@@ -167,7 +181,7 @@ const Admin = () => {
       subcategory: product.subcategory || "",
       description: product.description,
       image: product.image,
-      finishes: product.finishes.join(", "),
+      finishes: product.finishes || [],
     });
     setProductDialogOpen(true);
   };
@@ -184,11 +198,6 @@ const Admin = () => {
   };
 
   const handleSaveProduct = () => {
-    const finishesArray = productForm.finishes
-      .split(",")
-      .map((f) => f.trim())
-      .filter((f) => f);
-
     if (
       !productForm.name ||
       !productForm.category ||
@@ -209,7 +218,7 @@ const Admin = () => {
         subcategory: productForm.subcategory,
         description: productForm.description,
         image: productForm.image,
-        finishes: finishesArray,
+        finishes: productForm.finishes,
       });
       toast({
         title: "Product Updated",
@@ -222,7 +231,7 @@ const Admin = () => {
         subcategory: productForm.subcategory,
         description: productForm.description,
         image: productForm.image,
-        finishes: finishesArray,
+        finishes: productForm.finishes,
       });
       toast({
         title: "Product Added",
@@ -584,16 +593,37 @@ const Admin = () => {
               )}
             </div>
             <div>
-              <Label htmlFor="finishes">Finishes (comma-separated)</Label>
-              <Textarea
-                id="finishes"
-                value={productForm.finishes}
-                onChange={(e) =>
-                  setProductForm({ ...productForm, finishes: e.target.value })
-                }
-                placeholder="Brass, PVD Satin Gold, PVD Polished Copper"
-                rows={2}
-              />
+              <Label htmlFor="finishes">Available Finishes (optional)</Label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {availableFinishes.map((finish) => (
+                  <label
+                    key={finish}
+                    className="flex items-center gap-2 px-3 py-2 border border-border rounded-lg cursor-pointer hover:bg-accent/5 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={productForm.finishes.includes(finish)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setProductForm({
+                            ...productForm,
+                            finishes: [...productForm.finishes, finish],
+                          });
+                        } else {
+                          setProductForm({
+                            ...productForm,
+                            finishes: productForm.finishes.filter(
+                              (f) => f !== finish
+                            ),
+                          });
+                        }
+                      }}
+                      className="rounded border-border"
+                    />
+                    <span className="text-sm">{finish}</span>
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
           <DialogFooter>

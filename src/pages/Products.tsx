@@ -10,8 +10,7 @@ import { getProducts, type Product } from "@/lib/data";
 
 const categories = ["All Products", "Knobs", "Door Handles", "Pull Handles"];
 
-const finishes = [
-  "All Finishes",
+const availableFinishes = [
   "Brass",
   "Polished Stainless Steel",
   "PVD Satin Black",
@@ -25,22 +24,78 @@ const finishes = [
   "Satin Nickel",
 ];
 
+// Map finishes to their image filenames (in /images/finishes/)
+const finishImages: Record<string, string> = {
+  "Brass": "brass.jpg",
+  "Polished Stainless Steel": "polished-stainless-steel.jpg",
+  "PVD Satin Black": "pvd-satin-black.jpg",
+  "PVD Satin Gold": "pvd-satin-gold.jpg",
+  "PVD Satin Bronze": "pvd-satin-bronze.jpg",
+  "PVD Satin Nickel": "pvd-satin-nickel.jpg",
+  "PVD Polished Copper": "pvd-polished-copper.jpg",
+  "PVD Satin Stainless Steel": "pvd-satin-stainless-steel.jpg",
+  "Satin Black": "satin-black.jpg",
+  "Satin Stainless Steel": "satin-stainless-steel.jpg",
+  "Satin Nickel": "satin-nickel.jpg",
+};
+
 const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [activeCategory, setActiveCategory] = useState("All Products");
+  const [selectedFinish, setSelectedFinish] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showFinishSelection, setShowFinishSelection] = useState(false);
 
   useEffect(() => {
     setProducts(getProducts());
   }, []);
 
+  // Get available finishes for the selected category
+  const getAvailableFinishesForCategory = (category: string) => {
+    const categoryProducts =
+      category === "All Products"
+        ? products
+        : products.filter((p) => p.category === category);
+
+    const finishesSet = new Set<string>();
+    categoryProducts.forEach((product) => {
+      product.finishes.forEach((finish) => {
+        if (availableFinishes.includes(finish)) {
+          finishesSet.add(finish);
+        }
+      });
+    });
+
+    return Array.from(finishesSet);
+  };
+
+  const handleCategoryClick = (category: string) => {
+    setActiveCategory(category);
+    setSelectedFinish(null);
+    setSearchQuery("");
+
+    // Show finish selection if not "All Products"
+    if (category !== "All Products") {
+      setShowFinishSelection(true);
+    } else {
+      setShowFinishSelection(false);
+    }
+  };
+
+  const handleFinishSelect = (finish: string) => {
+    setSelectedFinish(finish);
+    setShowFinishSelection(false);
+  };
+
   const filteredProducts = products.filter((product) => {
     const matchesCategory =
       activeCategory === "All Products" || product.category === activeCategory;
+    const matchesFinish =
+      !selectedFinish || product.finishes.includes(selectedFinish);
     const matchesSearch =
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return matchesCategory && matchesFinish && matchesSearch;
   });
 
   return (
@@ -87,7 +142,7 @@ const Products = () => {
               {categories.map((category) => (
                 <button
                   key={category}
-                  onClick={() => setActiveCategory(category)}
+                  onClick={() => handleCategoryClick(category)}
                   className={cn(
                     "px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
                     activeCategory === category
@@ -101,8 +156,90 @@ const Products = () => {
             </div>
           </div>
 
+          {/* Finish Selection Screen */}
+          {showFinishSelection && (
+            <div className="mb-12 bg-card rounded-2xl p-8 border border-border/50">
+              <div className="text-center mb-8">
+                <h2 className="font-heading text-2xl font-semibold text-foreground mb-2">
+                  Select a Finish
+                </h2>
+                <p className="text-muted-foreground">
+                  Choose from available finishes for {activeCategory}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {getAvailableFinishesForCategory(activeCategory).map(
+                  (finish) => (
+                    <button
+                      key={finish}
+                      onClick={() => handleFinishSelect(finish)}
+                      className="group bg-background border border-border rounded-xl p-4 hover:border-accent hover:shadow-md transition-all duration-300 text-left"
+                    >
+                      <div className="aspect-square rounded-lg overflow-hidden mb-3 bg-secondary">
+                        <img
+                          src={`/images/finishes/${finishImages[finish]}`}
+                          alt={finish}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          onError={(e) => {
+                            // Fallback if image doesn't exist
+                            e.currentTarget.src =
+                              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='12' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
+                          }}
+                        />
+                      </div>
+                      <p className="font-medium text-sm text-foreground group-hover:text-accent transition-colors">
+                        {finish}
+                      </p>
+                    </button>
+                  )
+                )}
+              </div>
+              <div className="text-center mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowFinishSelection(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Active Filter Display */}
+          {selectedFinish && (
+            <div className="mb-6 flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">
+                Showing {activeCategory} in:
+              </span>
+              <span className="px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-medium flex items-center gap-2">
+                {selectedFinish}
+                <button
+                  onClick={() => {
+                    setSelectedFinish(null);
+                    setShowFinishSelection(true);
+                  }}
+                  className="hover:bg-accent/20 rounded-full p-1 transition-colors"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </span>
+            </div>
+          )}
+
           {/* Products Grid */}
-          {filteredProducts.length > 0 ? (
+          {!showFinishSelection && filteredProducts.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProducts.map((product, index) => (
                 <div
@@ -164,7 +301,7 @@ const Products = () => {
                 </div>
               ))}
             </div>
-          ) : (
+          ) : !showFinishSelection ? (
             <div className="text-center py-20">
               <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="font-heading text-xl font-semibold text-foreground mb-2">
@@ -174,7 +311,7 @@ const Products = () => {
                 Try adjusting your search or filter criteria.
               </p>
             </div>
-          )}
+          ) : null}
         </div>
       </section>
 
