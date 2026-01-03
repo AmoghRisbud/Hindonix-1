@@ -43,15 +43,13 @@ const team = [
   {
     name: "Sarvesh Todkari",
     role: "Founder & CEO",
-    image:
-      "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face",
+    image: "/images/about/Sarvesh_cropped.PNG",
     bio: "Founder of Hindonix",
   },
   {
     name: "Makrand Gangan",
     role: "Sales Executive",
-    image:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face",
+    image: "/images/about/Makrand_cropped.PNG",
     bio: "Sales executive of Hindonix",
   },
 ];
@@ -212,27 +210,29 @@ const About = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-10 place-items-center">
             {team.map((member) => (
               <div
                 key={member.name}
-                className="bg-card rounded-2xl overflow-hidden shadow-card border border-border/50 group hover:shadow-card-hover transition-all duration-300"
+                className="flex flex-col items-center text-center gap-4"
               >
-                <div className="aspect-square overflow-hidden">
+                <div className="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden border border-border/60 shadow-card">
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="p-6">
+                <div>
                   <h3 className="font-heading text-xl font-semibold text-foreground mb-1">
                     {member.name}
                   </h3>
-                  <p className="text-accent font-medium text-sm mb-3">
+                  <p className="text-accent font-medium text-sm mb-2">
                     {member.role}
                   </p>
-                  <p className="text-muted-foreground text-sm">{member.bio}</p>
+                  <p className="text-muted-foreground text-sm max-w-xs">
+                    {member.bio}
+                  </p>
                 </div>
               </div>
             ))}

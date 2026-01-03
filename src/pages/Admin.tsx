@@ -7,15 +7,22 @@ import { Plus, Edit, Trash2, Package, FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import {
   getProducts,
-  getCaseStudies,
+  getBlogs,
+  getTestimonials,
   addProduct,
   updateProduct,
   deleteProduct,
-  addCaseStudy,
-  updateCaseStudy,
-  deleteCaseStudy,
+  addBlog,
+  updateBlog,
+  deleteBlog,
+  addTestimonial,
+  updateTestimonial,
+  deleteTestimonial,
+  getHeroImage,
+  setHeroImage,
   type Product,
-  type CaseStudy,
+  type Blog,
+  type Testimonial,
 } from "@/lib/data";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -37,7 +44,6 @@ import {
 } from "@/components/ui/select";
 
 const productCategories = ["Knobs", "Door Handles", "Pull Handles"];
-const caseStudyCategories = ["Export", "Import", "Logistics", "Consulting"];
 
 const availableFinishes = [
   "Brass",
@@ -55,24 +61,28 @@ const availableFinishes = [
 
 const Admin = () => {
   const [products, setProducts] = useState<Product[]>(getProducts());
-  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>(getCaseStudies());
+  const [blogs, setBlogs] = useState<Blog[]>(getBlogs());
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(getTestimonials());
+  const [heroImage, setHeroImageState] = useState<string>(getHeroImage());
+  const [selectedHeroImage, setSelectedHeroImage] = useState<string>(getHeroImage());
   const [productDialogOpen, setProductDialogOpen] = useState(false);
-  const [caseStudyDialogOpen, setCaseStudyDialogOpen] = useState(false);
+  const [blogDialogOpen, setBlogDialogOpen] = useState(false);
+  const [testimonialDialogOpen, setTestimonialDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [editingCaseStudy, setEditingCaseStudy] = useState<CaseStudy | null>(
-    null
-  );
+  const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
+  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
   const [productImageFile, setProductImageFile] = useState<File | null>(null);
-  const [caseStudyImageFile, setCaseStudyImageFile] = useState<File | null>(
-    null
-  );
+  const [blogImageFile, setBlogImageFile] = useState<File | null>(null);
+  const [testimonialImageFile, setTestimonialImageFile] = useState<File | null>(null);
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   // Reload data on component mount and when localStorage changes
   useEffect(() => {
     const reloadData = () => {
       setProducts(getProducts());
-      setCaseStudies(getCaseStudies());
+      setBlogs(getBlogs());
+      setTestimonials(getTestimonials());
     };
 
     // Reload on mount
@@ -100,17 +110,21 @@ const Admin = () => {
     finishes: [] as string[],
   });
 
-  // Case Study form state
-  const [caseStudyForm, setCaseStudyForm] = useState({
-    title: "",
-    client: "",
-    category: "",
-    location: "",
+  // Blog form state
+  const [blogForm, setBlogForm] = useState({
     image: "",
-    problem: "",
-    solution: "",
-    outcome: "",
-    stats: "",
+    content: "",
+  });
+
+  // Testimonial form state
+  const [testimonialForm, setTestimonialForm] = useState({
+    name: "",
+    role: "",
+    company: "",
+    location: "",
+    content: "",
+    image: "",
+    rating: 5,
   });
 
   // Image upload handlers
@@ -136,25 +150,222 @@ const Admin = () => {
     }
   };
 
-  const handleCaseStudyImageUpload = async (
+  const handleBlogImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      setCaseStudyImageFile(file);
+      setBlogImageFile(file);
 
       // Convert image to base64
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
         // Store with unique key
-        const imageKey = `casestudy_image_${Date.now()}_${file.name}`;
+        const imageKey = `blog_image_${Date.now()}_${file.name}`;
         if (typeof window !== "undefined") {
           localStorage.setItem(imageKey, base64String);
         }
-        setCaseStudyForm({ ...caseStudyForm, image: imageKey });
+        setBlogForm({ ...blogForm, image: imageKey });
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleTestimonialImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setTestimonialImageFile(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        const imageKey = `testimonial_image_${Date.now()}_${file.name}`;
+        if (typeof window !== "undefined") {
+          localStorage.setItem(imageKey, base64String);
+        }
+        setTestimonialForm({ ...testimonialForm, image: imageKey });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Hero Image handler
+  const handleHeroImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+     if (!file) {
+       console.warn("No file selected");
+       return;
+     }
+
+     console.log("=== HERO IMAGE UPLOAD DEBUG ===");
+     console.log("Filename:", file.name);
+     console.log("File size:", file.size, "bytes", `(${(file.size / 1024).toFixed(2)}KB)`);
+     console.log("File type:", file.type);
+     console.log("Last modified:", new Date(file.lastModified).toLocaleString());
+
+     // Validation
+     const maxSize = 5 * 1024 * 1024; // 5MB
+     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+     if (file.size > maxSize) {
+       toast({
+         title: "File Too Large",
+         description: `Max 5MB, your file is ${(file.size / 1024 / 1024).toFixed(2)}MB`,
+         variant: "destructive",
+       });
+       console.error("File size exceeds limit");
+       return;
+     }
+
+     if (!allowedTypes.includes(file.type)) {
+       toast({
+         title: "Invalid File Type",
+         description: `Type: ${file.type}. Use: JPEG, PNG, GIF, or WebP`,
+         variant: "destructive",
+       });
+       console.error("Invalid file type:", file.type);
+       return;
+     }
+
+     // Test localStorage access
+     try {
+       const testKey = "test_storage_" + Date.now();
+       localStorage.setItem(testKey, "test");
+       localStorage.removeItem(testKey);
+       console.log("✓ localStorage is accessible");
+     } catch (e) {
+       toast({
+         title: "Storage Error",
+         description: "localStorage not accessible or quota exceeded",
+         variant: "destructive",
+       });
+       console.error("localStorage test failed:", e);
+       return;
+     }
+
+      setHeroImageFile(file);
+
+      // Convert image to base64
+      const reader = new FileReader();
+      reader.onerror = () => {
+         console.error("FileReader error:", reader.error);
+        toast({
+           title: "Read Error",
+           description: "Failed to read file. Try a different image.",
+          variant: "destructive",
+        });
+      };
+       reader.onprogress = (event) => {
+         if (event.lengthComputable) {
+           const percentComplete = (event.loaded / event.total) * 100;
+           console.log("Read progress:", percentComplete.toFixed(2) + "%");
+         }
+       };
+      reader.onload = () => {
+         try {
+        const base64String = reader.result as string;
+
+           if (!base64String) {
+             console.error("Failed to generate base64 string");
+             toast({
+               title: "Conversion Error",
+               description: "Failed to convert image. Try a different image.",
+               variant: "destructive",
+             });
+             return;
+           }
+
+           console.log("✓ Base64 generated, length:", base64String.length);
+
+        const imageKey = `hero_image_${Date.now()}_${file.name}`;
+           console.log("Storage key:", imageKey);
+
+           // Save to localStorage
+           try {
+             const storageBefore = Object.keys(localStorage).length;
+             console.log("localStorage items before:", storageBefore);
+
+          localStorage.setItem(imageKey, base64String);
+
+             const storageAfter = Object.keys(localStorage).length;
+             console.log("✓ Saved to localStorage");
+             console.log("localStorage items after:", storageAfter);
+
+             // Verify it was saved
+             const retrieved = localStorage.getItem(imageKey);
+             if (retrieved === base64String) {
+               console.log("✓ Verification passed - image successfully stored");
+          setSelectedHeroImage(imageKey);
+          toast({
+            title: "Success",
+            description: `Uploaded: ${file.name} - Click "Update Hero Image" to save`,
+          });
+
+               // Reset input
+               if (e.target) {
+                 e.target.value = "";
+               }
+             } else {
+               console.error("✗ Verification failed - data mismatch");
+               console.error("Expected length:", base64String.length);
+               console.error("Retrieved length:", retrieved?.length || 0);
+               toast({
+                 title: "Verification Error",
+                 description: "Image was not saved correctly. Try again.",
+                 variant: "destructive",
+               });
+             }
+           } catch (storageError) {
+             console.error("Storage error:", storageError);
+             if (storageError instanceof Error) {
+               console.error("Error name:", storageError.name);
+               console.error("Error message:", storageError.message);
+
+               if (storageError.name === "QuotaExceededError") {
+                 toast({
+                   title: "Storage Full",
+                   description: "Delete old images first or clear browser data.",
+                   variant: "destructive",
+                 });
+               } else {
+                 toast({
+                   title: "Storage Error",
+                   description: storageError.message,
+                   variant: "destructive",
+                 });
+               }
+             }
+           }
+         } catch (error) {
+           console.error("Processing error:", error);
+           toast({
+             title: "Processing Error",
+             description: "Error processing image. Try again.",
+             variant: "destructive",
+           });
+        }
+      };
+       console.log("Starting file read as Data URL...");
+      reader.readAsDataURL(file);
+  };
+
+  const handleSaveHeroImage = () => {
+    if (selectedHeroImage && selectedHeroImage.startsWith("hero_image_")) {
+      setHeroImage(selectedHeroImage);
+      setHeroImageState(selectedHeroImage);
+      toast({
+        title: "Hero Image Updated",
+        description: "The hero image has been successfully updated.",
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Please upload an image first.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -244,65 +455,120 @@ const Admin = () => {
     setProductImageFile(null);
   };
 
-  // Case Study handlers
-  const handleAddCaseStudy = () => {
-    setEditingCaseStudy(null);
-    setCaseStudyImageFile(null);
-    setCaseStudyForm({
-      title: "",
-      client: "",
-      category: "",
-      location: "",
+  // Blog handlers
+  const handleAddBlog = () => {
+    setEditingBlog(null);
+    setBlogImageFile(null);
+    setBlogForm({
       image: "",
-      problem: "",
-      solution: "",
-      outcome: "",
-      stats: "",
+      content: "",
     });
-    setCaseStudyDialogOpen(true);
+    setBlogDialogOpen(true);
   };
 
-  const handleEditCaseStudy = (caseStudy: CaseStudy) => {
-    setEditingCaseStudy(caseStudy);
-    setCaseStudyForm({
-      title: caseStudy.title,
-      client: caseStudy.client,
-      category: caseStudy.category,
-      location: caseStudy.location,
-      image: caseStudy.image,
-      problem: caseStudy.problem,
-      solution: caseStudy.solution,
-      outcome: caseStudy.outcome,
-      stats: caseStudy.stats.map((s) => `${s.label}:${s.value}`).join(", "),
+  // Testimonial handlers
+  const handleAddTestimonial = () => {
+    setEditingTestimonial(null);
+    setTestimonialImageFile(null);
+    setTestimonialForm({
+      name: "",
+      role: "",
+      company: "",
+      location: "",
+      content: "",
+      image: "",
+      rating: 5,
     });
-    setCaseStudyDialogOpen(true);
+    setTestimonialDialogOpen(true);
   };
 
-  const handleDeleteCaseStudy = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this case study?")) {
-      deleteCaseStudy(id);
-      setCaseStudies(getCaseStudies());
+  const handleEditTestimonial = (testimonial: Testimonial) => {
+    setEditingTestimonial(testimonial);
+    setTestimonialForm({
+      name: testimonial.name,
+      role: testimonial.role,
+      company: testimonial.company,
+      location: testimonial.location,
+      content: testimonial.content,
+      image: testimonial.image || "",
+      rating: testimonial.rating || 5,
+    });
+    setTestimonialDialogOpen(true);
+  };
+
+  const handleDeleteTestimonial = (id: number) => {
+    if (window.confirm("Are you sure you want to delete this testimonial?")) {
+      deleteTestimonial(id);
+      setTestimonials(getTestimonials());
       toast({
-        title: "Case Study Deleted",
-        description: "The case study has been successfully deleted.",
+        title: "Testimonial Deleted",
+        description: "The testimonial has been successfully deleted.",
       });
     }
   };
 
-  const handleSaveCaseStudy = () => {
-    const statsArray = caseStudyForm.stats
-      .split(",")
-      .map((s) => {
-        const [label, value] = s.split(":").map((p) => p.trim());
-        return { label, value };
-      })
-      .filter((s) => s.label && s.value);
+  const handleEditBlog = (blog: Blog) => {
+    setEditingBlog(blog);
+    setBlogForm({
+      image: blog.image,
+      content: blog.content,
+    });
+    setBlogDialogOpen(true);
+  };
 
+  const handleDeleteBlog = (id: number) => {
+    if (window.confirm("Are you sure you want to delete this blog?")) {
+      deleteBlog(id);
+      setBlogs(getBlogs());
+      toast({
+        title: "Blog Deleted",
+        description: "The blog has been successfully deleted.",
+      });
+    }
+  };
+
+  const handleSaveBlog = () => {
+    if (!blogForm.image || !blogForm.content) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (editingBlog) {
+      updateBlog(editingBlog.id, {
+        image: blogForm.image,
+        content: blogForm.content,
+      });
+      toast({
+        title: "Blog Updated",
+        description: "The blog has been successfully updated.",
+      });
+    } else {
+      addBlog({
+        image: blogForm.image,
+        content: blogForm.content,
+      });
+      toast({
+        title: "Blog Added",
+        description: "The blog has been successfully added.",
+      });
+    }
+
+    setBlogs(getBlogs());
+    setBlogDialogOpen(false);
+    setBlogImageFile(null);
+  };
+
+  const handleSaveTestimonial = () => {
     if (
-      !caseStudyForm.title ||
-      !caseStudyForm.client ||
-      !caseStudyForm.category ||
-      !caseStudyForm.problem
+      !testimonialForm.name ||
+      !testimonialForm.role ||
+      !testimonialForm.company ||
+      !testimonialForm.location ||
+      !testimonialForm.content
     ) {
       toast({
         title: "Validation Error",
@@ -312,43 +578,39 @@ const Admin = () => {
       return;
     }
 
-    if (editingCaseStudy) {
-      updateCaseStudy(editingCaseStudy.id, {
-        title: caseStudyForm.title,
-        client: caseStudyForm.client,
-        category: caseStudyForm.category,
-        location: caseStudyForm.location,
-        image: caseStudyForm.image,
-        problem: caseStudyForm.problem,
-        solution: caseStudyForm.solution,
-        outcome: caseStudyForm.outcome,
-        stats: statsArray,
+    if (editingTestimonial) {
+      updateTestimonial(editingTestimonial.id, {
+        name: testimonialForm.name,
+        role: testimonialForm.role,
+        company: testimonialForm.company,
+        location: testimonialForm.location,
+        content: testimonialForm.content,
+        image: testimonialForm.image || undefined,
+        rating: testimonialForm.rating,
       });
       toast({
-        title: "Case Study Updated",
-        description: "The case study has been successfully updated.",
+        title: "Testimonial Updated",
+        description: "The testimonial has been successfully updated.",
       });
     } else {
-      addCaseStudy({
-        title: caseStudyForm.title,
-        client: caseStudyForm.client,
-        category: caseStudyForm.category,
-        location: caseStudyForm.location,
-        image: caseStudyForm.image,
-        problem: caseStudyForm.problem,
-        solution: caseStudyForm.solution,
-        outcome: caseStudyForm.outcome,
-        stats: statsArray,
+      addTestimonial({
+        name: testimonialForm.name,
+        role: testimonialForm.role,
+        company: testimonialForm.company,
+        location: testimonialForm.location,
+        content: testimonialForm.content,
+        image: testimonialForm.image || undefined,
+        rating: testimonialForm.rating,
       });
       toast({
-        title: "Case Study Added",
-        description: "The case study has been successfully added.",
+        title: "Testimonial Added",
+        description: "The testimonial has been successfully added.",
       });
     }
 
-    setCaseStudies(getCaseStudies());
-    setCaseStudyDialogOpen(false);
-    setCaseStudyImageFile(null);
+    setTestimonials(getTestimonials());
+    setTestimonialDialogOpen(false);
+    setTestimonialImageFile(null);
   };
 
   return (
@@ -363,7 +625,7 @@ const Admin = () => {
               Admin Dashboard
             </h1>
             <p className="text-lg text-primary-foreground/80">
-              Manage products and case studies
+              Manage products and blogs
             </p>
           </div>
         </div>
@@ -372,10 +634,57 @@ const Admin = () => {
       {/* Admin Content */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
+          {/* Hero Image Management */}
+          <div className="mb-12 bg-card rounded-xl p-8 border border-border/50">
+            <h2 className="font-heading text-2xl font-bold text-foreground mb-6">
+              Manage Hero Image
+            </h2>
+            <div className="grid lg:grid-cols-2 gap-8">
+              <div>
+                <Label htmlFor="hero-image">Hero Image</Label>
+                <Input
+                  id="hero-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleHeroImageUpload}
+                  className="cursor-pointer mt-2"
+                />
+                {selectedHeroImage && selectedHeroImage.startsWith("hero_image_") && (
+                  <p className="text-sm text-green-600 mt-2 font-medium">
+                    ✓ Image selected: {selectedHeroImage.split("_").pop()}
+                  </p>
+                )}
+                {heroImage && heroImage !== selectedHeroImage && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Current: {heroImage.split("_").pop()}
+                  </p>
+                )}
+                <Button 
+                  onClick={handleSaveHeroImage} 
+                  className="mt-4"
+                  disabled={!selectedHeroImage || !selectedHeroImage.startsWith("hero_image_")}
+                >
+                  Update Hero Image
+                </Button>
+              </div>
+              <div>
+                <Label>Preview</Label>
+                <div className="mt-2 bg-secondary rounded-lg overflow-hidden h-48">
+                  <ImageDisplay
+                    src={selectedHeroImage}
+                    alt="Hero Preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
           <Tabs defaultValue="products" className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-8">
               <TabsTrigger value="products">Products</TabsTrigger>
-              <TabsTrigger value="caseStudies">Case Studies</TabsTrigger>
+              <TabsTrigger value="blogs">Blogs</TabsTrigger>
+              <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
             </TabsList>
 
             {/* Products Tab */}
@@ -446,54 +755,112 @@ const Admin = () => {
               </div>
             </TabsContent>
 
-            {/* Case Studies Tab */}
-            <TabsContent value="caseStudies">
+            {/* Blogs Tab */}
+            <TabsContent value="blogs">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="font-heading text-2xl font-bold text-foreground">
-                  Manage Case Studies
+                  Manage Blogs
                 </h2>
-                <Button onClick={handleAddCaseStudy}>
+                <Button onClick={handleAddBlog}>
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Case Study
+                  Add Blog
                 </Button>
               </div>
 
               <div className="grid gap-4">
-                {caseStudies.map((caseStudy) => (
+                {blogs.map((blog) => (
                   <div
-                    key={caseStudy.id}
+                    key={blog.id}
                     className="bg-card rounded-xl p-6 border border-border/50 flex items-start gap-4"
                   >
                     <div className="w-32 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-secondary">
                       <ImageDisplay
-                        src={caseStudy.image}
-                        alt={caseStudy.title}
+                        src={blog.image}
+                        alt="Blog"
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-heading text-lg font-semibold text-foreground mb-1">
-                        {caseStudy.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {caseStudy.client} • {caseStudy.category}
-                      </p>
-                      <p className="text-sm text-foreground line-clamp-2">
-                        {caseStudy.problem}
+                      <p className="text-sm text-foreground line-clamp-3">
+                        {blog.content}
                       </p>
                     </div>
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleEditCaseStudy(caseStudy)}
+                        onClick={() => handleEditBlog(blog)}
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => handleDeleteCaseStudy(caseStudy.id)}
+                        onClick={() => handleDeleteBlog(blog.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* Testimonials Tab */}
+            <TabsContent value="testimonials">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="font-heading text-2xl font-bold text-foreground">
+                  Manage Testimonials
+                </h2>
+                <Button onClick={handleAddTestimonial}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Testimonial
+                </Button>
+              </div>
+
+              <div className="grid gap-4">
+                {testimonials.map((testimonial) => (
+                  <div
+                    key={testimonial.id}
+                    className="bg-card rounded-xl p-6 border border-border/50 flex items-start gap-4"
+                  >
+                    {testimonial.image ? (
+                      <div className="w-16 h-16 rounded-full overflow-hidden bg-secondary flex-shrink-0">
+                        <ImageDisplay
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : null}
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <p className="font-heading font-semibold text-foreground">
+                          {testimonial.name}
+                        </p>
+                        <span className="text-xs px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
+                          {testimonial.role}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {testimonial.company} • {testimonial.location}
+                      </p>
+                      <p className="text-sm text-foreground mt-2 line-clamp-3">
+                        {testimonial.content}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditTestimonial(testimonial)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteTestimonial(testimonial.id)}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -640,160 +1007,171 @@ const Admin = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Case Study Dialog */}
-      <Dialog open={caseStudyDialogOpen} onOpenChange={setCaseStudyDialogOpen}>
+      {/* Blog Dialog */}
+      <Dialog open={blogDialogOpen} onOpenChange={setBlogDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editingCaseStudy ? "Edit Case Study" : "Add New Case Study"}
+              {editingBlog ? "Edit Blog" : "Add New Blog"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="title">Title *</Label>
+              <Label htmlFor="blog-image">Blog Image *</Label>
               <Input
-                id="title"
-                value={caseStudyForm.title}
-                onChange={(e) =>
-                  setCaseStudyForm({ ...caseStudyForm, title: e.target.value })
-                }
-                placeholder="Project Title"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="client">Client *</Label>
-                <Input
-                  id="client"
-                  value={caseStudyForm.client}
-                  onChange={(e) =>
-                    setCaseStudyForm({
-                      ...caseStudyForm,
-                      client: e.target.value,
-                    })
-                  }
-                  placeholder="Client Name"
-                />
-              </div>
-              <div>
-                <Label htmlFor="cs-category">Category *</Label>
-                <Select
-                  value={caseStudyForm.category}
-                  onValueChange={(value) =>
-                    setCaseStudyForm({ ...caseStudyForm, category: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {caseStudyCategories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={caseStudyForm.location}
-                onChange={(e) =>
-                  setCaseStudyForm({
-                    ...caseStudyForm,
-                    location: e.target.value,
-                  })
-                }
-                placeholder="Country A → Country B"
-              />
-            </div>
-            <div>
-              <Label htmlFor="cs-image">Case Study Image</Label>
-              <Input
-                id="cs-image"
+                id="blog-image"
                 type="file"
                 accept="image/*"
-                onChange={handleCaseStudyImageUpload}
+                onChange={handleBlogImageUpload}
                 className="cursor-pointer"
               />
-              {caseStudyForm.image && (
+              {blogForm.image && (
                 <p className="text-sm text-muted-foreground mt-1">
-                  Path: {caseStudyForm.image}
+                  Path: {blogForm.image}
                 </p>
               )}
             </div>
             <div>
-              <Label htmlFor="problem">Problem *</Label>
+              <Label htmlFor="content">Blog Content *</Label>
               <Textarea
-                id="problem"
-                value={caseStudyForm.problem}
+                id="content"
+                value={blogForm.content}
                 onChange={(e) =>
-                  setCaseStudyForm({
-                    ...caseStudyForm,
-                    problem: e.target.value,
-                  })
+                  setBlogForm({ ...blogForm, content: e.target.value })
                 }
-                placeholder="Describe the problem..."
-                rows={3}
-              />
-            </div>
-            <div>
-              <Label htmlFor="solution">Solution</Label>
-              <Textarea
-                id="solution"
-                value={caseStudyForm.solution}
-                onChange={(e) =>
-                  setCaseStudyForm({
-                    ...caseStudyForm,
-                    solution: e.target.value,
-                  })
-                }
-                placeholder="Describe the solution..."
-                rows={3}
-              />
-            </div>
-            <div>
-              <Label htmlFor="outcome">Outcome</Label>
-              <Textarea
-                id="outcome"
-                value={caseStudyForm.outcome}
-                onChange={(e) =>
-                  setCaseStudyForm({
-                    ...caseStudyForm,
-                    outcome: e.target.value,
-                  })
-                }
-                placeholder="Describe the outcome..."
-                rows={2}
-              />
-            </div>
-            <div>
-              <Label htmlFor="stats">
-                Stats (format: Label:Value, Label:Value)
-              </Label>
-              <Textarea
-                id="stats"
-                value={caseStudyForm.stats}
-                onChange={(e) =>
-                  setCaseStudyForm({ ...caseStudyForm, stats: e.target.value })
-                }
-                placeholder="Sales Increase:300%, Countries Covered:8"
-                rows={2}
+                placeholder="Write your blog content here..."
+                rows={6}
               />
             </div>
           </div>
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setCaseStudyDialogOpen(false)}
+              onClick={() => setBlogDialogOpen(false)}
             >
               Cancel
             </Button>
-            <Button onClick={handleSaveCaseStudy}>
-              {editingCaseStudy ? "Update" : "Add"} Case Study
+            <Button onClick={handleSaveBlog}>
+              {editingBlog ? "Update" : "Add"} Blog
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Testimonial Dialog */}
+      <Dialog open={testimonialDialogOpen} onOpenChange={setTestimonialDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingTestimonial ? "Edit Testimonial" : "Add New Testimonial"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="testimonial-name">Name *</Label>
+                <Input
+                  id="testimonial-name"
+                  value={testimonialForm.name}
+                  onChange={(e) =>
+                    setTestimonialForm({ ...testimonialForm, name: e.target.value })
+                  }
+                  placeholder="Jane Doe"
+                />
+              </div>
+              <div>
+                <Label htmlFor="testimonial-role">Role *</Label>
+                <Input
+                  id="testimonial-role"
+                  value={testimonialForm.role}
+                  onChange={(e) =>
+                    setTestimonialForm({ ...testimonialForm, role: e.target.value })
+                  }
+                  placeholder="Interior Designer"
+                />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="testimonial-company">Company *</Label>
+                <Input
+                  id="testimonial-company"
+                  value={testimonialForm.company}
+                  onChange={(e) =>
+                    setTestimonialForm({ ...testimonialForm, company: e.target.value })
+                  }
+                  placeholder="Design Studio"
+                />
+              </div>
+              <div>
+                <Label htmlFor="testimonial-location">Location *</Label>
+                <Input
+                  id="testimonial-location"
+                  value={testimonialForm.location}
+                  onChange={(e) =>
+                    setTestimonialForm({ ...testimonialForm, location: e.target.value })
+                  }
+                  placeholder="London, UK"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="testimonial-rating">Rating (1-5)</Label>
+              <Input
+                id="testimonial-rating"
+                type="number"
+                min={1}
+                max={5}
+                value={testimonialForm.rating}
+                onChange={(e) =>
+                  setTestimonialForm({
+                    ...testimonialForm,
+                    rating: Number(e.target.value) || 5,
+                  })
+                }
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="testimonial-image">Author Image (optional)</Label>
+              <Input
+                id="testimonial-image"
+                type="file"
+                accept="image/*"
+                onChange={handleTestimonialImageUpload}
+                className="cursor-pointer"
+              />
+              {testimonialForm.image && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Stored as: {testimonialForm.image}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="testimonial-content">Testimonial *</Label>
+              <Textarea
+                id="testimonial-content"
+                value={testimonialForm.content}
+                onChange={(e) =>
+                  setTestimonialForm({ ...testimonialForm, content: e.target.value })
+                }
+                placeholder="Write the testimonial here..."
+                rows={5}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setTestimonialDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleSaveTestimonial}>
+              {editingTestimonial ? "Update" : "Add"} Testimonial
             </Button>
           </DialogFooter>
         </DialogContent>

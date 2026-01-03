@@ -16,10 +16,12 @@ export const ImageDisplay = ({
   const [imageSrc, setImageSrc] = useState<string>("");
 
   useEffect(() => {
-    // Check if it's a localStorage key (starts with product_image_ or casestudy_image_)
+    // Check if it's a localStorage key (starts with product_image_, casestudy_image_, blog_image_, or hero_image_)
     if (
       src.startsWith("product_image_") ||
-      src.startsWith("casestudy_image_")
+      src.startsWith("casestudy_image_") ||
+      src.startsWith("blog_image_") ||
+      src.startsWith("hero_image_")
     ) {
       if (typeof window !== "undefined") {
         const storedImage = localStorage.getItem(src);

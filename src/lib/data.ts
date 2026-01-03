@@ -9,6 +9,24 @@ export interface Product {
   finishes: string[];
 }
 
+export interface Blog {
+  id: number;
+  image: string;
+  content: string;
+}
+
+export interface Testimonial {
+  id: number;
+  name: string;
+  role: string;
+  company: string;
+  location: string;
+  content: string;
+  image?: string;
+  rating?: number;
+}
+
+// Legacy interface kept for backwards compatibility
 export interface CaseStudy {
   id: number;
   title: string;
@@ -114,74 +132,74 @@ const defaultProducts: Product[] = [
   },
 ];
 
-const defaultCaseStudies: CaseStudy[] = [
+const defaultBlogs: Blog[] = [];
+
+const defaultTestimonials: Testimonial[] = [
   {
     id: 1,
-    title: "Scaling Hardware Exports to the Middle East",
-    client: "European Tool Manufacturer",
-    category: "Export",
-    location: "Germany → UAE, Saudi Arabia",
-    image:
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&h=400&fit=crop",
-    problem:
-      "A German tool manufacturer struggled to penetrate Middle Eastern markets due to complex regulations and lack of local distribution networks.",
-    solution:
-      "We established strategic partnerships with regional distributors, streamlined documentation processes, and set up efficient logistics routes.",
-    outcome:
-      "300% increase in Middle East sales within 18 months, with distribution now covering 8 countries.",
-    stats: [
-      { label: "Sales Increase", value: "300%" },
-      { label: "Countries Covered", value: "8" },
-      { label: "Time to Market", value: "-40%" },
-    ],
+    name: "David Richardson",
+    role: "Lead Architect",
+    company: "Richardson & Partners",
+    location: "London, UK",
+    image: "/images/testimonials/client-1.jpg",
+    content:
+      "Hindonix hardware has become our go-to specification for luxury residential projects. The PVD finishes are exceptional and the quality is consistently outstanding.",
+    rating: 5,
   },
   {
     id: 2,
-    title: "Optimizing Import Costs for Construction Supplies",
-    client: "Santos Construction Group",
-    category: "Import",
-    location: "China → Brazil",
-    image:
-      "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&h=400&fit=crop",
-    problem:
-      "High import duties and lengthy customs clearance were significantly impacting profit margins and project timelines.",
-    solution:
-      "Implemented duty optimization strategies, streamlined customs procedures, and established bonded warehouse solutions.",
-    outcome:
-      "Reduced import costs by 25% and cut average clearance time from 15 days to 5 days.",
-    stats: [
-      { label: "Cost Reduction", value: "25%" },
-      { label: "Clearance Time", value: "5 days" },
-      { label: "Annual Savings", value: "$2M" },
-    ],
+    name: "Sarah Mitchell",
+    role: "Interior Designer",
+    company: "Mitchell Design Studio",
+    location: "Dubai, UAE",
+    image: "/images/testimonials/client-2.jpg",
+    content:
+      "The attention to detail in Hindonix products is remarkable. Their brass knobs and door handles add that perfect finishing touch to our high-end projects.",
+    rating: 5,
   },
   {
     id: 3,
-    title: "Multi-Country Logistics Consolidation",
-    client: "Pacific Tools Ltd",
-    category: "Logistics",
-    location: "Asia → Australia",
-    image:
-      "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=600&h=400&fit=crop",
-    problem:
-      "Managing shipments from multiple Asian suppliers resulted in high freight costs and inventory management challenges.",
-    solution:
-      "Established a consolidation hub in Singapore, implemented inventory management systems, and optimized shipping routes.",
-    outcome:
-      "Reduced logistics costs by 35% and improved inventory turnover by 50%.",
-    stats: [
-      { label: "Freight Savings", value: "35%" },
-      { label: "Inventory Turnover", value: "+50%" },
-      { label: "Suppliers Managed", value: "25+" },
-    ],
+    name: "James Thompson",
+    role: "Project Manager",
+    company: "Thompson Construction",
+    location: "Manchester, UK",
+    image: "/images/testimonials/client-3.jpg",
+    content:
+      "Reliable delivery and consistent quality. Hindonix has never let us down on our commercial projects. Their range of finishes meets all our specification needs.",
+    rating: 5,
+  },
+  {
+    id: 4,
+    name: "Fatima Al-Mansoori",
+    role: "Procurement Director",
+    company: "Al-Mansoori Developments",
+    location: "Abu Dhabi, UAE",
+    image: "/images/testimonials/client-4.jpg",
+    content:
+      "Outstanding B2B partnership. Hindonix understands the demands of large-scale projects and delivers premium hardware that exceeds expectations every time.",
+    rating: 5,
   },
 ];
+
+const defaultCaseStudies: CaseStudy[] = [];
 
 // Initialize data from localStorage or use defaults
 const loadProducts = (): Product[] => {
   if (typeof window === "undefined") return defaultProducts;
   const stored = localStorage.getItem("hindonix_products");
   return stored ? JSON.parse(stored) : defaultProducts;
+};
+
+const loadBlogs = (): Blog[] => {
+  if (typeof window === "undefined") return defaultBlogs;
+  const stored = localStorage.getItem("hindonix_blogs");
+  return stored ? JSON.parse(stored) : defaultBlogs;
+};
+
+const loadTestimonials = (): Testimonial[] => {
+  if (typeof window === "undefined") return defaultTestimonials;
+  const stored = localStorage.getItem("hindonix_testimonials");
+  return stored ? JSON.parse(stored) : defaultTestimonials;
 };
 
 const loadCaseStudies = (): CaseStudy[] => {
@@ -197,6 +215,20 @@ const saveProducts = (products: Product[]) => {
   }
 };
 
+const saveBlogs = (blogs: Blog[]) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("hindonix_blogs", JSON.stringify(blogs));
+    window.dispatchEvent(new Event("dataUpdated"));
+  }
+};
+
+const saveTestimonials = (testimonials: Testimonial[]) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("hindonix_testimonials", JSON.stringify(testimonials));
+    window.dispatchEvent(new Event("dataUpdated"));
+  }
+};
+
 const saveCaseStudies = (caseStudies: CaseStudy[]) => {
   if (typeof window !== "undefined") {
     localStorage.setItem("hindonix_case_studies", JSON.stringify(caseStudies));
@@ -205,6 +237,8 @@ const saveCaseStudies = (caseStudies: CaseStudy[]) => {
 };
 
 let products: Product[] = loadProducts();
+let blogs: Blog[] = loadBlogs();
+let testimonials: Testimonial[] = loadTestimonials();
 let caseStudies: CaseStudy[] = loadCaseStudies();
 
 // Product management functions
@@ -238,6 +272,70 @@ export const deleteProduct = (id: number): boolean => {
   return products.length < initialLength;
 };
 
+// Blog management functions
+export const getBlogs = (): Blog[] => {
+  blogs = loadBlogs();
+  return blogs;
+};
+
+export const addBlog = (blog: Omit<Blog, "id">): Blog => {
+  const newBlog = { ...blog, id: Date.now() };
+  blogs = [...blogs, newBlog];
+  saveBlogs(blogs);
+  return newBlog;
+};
+
+export const updateBlog = (
+  id: number,
+  updates: Partial<Blog>
+): Blog | null => {
+  const index = blogs.findIndex((b) => b.id === id);
+  if (index === -1) return null;
+  blogs[index] = { ...blogs[index], ...updates };
+  saveBlogs(blogs);
+  return blogs[index];
+};
+
+export const deleteBlog = (id: number): boolean => {
+  const initialLength = blogs.length;
+  blogs = blogs.filter((b) => b.id !== id);
+  saveBlogs(blogs);
+  return blogs.length < initialLength;
+};
+
+// Testimonial management functions
+export const getTestimonials = (): Testimonial[] => {
+  testimonials = loadTestimonials();
+  return testimonials;
+};
+
+export const addTestimonial = (
+  testimonial: Omit<Testimonial, "id">
+): Testimonial => {
+  const newTestimonial = { ...testimonial, id: Date.now() };
+  testimonials = [...testimonials, newTestimonial];
+  saveTestimonials(testimonials);
+  return newTestimonial;
+};
+
+export const updateTestimonial = (
+  id: number,
+  updates: Partial<Testimonial>
+): Testimonial | null => {
+  const index = testimonials.findIndex((t) => t.id === id);
+  if (index === -1) return null;
+  testimonials[index] = { ...testimonials[index], ...updates };
+  saveTestimonials(testimonials);
+  return testimonials[index];
+};
+
+export const deleteTestimonial = (id: number): boolean => {
+  const initialLength = testimonials.length;
+  testimonials = testimonials.filter((t) => t.id !== id);
+  saveTestimonials(testimonials);
+  return testimonials.length < initialLength;
+};
+
 // Case Study management functions
 export const getCaseStudies = (): CaseStudy[] => {
   caseStudies = loadCaseStudies();
@@ -267,4 +365,21 @@ export const deleteCaseStudy = (id: number): boolean => {
   caseStudies = caseStudies.filter((cs) => cs.id !== id);
   saveCaseStudies(caseStudies);
   return caseStudies.length < initialLength;
+};
+
+// Hero Image management
+const HERO_IMAGE_KEY = "hindonix_hero_image";
+const DEFAULT_HERO_IMAGE = "/images/hero/hero-1.jpg";
+
+export const getHeroImage = (): string => {
+  if (typeof window === "undefined") return DEFAULT_HERO_IMAGE;
+  const stored = localStorage.getItem(HERO_IMAGE_KEY);
+  return stored || DEFAULT_HERO_IMAGE;
+};
+
+export const setHeroImage = (imageKey: string): void => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(HERO_IMAGE_KEY, imageKey);
+    window.dispatchEvent(new Event("heroImageUpdated"));
+  }
 };

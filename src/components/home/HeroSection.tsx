@@ -1,7 +1,22 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { getHeroImage } from "@/lib/data";
+import { ImageDisplay } from "@/components/ImageDisplay";
 
 export function HeroSection() {
+  const [heroImage, setHeroImage] = useState<string>(getHeroImage());
+
+  useEffect(() => {
+    // Listen for hero image updates from admin
+    const handleHeroImageUpdate = () => {
+      setHeroImage(getHeroImage());
+    };
+
+    window.addEventListener("heroImageUpdated", handleHeroImageUpdate);
+    return () => window.removeEventListener("heroImageUpdated", handleHeroImageUpdate);
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center bg-background">
       {/* ===== Content ===== */}
@@ -41,8 +56,8 @@ export function HeroSection() {
 
           {/* RIGHT - IMAGE */}
           <div className="relative w-full hidden lg:block">
-            <img
-              src="/images/hero/hero-1.jpg"
+            <ImageDisplay
+              src={heroImage}
               alt="Architectural Hardware Collection"
               className="w-full h-[450px] object-cover"
             />

@@ -8,7 +8,7 @@ const navLinks = [
   { name: "Home", path: "/" },
   { name: "About", path: "/about" },
   { name: "Products", path: "/products" },
-  { name: "Case Studies", path: "/case-studies" },
+  { name: "Blogs", path: "/blogs" },
   { name: "Contact", path: "/contact" },
   { name: "Admin", path: "/admin" },
 ];
@@ -44,11 +44,12 @@ export function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <img
-              src="/images/logo/Logo_With_Name_cropped.PNG"
+              src="/images/logo/cropped_updated_logo_with_name.PNG"
               alt="Hindonix Logo"
-              className="h-16 w-auto transition-all group-hover:scale-105"
+              className="h-20 w-auto transition-all group-hover:scale-105"
             />
             <span
+              style={{ fontFamily: '"Times New Roman", Times, serif' }}
               className={cn(
                 "font-heading font-bold text-2xl tracking-wide transition-colors",
                 isScrolled ? "text-foreground" : "text-foreground"
@@ -87,7 +88,8 @@ export function Navbar() {
               size="default"
               asChild
               className={cn(
-                !isScrolled && "bg-foreground text-background hover:bg-foreground/90"
+                !isScrolled &&
+                  "bg-foreground text-background hover:bg-foreground/90"
               )}
             >
               <Link to="/contact">Get a Quote</Link>
