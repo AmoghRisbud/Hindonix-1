@@ -26,7 +26,7 @@ const availableFinishes = [
 
 // Map finishes to their image filenames (in /images/finishes/)
 const finishImages: Record<string, string> = {
-  "Brass": "brass.jpg",
+  Brass: "brass.jpg",
   "Polished Stainless Steel": "polished-stainless-steel.jpg",
   "PVD Satin Black": "pvd-satin-black.jpg",
   "PVD Satin Gold": "pvd-satin-gold.jpg",

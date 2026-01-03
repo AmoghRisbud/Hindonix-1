@@ -62,18 +62,25 @@ const availableFinishes = [
 const Admin = () => {
   const [products, setProducts] = useState<Product[]>(getProducts());
   const [blogs, setBlogs] = useState<Blog[]>(getBlogs());
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(getTestimonials());
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(
+    getTestimonials()
+  );
   const [heroImage, setHeroImageState] = useState<string>(getHeroImage());
-  const [selectedHeroImage, setSelectedHeroImage] = useState<string>(getHeroImage());
+  const [selectedHeroImage, setSelectedHeroImage] = useState<string>(
+    getHeroImage()
+  );
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [blogDialogOpen, setBlogDialogOpen] = useState(false);
   const [testimonialDialogOpen, setTestimonialDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
-  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
+  const [editingTestimonial, setEditingTestimonial] =
+    useState<Testimonial | null>(null);
   const [productImageFile, setProductImageFile] = useState<File | null>(null);
   const [blogImageFile, setBlogImageFile] = useState<File | null>(null);
-  const [testimonialImageFile, setTestimonialImageFile] = useState<File | null>(null);
+  const [testimonialImageFile, setTestimonialImageFile] = useState<File | null>(
+    null
+  );
   const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
   const { toast } = useToast();
 
@@ -195,161 +202,168 @@ const Admin = () => {
   // Hero Image handler
   const handleHeroImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-     if (!file) {
-       console.warn("No file selected");
-       return;
-     }
+    if (!file) {
+      console.warn("No file selected");
+      return;
+    }
 
-     console.log("=== HERO IMAGE UPLOAD DEBUG ===");
-     console.log("Filename:", file.name);
-     console.log("File size:", file.size, "bytes", `(${(file.size / 1024).toFixed(2)}KB)`);
-     console.log("File type:", file.type);
-     console.log("Last modified:", new Date(file.lastModified).toLocaleString());
+    console.log("=== HERO IMAGE UPLOAD DEBUG ===");
+    console.log("Filename:", file.name);
+    console.log(
+      "File size:",
+      file.size,
+      "bytes",
+      `(${(file.size / 1024).toFixed(2)}KB)`
+    );
+    console.log("File type:", file.type);
+    console.log("Last modified:", new Date(file.lastModified).toLocaleString());
 
-     // Validation
-     const maxSize = 5 * 1024 * 1024; // 5MB
-     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    // Validation
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
-     if (file.size > maxSize) {
-       toast({
-         title: "File Too Large",
-         description: `Max 5MB, your file is ${(file.size / 1024 / 1024).toFixed(2)}MB`,
-         variant: "destructive",
-       });
-       console.error("File size exceeds limit");
-       return;
-     }
+    if (file.size > maxSize) {
+      toast({
+        title: "File Too Large",
+        description: `Max 5MB, your file is ${(file.size / 1024 / 1024).toFixed(
+          2
+        )}MB`,
+        variant: "destructive",
+      });
+      console.error("File size exceeds limit");
+      return;
+    }
 
-     if (!allowedTypes.includes(file.type)) {
-       toast({
-         title: "Invalid File Type",
-         description: `Type: ${file.type}. Use: JPEG, PNG, GIF, or WebP`,
-         variant: "destructive",
-       });
-       console.error("Invalid file type:", file.type);
-       return;
-     }
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        title: "Invalid File Type",
+        description: `Type: ${file.type}. Use: JPEG, PNG, GIF, or WebP`,
+        variant: "destructive",
+      });
+      console.error("Invalid file type:", file.type);
+      return;
+    }
 
-     // Test localStorage access
-     try {
-       const testKey = "test_storage_" + Date.now();
-       localStorage.setItem(testKey, "test");
-       localStorage.removeItem(testKey);
-       console.log("✓ localStorage is accessible");
-     } catch (e) {
-       toast({
-         title: "Storage Error",
-         description: "localStorage not accessible or quota exceeded",
-         variant: "destructive",
-       });
-       console.error("localStorage test failed:", e);
-       return;
-     }
+    // Test localStorage access
+    try {
+      const testKey = "test_storage_" + Date.now();
+      localStorage.setItem(testKey, "test");
+      localStorage.removeItem(testKey);
+      console.log("✓ localStorage is accessible");
+    } catch (e) {
+      toast({
+        title: "Storage Error",
+        description: "localStorage not accessible or quota exceeded",
+        variant: "destructive",
+      });
+      console.error("localStorage test failed:", e);
+      return;
+    }
 
-      setHeroImageFile(file);
+    setHeroImageFile(file);
 
-      // Convert image to base64
-      const reader = new FileReader();
-      reader.onerror = () => {
-         console.error("FileReader error:", reader.error);
-        toast({
-           title: "Read Error",
-           description: "Failed to read file. Try a different image.",
-          variant: "destructive",
-        });
-      };
-       reader.onprogress = (event) => {
-         if (event.lengthComputable) {
-           const percentComplete = (event.loaded / event.total) * 100;
-           console.log("Read progress:", percentComplete.toFixed(2) + "%");
-         }
-       };
-      reader.onload = () => {
-         try {
+    // Convert image to base64
+    const reader = new FileReader();
+    reader.onerror = () => {
+      console.error("FileReader error:", reader.error);
+      toast({
+        title: "Read Error",
+        description: "Failed to read file. Try a different image.",
+        variant: "destructive",
+      });
+    };
+    reader.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = (event.loaded / event.total) * 100;
+        console.log("Read progress:", percentComplete.toFixed(2) + "%");
+      }
+    };
+    reader.onload = () => {
+      try {
         const base64String = reader.result as string;
 
-           if (!base64String) {
-             console.error("Failed to generate base64 string");
-             toast({
-               title: "Conversion Error",
-               description: "Failed to convert image. Try a different image.",
-               variant: "destructive",
-             });
-             return;
-           }
+        if (!base64String) {
+          console.error("Failed to generate base64 string");
+          toast({
+            title: "Conversion Error",
+            description: "Failed to convert image. Try a different image.",
+            variant: "destructive",
+          });
+          return;
+        }
 
-           console.log("✓ Base64 generated, length:", base64String.length);
+        console.log("✓ Base64 generated, length:", base64String.length);
 
         const imageKey = `hero_image_${Date.now()}_${file.name}`;
-           console.log("Storage key:", imageKey);
+        console.log("Storage key:", imageKey);
 
-           // Save to localStorage
-           try {
-             const storageBefore = Object.keys(localStorage).length;
-             console.log("localStorage items before:", storageBefore);
+        // Save to localStorage
+        try {
+          const storageBefore = Object.keys(localStorage).length;
+          console.log("localStorage items before:", storageBefore);
 
           localStorage.setItem(imageKey, base64String);
 
-             const storageAfter = Object.keys(localStorage).length;
-             console.log("✓ Saved to localStorage");
-             console.log("localStorage items after:", storageAfter);
+          const storageAfter = Object.keys(localStorage).length;
+          console.log("✓ Saved to localStorage");
+          console.log("localStorage items after:", storageAfter);
 
-             // Verify it was saved
-             const retrieved = localStorage.getItem(imageKey);
-             if (retrieved === base64String) {
-               console.log("✓ Verification passed - image successfully stored");
-          setSelectedHeroImage(imageKey);
-          toast({
-            title: "Success",
-            description: `Uploaded: ${file.name} - Click "Update Hero Image" to save`,
-          });
+          // Verify it was saved
+          const retrieved = localStorage.getItem(imageKey);
+          if (retrieved === base64String) {
+            console.log("✓ Verification passed - image successfully stored");
+            setSelectedHeroImage(imageKey);
+            toast({
+              title: "Success",
+              description: `Uploaded: ${file.name} - Click "Update Hero Image" to save`,
+            });
 
-               // Reset input
-               if (e.target) {
-                 e.target.value = "";
-               }
-             } else {
-               console.error("✗ Verification failed - data mismatch");
-               console.error("Expected length:", base64String.length);
-               console.error("Retrieved length:", retrieved?.length || 0);
-               toast({
-                 title: "Verification Error",
-                 description: "Image was not saved correctly. Try again.",
-                 variant: "destructive",
-               });
-             }
-           } catch (storageError) {
-             console.error("Storage error:", storageError);
-             if (storageError instanceof Error) {
-               console.error("Error name:", storageError.name);
-               console.error("Error message:", storageError.message);
+            // Reset input
+            if (e.target) {
+              e.target.value = "";
+            }
+          } else {
+            console.error("✗ Verification failed - data mismatch");
+            console.error("Expected length:", base64String.length);
+            console.error("Retrieved length:", retrieved?.length || 0);
+            toast({
+              title: "Verification Error",
+              description: "Image was not saved correctly. Try again.",
+              variant: "destructive",
+            });
+          }
+        } catch (storageError) {
+          console.error("Storage error:", storageError);
+          if (storageError instanceof Error) {
+            console.error("Error name:", storageError.name);
+            console.error("Error message:", storageError.message);
 
-               if (storageError.name === "QuotaExceededError") {
-                 toast({
-                   title: "Storage Full",
-                   description: "Delete old images first or clear browser data.",
-                   variant: "destructive",
-                 });
-               } else {
-                 toast({
-                   title: "Storage Error",
-                   description: storageError.message,
-                   variant: "destructive",
-                 });
-               }
-             }
-           }
-         } catch (error) {
-           console.error("Processing error:", error);
-           toast({
-             title: "Processing Error",
-             description: "Error processing image. Try again.",
-             variant: "destructive",
-           });
+            if (storageError.name === "QuotaExceededError") {
+              toast({
+                title: "Storage Full",
+                description: "Delete old images first or clear browser data.",
+                variant: "destructive",
+              });
+            } else {
+              toast({
+                title: "Storage Error",
+                description: storageError.message,
+                variant: "destructive",
+              });
+            }
+          }
         }
-      };
-       console.log("Starting file read as Data URL...");
-      reader.readAsDataURL(file);
+      } catch (error) {
+        console.error("Processing error:", error);
+        toast({
+          title: "Processing Error",
+          description: "Error processing image. Try again.",
+          variant: "destructive",
+        });
+      }
+    };
+    console.log("Starting file read as Data URL...");
+    reader.readAsDataURL(file);
   };
 
   const handleSaveHeroImage = () => {
@@ -649,20 +663,24 @@ const Admin = () => {
                   onChange={handleHeroImageUpload}
                   className="cursor-pointer mt-2"
                 />
-                {selectedHeroImage && selectedHeroImage.startsWith("hero_image_") && (
-                  <p className="text-sm text-green-600 mt-2 font-medium">
-                    ✓ Image selected: {selectedHeroImage.split("_").pop()}
-                  </p>
-                )}
+                {selectedHeroImage &&
+                  selectedHeroImage.startsWith("hero_image_") && (
+                    <p className="text-sm text-green-600 mt-2 font-medium">
+                      ✓ Image selected: {selectedHeroImage.split("_").pop()}
+                    </p>
+                  )}
                 {heroImage && heroImage !== selectedHeroImage && (
                   <p className="text-sm text-muted-foreground mt-2">
                     Current: {heroImage.split("_").pop()}
                   </p>
                 )}
-                <Button 
-                  onClick={handleSaveHeroImage} 
+                <Button
+                  onClick={handleSaveHeroImage}
                   className="mt-4"
-                  disabled={!selectedHeroImage || !selectedHeroImage.startsWith("hero_image_")}
+                  disabled={
+                    !selectedHeroImage ||
+                    !selectedHeroImage.startsWith("hero_image_")
+                  }
                 >
                   Update Hero Image
                 </Button>
@@ -1045,10 +1063,7 @@ const Admin = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setBlogDialogOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setBlogDialogOpen(false)}>
               Cancel
             </Button>
             <Button onClick={handleSaveBlog}>
@@ -1059,7 +1074,10 @@ const Admin = () => {
       </Dialog>
 
       {/* Testimonial Dialog */}
-      <Dialog open={testimonialDialogOpen} onOpenChange={setTestimonialDialogOpen}>
+      <Dialog
+        open={testimonialDialogOpen}
+        onOpenChange={setTestimonialDialogOpen}
+      >
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
@@ -1074,7 +1092,10 @@ const Admin = () => {
                   id="testimonial-name"
                   value={testimonialForm.name}
                   onChange={(e) =>
-                    setTestimonialForm({ ...testimonialForm, name: e.target.value })
+                    setTestimonialForm({
+                      ...testimonialForm,
+                      name: e.target.value,
+                    })
                   }
                   placeholder="Jane Doe"
                 />
@@ -1085,7 +1106,10 @@ const Admin = () => {
                   id="testimonial-role"
                   value={testimonialForm.role}
                   onChange={(e) =>
-                    setTestimonialForm({ ...testimonialForm, role: e.target.value })
+                    setTestimonialForm({
+                      ...testimonialForm,
+                      role: e.target.value,
+                    })
                   }
                   placeholder="Interior Designer"
                 />
@@ -1099,7 +1123,10 @@ const Admin = () => {
                   id="testimonial-company"
                   value={testimonialForm.company}
                   onChange={(e) =>
-                    setTestimonialForm({ ...testimonialForm, company: e.target.value })
+                    setTestimonialForm({
+                      ...testimonialForm,
+                      company: e.target.value,
+                    })
                   }
                   placeholder="Design Studio"
                 />
@@ -1110,7 +1137,10 @@ const Admin = () => {
                   id="testimonial-location"
                   value={testimonialForm.location}
                   onChange={(e) =>
-                    setTestimonialForm({ ...testimonialForm, location: e.target.value })
+                    setTestimonialForm({
+                      ...testimonialForm,
+                      location: e.target.value,
+                    })
                   }
                   placeholder="London, UK"
                 />
@@ -1156,7 +1186,10 @@ const Admin = () => {
                 id="testimonial-content"
                 value={testimonialForm.content}
                 onChange={(e) =>
-                  setTestimonialForm({ ...testimonialForm, content: e.target.value })
+                  setTestimonialForm({
+                    ...testimonialForm,
+                    content: e.target.value,
+                  })
                 }
                 placeholder="Write the testimonial here..."
                 rows={5}

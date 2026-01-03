@@ -14,7 +14,8 @@ export function HeroSection() {
     };
 
     window.addEventListener("heroImageUpdated", handleHeroImageUpdate);
-    return () => window.removeEventListener("heroImageUpdated", handleHeroImageUpdate);
+    return () =>
+      window.removeEventListener("heroImageUpdated", handleHeroImageUpdate);
   }, []);
 
   return (

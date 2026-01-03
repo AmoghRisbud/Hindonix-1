@@ -26,7 +26,8 @@ const Blogs = () => {
               Latest Insights & Articles
             </h1>
             <p className="text-lg text-primary-foreground/80">
-              Explore our latest blog posts and stay updated with industry insights.
+              Explore our latest blog posts and stay updated with industry
+              insights.
             </p>
           </div>
         </div>

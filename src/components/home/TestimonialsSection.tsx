@@ -5,7 +5,9 @@ import { getTestimonials, type Testimonial } from "@/lib/data";
 import { ImageDisplay } from "@/components/ImageDisplay";
 
 export function TestimonialsSection() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(getTestimonials());
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(
+    getTestimonials()
+  );
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -92,8 +94,13 @@ export function TestimonialsSection() {
                   </div>
                   {testimonials[activeIndex].rating ? (
                     <div className="flex items-center gap-1 mt-2">
-                      {Array.from({ length: testimonials[activeIndex].rating }).map((_, idx) => (
-                        <Star key={idx} className="w-4 h-4 fill-accent text-accent" />
+                      {Array.from({
+                        length: testimonials[activeIndex].rating,
+                      }).map((_, idx) => (
+                        <Star
+                          key={idx}
+                          className="w-4 h-4 fill-accent text-accent"
+                        />
                       ))}
                     </div>
                   ) : null}

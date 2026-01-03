@@ -285,10 +285,7 @@ export const addBlog = (blog: Omit<Blog, "id">): Blog => {
   return newBlog;
 };
 
-export const updateBlog = (
-  id: number,
-  updates: Partial<Blog>
-): Blog | null => {
+export const updateBlog = (id: number, updates: Partial<Blog>): Blog | null => {
   const index = blogs.findIndex((b) => b.id === id);
   if (index === -1) return null;
   blogs[index] = { ...blogs[index], ...updates };

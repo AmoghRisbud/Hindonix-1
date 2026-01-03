@@ -59,7 +59,10 @@ export function WhyChooseUsSection() {
                 Specialized in Architectural Hardware
               </h3>
               <p className="text-muted-foreground text-sm lg:text-base mb-5 leading-relaxed">
-                Since 2025, we've been crafting premium architectural hardware for luxury residential and commercial projects. Our expertise in material selection, finish quality, and ergonomic design ensures hardware that performs beautifully for decades.
+                Since 2025, we've been crafting premium architectural hardware
+                for luxury residential and commercial projects. Our expertise in
+                material selection, finish quality, and ergonomic design ensures
+                hardware that performs beautifully for decades.
               </p>
               <div className="flex flex-wrap gap-2.5 mb-6">
                 {[
@@ -82,13 +85,21 @@ export function WhyChooseUsSection() {
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-secondary rounded-2xl p-5 text-center">
                 <Factory className="w-10 h-10 text-accent mx-auto mb-3" />
-                <div className="text-xl font-heading font-bold text-foreground">10+</div>
-                <div className="text-xs text-muted-foreground">Years Experience</div>
+                <div className="text-xl font-heading font-bold text-foreground">
+                  10+
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Years Experience
+                </div>
               </div>
               <div className="bg-secondary rounded-2xl p-5 text-center">
                 <Shield className="w-10 h-10 text-accent mx-auto mb-3" />
-                <div className="text-xl font-heading font-bold text-foreground">100%</div>
-                <div className="text-xs text-muted-foreground">Quality Assured</div>
+                <div className="text-xl font-heading font-bold text-foreground">
+                  100%
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Quality Assured
+                </div>
               </div>
               <div className="bg-primary rounded-2xl p-5 text-center col-span-2">
                 <div className="text-lg font-heading font-bold text-primary-foreground mb-1">
@@ -110,7 +121,9 @@ export function WhyChooseUsSection() {
               Craftsmanship Meets Design Excellence
             </h2>
             <p className="text-muted-foreground text-sm lg:text-base mb-6">
-              We combine traditional craftsmanship with modern design to deliver architectural hardware that enhances every space with beauty, function, and lasting quality.
+              We combine traditional craftsmanship with modern design to deliver
+              architectural hardware that enhances every space with beauty,
+              function, and lasting quality.
             </p>
 
             <div className="grid sm:grid-cols-2 gap-5 mb-6">
@@ -148,7 +161,9 @@ export function WhyChooseUsSection() {
                   <div className="text-xl lg:text-2xl font-heading font-bold text-foreground mb-0.5">
                     {stat.value}
                   </div>
-                  <div className="text-xs text-muted-foreground">{stat.label}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>
