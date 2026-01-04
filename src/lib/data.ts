@@ -1,12 +1,56 @@
 // Shared data store for products and case studies
+
+// Taxonomy interfaces
+export interface Category {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+export interface Subcategory {
+  id: number;
+  name: string;
+  categoryId: number;
+  description?: string;
+}
+
+export interface Material {
+  id: number;
+  name: string;
+  categoryId?: number; // Optional: link to specific category
+  subcategoryId?: number; // Optional: link to specific subcategory
+  description?: string;
+}
+
+export interface FinishCategory {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+export interface Finish {
+  id: number;
+  name: string;
+  categoryId: number; // Link to FinishCategory
+  image: string; // Path or key to finish image
+  description?: string;
+}
+
 export interface Product {
   id: number;
   name: string;
-  category: string;
-  subcategory?: string;
+  category: string; // Keep as string for backward compatibility
+  categoryId?: number; // New: reference to Category
+  subcategory?: string; // Keep as string for backward compatibility
+  subcategoryId?: number; // New: reference to Subcategory
+  material: string; // Keep as string for backward compatibility
+  materialId?: number; // New: reference to Material
   description: string;
+  modelNumber?: string; // Product model number
+  longDescription?: string; // Detailed product description
   image: string;
-  finishes: string[];
+  finishes: string[]; // Keep as string array for backward compatibility
+  finishIds?: number[]; // New: references to Finish
 }
 
 export interface Blog {
@@ -44,8 +88,8 @@ const defaultProducts: Product[] = [
   {
     id: 1,
     name: "Classic Brass Knob",
-    category: "Knobs",
-    subcategory: "Brass Knob",
+    category: "Knob",
+    material: "Brass",
     description:
       "Timeless brass knob with exceptional craftsmanship and warm golden finish.",
     image: "/images/products/knobs/brassknob1.jpg",
@@ -53,29 +97,9 @@ const defaultProducts: Product[] = [
   },
   {
     id: 2,
-    name: "Wooden Cabinet Knob",
-    category: "Knobs",
-    subcategory: "Wooden Knobs",
-    description:
-      "Handcrafted wooden knobs combining natural beauty with modern design.",
-    image: "/images/products/knobs/wooden-knob-1.jpg",
-    finishes: ["Natural Wood"],
-  },
-  {
-    id: 3,
-    name: "Cotton Rope Knob",
-    category: "Knobs",
-    subcategory: "Cotton Knobs",
-    description:
-      "Unique textile-wrapped knobs adding a soft, contemporary touch.",
-    image: "/images/products/knobs/cotton-knob-1.jpg",
-    finishes: ["Natural Cotton"],
-  },
-  {
-    id: 4,
     name: "Stainless Steel Knob",
-    category: "Knobs",
-    subcategory: "Metal Knobs",
+    category: "Knob",
+    material: "Stainless Steel",
     description:
       "Modern metal knob with premium finishes for contemporary interiors.",
     image: "/images/products/knobs/metal-knob-1.jpg",
@@ -86,49 +110,48 @@ const defaultProducts: Product[] = [
     ],
   },
   {
-    id: 5,
-    name: "Architectural Door Handle",
-    category: "Door Handles",
+    id: 3,
+    name: "Architectural Cabinet Handle",
+    category: "Door Handle",
+    subcategory: "Cabinet Handle",
+    material: "Stainless Steel",
     description:
-      "Precision-engineered door handle with ergonomic design and multiple finish options.",
+      "Precision-engineered cabinet handle with ergonomic design and multiple finish options.",
     image: "/images/products/door-handles/door-handle-1.jpg",
     finishes: ["PVD Satin Black", "PVD Satin Bronze", "Satin Black"],
   },
   {
-    id: 6,
-    name: "Contemporary Lever Handle",
-    category: "Door Handles",
+    id: 4,
+    name: "Contemporary Cabinet Handle",
+    category: "Door Handle",
+    subcategory: "Cabinet Handle",
+    material: "Brass",
     description:
-      "Sleek lever handle combining functionality with minimalist aesthetics.",
+      "Sleek brass cabinet handle combining functionality with minimalist aesthetics.",
     image: "/images/products/door-handles/door-handle-2.jpg",
-    finishes: ["Polished Stainless Steel", "PVD Satin Nickel", "Brass"],
+    finishes: ["Brass", "PVD Satin Gold", "PVD Polished Copper"],
   },
   {
-    id: 7,
-    name: "Premium Pull Handle",
-    category: "Pull Handles",
+    id: 5,
+    name: "Premium Door Handle",
+    category: "Door Handle",
+    subcategory: "Door Handle",
+    material: "Stainless Steel",
     description:
-      "Robust pull handle perfect for entrance doors and commercial applications.",
+      "Robust door handle perfect for entrance doors and commercial applications.",
     image: "/images/products/pull-handles/pull-handle-1.jpg",
-    finishes: ["PVD Satin Stainless Steel", "PVD Satin Black", "Brass"],
+    finishes: ["PVD Satin Stainless Steel", "PVD Satin Black", "Satin Stainless Steel"],
   },
   {
-    id: 8,
-    name: "Designer Pull Handle",
-    category: "Pull Handles",
+    id: 6,
+    name: "Designer Door Handle",
+    category: "Door Handle",
+    subcategory: "Door Handle",
+    material: "Brass",
     description:
-      "Statement pull handle with architectural presence and luxurious finishes.",
+      "Statement door handle with architectural presence and luxurious finishes.",
     image: "/images/products/pull-handles/pull-handle-2.jpg",
-    finishes: ["PVD Satin Gold", "PVD Satin Bronze", "PVD Polished Copper"],
-  },
-  {
-    id: 9,
-    name: "Minimalist Pull Bar",
-    category: "Pull Handles",
-    description:
-      "Clean-lined pull bar for modern spaces, available in premium finishes.",
-    image: "/images/products/pull-handles/pull-handle-3.jpg",
-    finishes: ["Satin Stainless Steel", "Satin Black", "Satin Nickel"],
+    finishes: ["Brass", "PVD Satin Gold", "PVD Satin Bronze", "PVD Polished Copper"],
   },
 ];
 
@@ -183,6 +206,42 @@ const defaultTestimonials: Testimonial[] = [
 
 const defaultCaseStudies: CaseStudy[] = [];
 
+// Default taxonomy data
+const defaultCategories: Category[] = [
+  { id: 1, name: "Knob", description: "Door and cabinet knobs" },
+  { id: 2, name: "Door Handle", description: "Various types of door handles" },
+];
+
+const defaultSubcategories: Subcategory[] = [
+  { id: 1, name: "Cabinet Handle", categoryId: 2, description: "Handles for cabinets" },
+  { id: 2, name: "Door Handle", categoryId: 2, description: "Handles for doors" },
+];
+
+const defaultMaterials: Material[] = [
+  { id: 1, name: "Stainless Steel", description: "Premium stainless steel" },
+  { id: 2, name: "Brass", description: "High-quality brass" },
+];
+
+const defaultFinishCategories: FinishCategory[] = [
+  { id: 1, name: "Stainless Steel Finish", description: "Finishes for stainless steel products" },
+  { id: 2, name: "Brass Finish", description: "Finishes for brass products" },
+  { id: 3, name: "PVD Finish", description: "Physical Vapor Deposition finishes" },
+];
+
+const defaultFinishes: Finish[] = [
+  { id: 1, name: "Matt", categoryId: 1, image: "/images/finishes/matt.jpg" },
+  { id: 2, name: "Glossy Chrome", categoryId: 1, image: "/images/finishes/glossy-chrome.jpg" },
+  { id: 3, name: "Satin", categoryId: 1, image: "/images/finishes/satin-stainless-steel.jpg" },
+  { id: 4, name: "Black Satin", categoryId: 1, image: "/images/finishes/satin-black.jpg" },
+  { id: 5, name: "Brass Antique", categoryId: 2, image: "/images/finishes/brass.jpg" },
+  { id: 6, name: "Rose Gold", categoryId: 3, image: "/images/finishes/pvd-rose-gold.jpg" },
+  { id: 7, name: "Matte Black", categoryId: 3, image: "/images/finishes/pvd-satin-black.jpg" },
+  { id: 8, name: "PVD Rose Gold", categoryId: 3, image: "/images/finishes/pvd-polished-copper.jpg" },
+  { id: 9, name: "PVD Gold", categoryId: 3, image: "/images/finishes/pvd-satin-gold.jpg" },
+  { id: 10, name: "PVD Bronze", categoryId: 3, image: "/images/finishes/pvd-satin-bronze.jpg" },
+  { id: 11, name: "PVD Nickel", categoryId: 3, image: "/images/finishes/pvd-satin-nickel.jpg" },
+];
+
 // Initialize data from localStorage or use defaults
 const loadProducts = (): Product[] => {
   if (typeof window === "undefined") return defaultProducts;
@@ -206,6 +265,37 @@ const loadCaseStudies = (): CaseStudy[] => {
   if (typeof window === "undefined") return defaultCaseStudies;
   const stored = localStorage.getItem("hindonix_case_studies");
   return stored ? JSON.parse(stored) : defaultCaseStudies;
+};
+
+// Taxonomy loaders
+const loadCategories = (): Category[] => {
+  if (typeof window === "undefined") return defaultCategories;
+  const stored = localStorage.getItem("hindonix_categories");
+  return stored ? JSON.parse(stored) : defaultCategories;
+};
+
+const loadSubcategories = (): Subcategory[] => {
+  if (typeof window === "undefined") return defaultSubcategories;
+  const stored = localStorage.getItem("hindonix_subcategories");
+  return stored ? JSON.parse(stored) : defaultSubcategories;
+};
+
+const loadMaterials = (): Material[] => {
+  if (typeof window === "undefined") return defaultMaterials;
+  const stored = localStorage.getItem("hindonix_materials");
+  return stored ? JSON.parse(stored) : defaultMaterials;
+};
+
+const loadFinishes = (): Finish[] => {
+  if (typeof window === "undefined") return defaultFinishes;
+  const stored = localStorage.getItem("hindonix_finishes");
+  return stored ? JSON.parse(stored) : defaultFinishes;
+};
+
+const loadFinishCategories = (): FinishCategory[] => {
+  if (typeof window === "undefined") return defaultFinishCategories;
+  const stored = localStorage.getItem("hindonix_finish_categories");
+  return stored ? JSON.parse(stored) : defaultFinishCategories;
 };
 
 const saveProducts = (products: Product[]) => {
@@ -236,10 +326,51 @@ const saveCaseStudies = (caseStudies: CaseStudy[]) => {
   }
 };
 
+// Taxonomy savers
+const saveCategories = (categories: Category[]) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("hindonix_categories", JSON.stringify(categories));
+    window.dispatchEvent(new Event("dataUpdated"));
+  }
+};
+
+const saveSubcategories = (subcategories: Subcategory[]) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("hindonix_subcategories", JSON.stringify(subcategories));
+    window.dispatchEvent(new Event("dataUpdated"));
+  }
+};
+
+const saveMaterials = (materials: Material[]) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("hindonix_materials", JSON.stringify(materials));
+    window.dispatchEvent(new Event("dataUpdated"));
+  }
+};
+
+const saveFinishes = (finishes: Finish[]) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("hindonix_finishes", JSON.stringify(finishes));
+    window.dispatchEvent(new Event("dataUpdated"));
+  }
+};
+
+const saveFinishCategories = (finishCategories: FinishCategory[]) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("hindonix_finish_categories", JSON.stringify(finishCategories));
+    window.dispatchEvent(new Event("dataUpdated"));
+  }
+};
+
 let products: Product[] = loadProducts();
 let blogs: Blog[] = loadBlogs();
 let testimonials: Testimonial[] = loadTestimonials();
 let caseStudies: CaseStudy[] = loadCaseStudies();
+let categories: Category[] = loadCategories();
+let subcategories: Subcategory[] = loadSubcategories();
+let materials: Material[] = loadMaterials();
+let finishes: Finish[] = loadFinishes();
+let finishCategories: FinishCategory[] = loadFinishCategories();
 
 // Product management functions
 export const getProducts = (): Product[] => {
@@ -379,4 +510,184 @@ export const setHeroImage = (imageKey: string): void => {
     localStorage.setItem(HERO_IMAGE_KEY, imageKey);
     window.dispatchEvent(new Event("heroImageUpdated"));
   }
+};
+
+// ========================================
+// Taxonomy Management Functions
+// ========================================
+
+// Category management
+export const getCategories = (): Category[] => {
+  categories = loadCategories();
+  return categories;
+};
+
+export const addCategory = (category: Omit<Category, "id">): Category => {
+  const newCategory = { ...category, id: Date.now() };
+  categories = [...categories, newCategory];
+  saveCategories(categories);
+  return newCategory;
+};
+
+export const updateCategory = (id: number, updates: Partial<Category>): Category | null => {
+  const index = categories.findIndex((c) => c.id === id);
+  if (index === -1) return null;
+  categories[index] = { ...categories[index], ...updates };
+  saveCategories(categories);
+  return categories[index];
+};
+
+export const deleteCategory = (id: number): boolean => {
+  // Check if category has products
+  const hasProducts = products.some((p) => p.categoryId === id || p.category === categories.find(c => c.id === id)?.name);
+  if (hasProducts) {
+    return false; // Cannot delete category with products
+  }
+  
+  // Delete associated subcategories and materials
+  subcategories = subcategories.filter((s) => s.categoryId !== id);
+  saveSubcategories(subcategories);
+  materials = materials.filter((m) => m.categoryId !== id);
+  saveMaterials(materials);
+  
+  const initialLength = categories.length;
+  categories = categories.filter((c) => c.id !== id);
+  saveCategories(categories);
+  return categories.length < initialLength;
+};
+
+// Subcategory management
+export const getSubcategories = (): Subcategory[] => {
+  subcategories = loadSubcategories();
+  return subcategories;
+};
+
+export const addSubcategory = (subcategory: Omit<Subcategory, "id">): Subcategory => {
+  const newSubcategory = { ...subcategory, id: Date.now() };
+  subcategories = [...subcategories, newSubcategory];
+  saveSubcategories(subcategories);
+  return newSubcategory;
+};
+
+export const updateSubcategory = (id: number, updates: Partial<Subcategory>): Subcategory | null => {
+  const index = subcategories.findIndex((s) => s.id === id);
+  if (index === -1) return null;
+  subcategories[index] = { ...subcategories[index], ...updates };
+  saveSubcategories(subcategories);
+  return subcategories[index];
+};
+
+export const deleteSubcategory = (id: number): boolean => {
+  // Check if subcategory has products
+  const hasProducts = products.some((p) => p.subcategoryId === id || p.subcategory === subcategories.find(s => s.id === id)?.name);
+  if (hasProducts) {
+    return false; // Cannot delete subcategory with products
+  }
+  
+  // Delete associated materials
+  materials = materials.filter((m) => m.subcategoryId !== id);
+  saveMaterials(materials);
+  
+  const initialLength = subcategories.length;
+  subcategories = subcategories.filter((s) => s.id !== id);
+  saveSubcategories(subcategories);
+  return subcategories.length < initialLength;
+};
+
+// Material management
+export const getMaterials = (): Material[] => {
+  materials = loadMaterials();
+  return materials;
+};
+
+export const addMaterial = (material: Omit<Material, "id">): Material => {
+  const newMaterial = { ...material, id: Date.now() };
+  materials = [...materials, newMaterial];
+  saveMaterials(materials);
+  return newMaterial;
+};
+
+export const updateMaterial = (id: number, updates: Partial<Material>): Material | null => {
+  const index = materials.findIndex((m) => m.id === id);
+  if (index === -1) return null;
+  materials[index] = { ...materials[index], ...updates };
+  saveMaterials(materials);
+  return materials[index];
+};
+
+export const deleteMaterial = (id: number): boolean => {
+  // Check if material has products
+  const hasMaterial = products.some((p) => p.materialId === id || p.material === materials.find(m => m.id === id)?.name);
+  if (hasMaterial) {
+    return false; // Cannot delete material with products
+  }
+  
+  const initialLength = materials.length;
+  materials = materials.filter((m) => m.id !== id);
+  saveMaterials(materials);
+  return materials.length < initialLength;
+};
+
+// Finish management
+export const getFinishes = (): Finish[] => {
+  finishes = loadFinishes();
+  return finishes;
+};
+
+export const addFinish = (finish: Omit<Finish, "id">): Finish => {
+  const newFinish = { ...finish, id: Date.now() };
+  finishes = [...finishes, newFinish];
+  saveFinishes(finishes);
+  return newFinish;
+};
+
+export const updateFinish = (id: number, updates: Partial<Finish>): Finish | null => {
+  const index = finishes.findIndex((f) => f.id === id);
+  if (index === -1) return null;
+  finishes[index] = { ...finishes[index], ...updates };
+  saveFinishes(finishes);
+  return finishes[index];
+};
+
+export const deleteFinish = (id: number): boolean => {
+  // Note: We allow deleting finishes even if products use them
+  // Products will retain finish names in their finishes array
+  const initialLength = finishes.length;
+  finishes = finishes.filter((f) => f.id !== id);
+  saveFinishes(finishes);
+  return finishes.length < initialLength;
+};
+
+// Finish Category management
+export const getFinishCategories = (): FinishCategory[] => {
+  finishCategories = loadFinishCategories();
+  return finishCategories;
+};
+
+export const addFinishCategory = (category: Omit<FinishCategory, "id">): FinishCategory => {
+  const newCategory = { ...category, id: Date.now() };
+  finishCategories = [...finishCategories, newCategory];
+  saveFinishCategories(finishCategories);
+  return newCategory;
+};
+
+export const updateFinishCategory = (id: number, updates: Partial<FinishCategory>): FinishCategory | null => {
+  const index = finishCategories.findIndex((c) => c.id === id);
+  if (index === -1) return null;
+  finishCategories[index] = { ...finishCategories[index], ...updates };
+  saveFinishCategories(finishCategories);
+  return finishCategories[index];
+};
+
+export const deleteFinishCategory = (id: number): boolean => {
+  // Check if category has finishes
+  const hasFinishes = finishes.some((f) => f.categoryId === id);
+  if (hasFinishes) {
+    return false; // Cannot delete category with finishes
+  }
+  
+  const initialLength = finishCategories.length;
+  finishCategories = finishCategories.filter((c) => c.id !== id);
+  saveFinishCategories(finishCategories);
+  return finishCategories.length < initialLength;
 };

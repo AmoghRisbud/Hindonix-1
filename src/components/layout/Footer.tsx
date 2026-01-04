@@ -24,9 +24,7 @@ const footerTopLinks = [
   { name: "About", path: "/about" },
   { name: "Product Catalogue", path: "/products" },
   { name: "Blogs", path: "/blogs" },
-  { name: "Contact", path: "/contact" },
-  { name: "Privacy Policy", path: "/privacy" },
-  { name: "Terms & Conditions", path: "/terms" },
+  { name: "Get Quote", path: "/contact" },
 ];
 
 const socialLinks = [
@@ -66,21 +64,12 @@ export function Footer() {
       {/* Center Content Section */}
       <div className="container mx-auto px-4 lg:px-8 py-12">
         <div className="max-w-md mx-auto text-center space-y-6">
-          {/* Logo */}
-          <Link to="/" className="inline-block mb-4">
-            <img
-              src="/images/logo/cropped_updated_logo_without_name.PNG"
-              alt="Hindonix Logo"
-              className="h-24 w-auto mx-auto -ml-2"
-            />
-          </Link>
-
           {/* Brand Name */}
           <h3
             style={{ fontFamily: '"Times New Roman", Times, serif' }}
-            className="font-heading text-2xl font-semibold text-foreground tracking-wider"
+            className="text-2xl font-normal text-foreground tracking-wide leading-none"
           >
-            HINDONIX<sup className="text-xs ml-0.5">®</sup>
+            H I N D O N I X<sup className="text-xs ml-0.5">®</sup>
           </h3>
 
           {/* Contact Info */}

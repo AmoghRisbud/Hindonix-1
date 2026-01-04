@@ -44,13 +44,13 @@ const team = [
     name: "Sarvesh Todkari",
     role: "Founder & CEO",
     image: "/images/about/Sarvesh_cropped.PNG",
-    bio: "Founder of Hindonix",
+    bio: "Hindonix International",
   },
   {
     name: "Makrand Gangan",
     role: "Sales Executive",
     image: "/images/about/Makrand_cropped.PNG",
-    bio: "Sales executive of Hindonix",
+    bio: "Hindonix International",
   },
 ];
 

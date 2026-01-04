@@ -382,10 +382,10 @@ const Contact = () => {
                         Email
                       </h4>
                       <a
-                        href="mailto:info@hindonix.com"
+                        href="mailto:sales@hindonix.com"
                         className="text-foreground hover:text-accent transition-colors"
                       >
-                        info@hindonix.com
+                        sales@hindonix.com
                       </a>
                     </div>
                   </div>

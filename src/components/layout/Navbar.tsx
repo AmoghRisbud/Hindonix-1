@@ -51,11 +51,11 @@ export function Navbar() {
             <span
               style={{ fontFamily: '"Times New Roman", Times, serif' }}
               className={cn(
-                "font-heading font-bold text-2xl tracking-wide transition-colors",
+                "font-heading text-2xl tracking-wide transition-colors leading-none -translate-y-3",
                 isScrolled ? "text-foreground" : "text-foreground"
               )}
             >
-              HINDONIX<sup className="text-xs ml-0.5">®</sup>
+              H I N D O N I X<sup className="text-xs ml-0.5">®</sup>
             </span>
           </Link>
 
