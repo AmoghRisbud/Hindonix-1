@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ImageDisplay } from "@/components/ImageDisplay";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, TrendingUp, Clock, Package, MapPin } from "lucide-react";
+import { ArrowRight, TrendingUp, Clock, Package, MapPin, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { getCaseStudies, type CaseStudy } from "@/lib/data";
@@ -12,10 +12,23 @@ const filters = ["All", "Export", "Import", "Logistics", "Consulting"];
 
 const CaseStudies = () => {
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
 
   useEffect(() => {
-    setCaseStudies(getCaseStudies());
+    const loadCaseStudies = async () => {
+      try {
+        setLoading(true);
+        const data = await getCaseStudies();
+        setCaseStudies(data);
+      } catch (error) {
+        console.error("Error loading case studies:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCaseStudies();
   }, []);
 
   const filteredCases = caseStudies.filter(
@@ -65,7 +78,15 @@ const CaseStudies = () => {
             ))}
           </div>
 
+          {/* Loading State */}
+          {loading && (
+            <div className="flex justify-center items-center py-16">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          )}
+
           {/* Case Studies Grid */}
+          {!loading && (
           <div className="grid lg:grid-cols-2 gap-8">
             {filteredCases.map((study) => (
               <div
@@ -141,6 +162,7 @@ const CaseStudies = () => {
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 

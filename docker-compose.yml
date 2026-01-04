@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  hindonix:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hindonix-app
+    ports:
+      - "8080:80"
+    environment:
+      # These environment variables are injected at container startup
+      # They can be overridden via .env file or command line
+      - VITE_UPSTASH_REDIS_REST_URL=${VITE_UPSTASH_REDIS_REST_URL}
+      - VITE_UPSTASH_REDIS_REST_TOKEN=${VITE_UPSTASH_REDIS_REST_TOKEN}
+      - VITE_CLOUDINARY_CLOUD_NAME=${VITE_CLOUDINARY_CLOUD_NAME}
+      - VITE_CLOUDINARY_UPLOAD_PRESET=${VITE_CLOUDINARY_UPLOAD_PRESET}
+      - VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+# Optional: Use env_file instead of environment variables
+# services:
+#   hindonix:
+#     env_file:
+#       - .env.production

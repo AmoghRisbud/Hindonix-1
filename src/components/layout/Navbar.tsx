@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { UserButton, useAuth } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -11,12 +12,12 @@ const navLinks = [
   { name: "Products", path: "/products" },
   { name: "Case Studies", path: "/case-studies" },
   { name: "Contact", path: "/contact" },
-  { name: "Admin", path: "/admin" },
 ];
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { isSignedIn } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -79,20 +80,72 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
+            {isSignedIn && (
+              <Link
+                to="/admin"
+                className={cn(
+                  "px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200",
+                  location.pathname === "/admin"
+                    ? isScrolled
+                      ? "text-primary bg-primary/5 font-semibold"
+                      : "text-white bg-white/10 font-semibold"
+                    : isScrolled
+                    ? "text-foreground hover:text-primary hover:bg-primary/5"
+                    : "text-white/90 hover:text-white hover:bg-white/10"
+                )}
+              >
+                Admin
+              </Link>
+            )}
           </div>
 
-          {/* CTA Button */}
+          {/* CTA Button & Auth */}
           <div className="hidden lg:flex items-center gap-4">
-            <Button
-              variant={isScrolled ? "accent" : "default"}
-              size="default"
-              asChild
-              className={cn(
-                !isScrolled && "bg-white text-primary hover:bg-white/90"
-              )}
-            >
-              <Link to="/contact">Get a Quote</Link>
-            </Button>
+            {!isSignedIn ? (
+              <>
+                <Button
+                  variant={isScrolled ? "outline" : "ghost"}
+                  size="default"
+                  asChild
+                  className={cn(
+                    !isScrolled && "text-white hover:bg-white/10 border-white/20"
+                  )}
+                >
+                  <Link to="/login">Sign In</Link>
+                </Button>
+                <Button
+                  variant={isScrolled ? "accent" : "default"}
+                  size="default"
+                  asChild
+                  className={cn(
+                    !isScrolled && "bg-white text-primary hover:bg-white/90"
+                  )}
+                >
+                  <Link to="/contact">Get a Quote</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant={isScrolled ? "accent" : "default"}
+                  size="default"
+                  asChild
+                  className={cn(
+                    !isScrolled && "bg-white text-primary hover:bg-white/90"
+                  )}
+                >
+                  <Link to="/contact">Get a Quote</Link>
+                </Button>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-9 h-9",
+                    },
+                  }}
+                  afterSignOutUrl="/"
+                />
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -112,7 +165,7 @@ export function Navbar() {
         <div
           className={cn(
             "lg:hidden overflow-hidden transition-all duration-300",
-            isOpen ? "max-h-[400px] mt-4" : "max-h-0"
+            isOpen ? "max-h-[500px] mt-4" : "max-h-0"
           )}
         >
           <div className="bg-card rounded-xl shadow-lg border border-border p-4 space-y-1">
@@ -130,10 +183,46 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
-            <div className="pt-3 mt-3 border-t border-border">
-              <Button variant="accent" size="lg" className="w-full" asChild>
-                <Link to="/contact">Get a Quote</Link>
-              </Button>
+            {isSignedIn && (
+              <Link
+                to="/admin"
+                className={cn(
+                  "block px-4 py-3 rounded-lg font-medium transition-colors",
+                  location.pathname === "/admin"
+                    ? "text-accent bg-accent/10"
+                    : "text-foreground hover:text-accent hover:bg-accent/5"
+                )}
+              >
+                Admin
+              </Link>
+            )}
+            <div className="pt-3 mt-3 border-t border-border space-y-2">
+              {!isSignedIn ? (
+                <>
+                  <Button variant="outline" size="lg" className="w-full" asChild>
+                    <Link to="/login">Sign In</Link>
+                  </Button>
+                  <Button variant="accent" size="lg" className="w-full" asChild>
+                    <Link to="/contact">Get a Quote</Link>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="accent" size="lg" className="w-full" asChild>
+                    <Link to="/contact">Get a Quote</Link>
+                  </Button>
+                  <div className="flex items-center justify-center pt-2">
+                    <UserButton
+                      appearance={{
+                        elements: {
+                          avatarBox: "w-10 h-10",
+                        },
+                      }}
+                      afterSignOutUrl="/"
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

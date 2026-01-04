@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ImageDisplay } from "@/components/ImageDisplay";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Search, Filter, Package } from "lucide-react";
+import { ArrowRight, Search, Filter, Package, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { getProducts, type Product } from "@/lib/data";
@@ -27,11 +27,24 @@ const finishes = [
 
 const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All Products");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    setProducts(getProducts());
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await getProducts();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error loading products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
   }, []);
 
   const filteredProducts = products.filter((product) => {
@@ -101,8 +114,15 @@ const Products = () => {
             </div>
           </div>
 
+          {/* Loading State */}
+          {loading && (
+            <div className="flex justify-center items-center py-16">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          )}
+
           {/* Products Grid */}
-          {filteredProducts.length > 0 ? (
+          {!loading && filteredProducts.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProducts.map((product, index) => (
                 <div
@@ -165,6 +185,7 @@ const Products = () => {
               ))}
             </div>
           ) : (
+            !loading && (
             <div className="text-center py-20">
               <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="font-heading text-xl font-semibold text-foreground mb-2">
@@ -174,6 +195,7 @@ const Products = () => {
                 Try adjusting your search or filter criteria.
               </p>
             </div>
+            )
           )}
         </div>
       </section>

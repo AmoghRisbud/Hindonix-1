@@ -1,4 +1,16 @@
 // Shared data store for products and case studies
+// Now uses Redis for persistence via redis.ts module
+import {
+  getAllProducts,
+  addProductToRedis,
+  updateProductInRedis,
+  deleteProductFromRedis,
+  getAllCaseStudies,
+  addCaseStudyToRedis,
+  updateCaseStudyInRedis,
+  deleteCaseStudyFromRedis,
+} from "./redis";
+
 export interface Product {
   id: number;
   name: string;
@@ -22,7 +34,7 @@ export interface CaseStudy {
   stats: { label: string; value: string }[];
 }
 
-const defaultProducts: Product[] = [
+const defaultProductsData: Product[] = [
   {
     id: 1,
     name: "Classic Brass Knob",
@@ -114,7 +126,7 @@ const defaultProducts: Product[] = [
   },
 ];
 
-const defaultCaseStudies: CaseStudy[] = [
+const defaultCaseStudiesData: CaseStudy[] = [
   {
     id: 1,
     title: "Scaling Hardware Exports to the Middle East",
@@ -177,94 +189,46 @@ const defaultCaseStudies: CaseStudy[] = [
   },
 ];
 
-// Initialize data from localStorage or use defaults
-const loadProducts = (): Product[] => {
-  if (typeof window === "undefined") return defaultProducts;
-  const stored = localStorage.getItem("hindonix_products");
-  return stored ? JSON.parse(stored) : defaultProducts;
+// Export default data for initialization purposes
+export const defaultProducts = defaultProductsData;
+export const defaultCaseStudies = defaultCaseStudiesData;
+
+// Product management functions - now async with Redis
+export const getProducts = async (): Promise<Product[]> => {
+  return await getAllProducts();
 };
 
-const loadCaseStudies = (): CaseStudy[] => {
-  if (typeof window === "undefined") return defaultCaseStudies;
-  const stored = localStorage.getItem("hindonix_case_studies");
-  return stored ? JSON.parse(stored) : defaultCaseStudies;
+export const addProduct = async (product: Omit<Product, "id">): Promise<Product> => {
+  return await addProductToRedis(product);
 };
 
-const saveProducts = (products: Product[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("hindonix_products", JSON.stringify(products));
-    window.dispatchEvent(new Event("dataUpdated"));
-  }
-};
-
-const saveCaseStudies = (caseStudies: CaseStudy[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("hindonix_case_studies", JSON.stringify(caseStudies));
-    window.dispatchEvent(new Event("dataUpdated"));
-  }
-};
-
-let products: Product[] = loadProducts();
-let caseStudies: CaseStudy[] = loadCaseStudies();
-
-// Product management functions
-export const getProducts = (): Product[] => {
-  products = loadProducts();
-  return products;
-};
-
-export const addProduct = (product: Omit<Product, "id">): Product => {
-  const newProduct = { ...product, id: Date.now() };
-  products = [...products, newProduct];
-  saveProducts(products);
-  return newProduct;
-};
-
-export const updateProduct = (
+export const updateProduct = async (
   id: number,
   updates: Partial<Product>
-): Product | null => {
-  const index = products.findIndex((p) => p.id === id);
-  if (index === -1) return null;
-  products[index] = { ...products[index], ...updates };
-  saveProducts(products);
-  return products[index];
+): Promise<Product | null> => {
+  return await updateProductInRedis(id, updates);
 };
 
-export const deleteProduct = (id: number): boolean => {
-  const initialLength = products.length;
-  products = products.filter((p) => p.id !== id);
-  saveProducts(products);
-  return products.length < initialLength;
+export const deleteProduct = async (id: number): Promise<boolean> => {
+  return await deleteProductFromRedis(id);
 };
 
-// Case Study management functions
-export const getCaseStudies = (): CaseStudy[] => {
-  caseStudies = loadCaseStudies();
-  return caseStudies;
+// Case Study management functions - now async with Redis
+export const getCaseStudies = async (): Promise<CaseStudy[]> => {
+  return await getAllCaseStudies();
 };
 
-export const addCaseStudy = (caseStudy: Omit<CaseStudy, "id">): CaseStudy => {
-  const newCaseStudy = { ...caseStudy, id: Date.now() };
-  caseStudies = [...caseStudies, newCaseStudy];
-  saveCaseStudies(caseStudies);
-  return newCaseStudy;
+export const addCaseStudy = async (caseStudy: Omit<CaseStudy, "id">): Promise<CaseStudy> => {
+  return await addCaseStudyToRedis(caseStudy);
 };
 
-export const updateCaseStudy = (
+export const updateCaseStudy = async (
   id: number,
   updates: Partial<CaseStudy>
-): CaseStudy | null => {
-  const index = caseStudies.findIndex((cs) => cs.id === id);
-  if (index === -1) return null;
-  caseStudies[index] = { ...caseStudies[index], ...updates };
-  saveCaseStudies(caseStudies);
-  return caseStudies[index];
+): Promise<CaseStudy | null> => {
+  return await updateCaseStudyInRedis(id, updates);
 };
 
-export const deleteCaseStudy = (id: number): boolean => {
-  const initialLength = caseStudies.length;
-  caseStudies = caseStudies.filter((cs) => cs.id !== id);
-  saveCaseStudies(caseStudies);
-  return caseStudies.length < initialLength;
+export const deleteCaseStudy = async (id: number): Promise<boolean> => {
+  return await deleteCaseStudyFromRedis(id);
 };

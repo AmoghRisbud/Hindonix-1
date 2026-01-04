@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ImageDisplay } from "@/components/ImageDisplay";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Package, FileText } from "lucide-react";
+import { Plus, Edit, Trash2, Package, FileText, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import {
   getProducts,
@@ -17,6 +17,7 @@ import {
   type Product,
   type CaseStudy,
 } from "@/lib/data";
+import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -40,8 +41,10 @@ const productCategories = ["Knobs", "Door Handles", "Pull Handles"];
 const caseStudyCategories = ["Export", "Import", "Logistics", "Consulting"];
 
 const Admin = () => {
-  const [products, setProducts] = useState<Product[]>(getProducts());
-  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>(getCaseStudies());
+  const [products, setProducts] = useState<Product[]>([]);
+  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [caseStudyDialogOpen, setCaseStudyDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -54,27 +57,31 @@ const Admin = () => {
   );
   const { toast } = useToast();
 
-  // Reload data on component mount and when localStorage changes
+  // Load data on component mount
   useEffect(() => {
-    const reloadData = () => {
-      setProducts(getProducts());
-      setCaseStudies(getCaseStudies());
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [productsData, caseStudiesData] = await Promise.all([
+          getProducts(),
+          getCaseStudies(),
+        ]);
+        setProducts(productsData);
+        setCaseStudies(caseStudiesData);
+      } catch (error) {
+        console.error("Error loading data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load data from Redis. Please check your configuration.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     };
 
-    // Reload on mount
-    reloadData();
-
-    // Listen for storage changes from other tabs/windows
-    window.addEventListener("storage", reloadData);
-
-    // Custom event for same-tab updates
-    window.addEventListener("dataUpdated", reloadData);
-
-    return () => {
-      window.removeEventListener("storage", reloadData);
-      window.removeEventListener("dataUpdated", reloadData);
-    };
-  }, []);
+    loadData();
+  }, [toast]);
 
   // Product form state
   const [productForm, setProductForm] = useState({
@@ -99,26 +106,32 @@ const Admin = () => {
     stats: "",
   });
 
-  // Image upload handlers
+  // Image upload handlers with Cloudinary
   const handleProductImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
     if (file) {
       setProductImageFile(file);
+      setUploading(true);
 
-      // Convert image to base64
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        // Store with unique key
-        const imageKey = `product_image_${Date.now()}_${file.name}`;
-        if (typeof window !== "undefined") {
-          localStorage.setItem(imageKey, base64String);
-        }
-        setProductForm({ ...productForm, image: imageKey });
-      };
-      reader.readAsDataURL(file);
+      try {
+        const result = await uploadImageToCloudinary(file);
+        setProductForm({ ...productForm, image: result.secure_url });
+        toast({
+          title: "Image Uploaded",
+          description: "Image uploaded successfully to Cloudinary.",
+        });
+      } catch (error) {
+        console.error("Image upload error:", error);
+        toast({
+          title: "Upload Error",
+          description: error instanceof Error ? error.message : "Failed to upload image",
+          variant: "destructive",
+        });
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -128,19 +141,25 @@ const Admin = () => {
     const file = e.target.files?.[0];
     if (file) {
       setCaseStudyImageFile(file);
+      setUploading(true);
 
-      // Convert image to base64
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        // Store with unique key
-        const imageKey = `casestudy_image_${Date.now()}_${file.name}`;
-        if (typeof window !== "undefined") {
-          localStorage.setItem(imageKey, base64String);
-        }
-        setCaseStudyForm({ ...caseStudyForm, image: imageKey });
-      };
-      reader.readAsDataURL(file);
+      try {
+        const result = await uploadImageToCloudinary(file);
+        setCaseStudyForm({ ...caseStudyForm, image: result.secure_url });
+        toast({
+          title: "Image Uploaded",
+          description: "Image uploaded successfully to Cloudinary.",
+        });
+      } catch (error) {
+        console.error("Image upload error:", error);
+        toast({
+          title: "Upload Error",
+          description: error instanceof Error ? error.message : "Failed to upload image",
+          variant: "destructive",
+        });
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -172,18 +191,31 @@ const Admin = () => {
     setProductDialogOpen(true);
   };
 
-  const handleDeleteProduct = (id: number) => {
+  const handleDeleteProduct = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      deleteProduct(id);
-      setProducts(getProducts());
-      toast({
-        title: "Product Deleted",
-        description: "The product has been successfully deleted.",
-      });
+      try {
+        setLoading(true);
+        await deleteProduct(id);
+        const updatedProducts = await getProducts();
+        setProducts(updatedProducts);
+        toast({
+          title: "Product Deleted",
+          description: "The product has been successfully deleted.",
+        });
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        toast({
+          title: "Error",
+          description: "Failed to delete product.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  const handleSaveProduct = () => {
+  const handleSaveProduct = async () => {
     const finishesArray = productForm.finishes
       .split(",")
       .map((f) => f.trim())
@@ -202,37 +234,51 @@ const Admin = () => {
       return;
     }
 
-    if (editingProduct) {
-      updateProduct(editingProduct.id, {
-        name: productForm.name,
-        category: productForm.category,
-        subcategory: productForm.subcategory,
-        description: productForm.description,
-        image: productForm.image,
-        finishes: finishesArray,
-      });
-      toast({
-        title: "Product Updated",
-        description: "The product has been successfully updated.",
-      });
-    } else {
-      addProduct({
-        name: productForm.name,
-        category: productForm.category,
-        subcategory: productForm.subcategory,
-        description: productForm.description,
-        image: productForm.image,
-        finishes: finishesArray,
-      });
-      toast({
-        title: "Product Added",
-        description: "The product has been successfully added.",
-      });
-    }
+    try {
+      setLoading(true);
+      
+      if (editingProduct) {
+        await updateProduct(editingProduct.id, {
+          name: productForm.name,
+          category: productForm.category,
+          subcategory: productForm.subcategory,
+          description: productForm.description,
+          image: productForm.image,
+          finishes: finishesArray,
+        });
+        toast({
+          title: "Product Updated",
+          description: "The product has been successfully updated.",
+        });
+      } else {
+        await addProduct({
+          name: productForm.name,
+          category: productForm.category,
+          subcategory: productForm.subcategory,
+          description: productForm.description,
+          image: productForm.image,
+          finishes: finishesArray,
+        });
+        toast({
+          title: "Product Added",
+          description: "The product has been successfully added.",
+        });
+      }
 
-    setProducts(getProducts());
-    setProductDialogOpen(false);
-    setProductImageFile(null);
+      const updatedProducts = await getProducts();
+      setProducts(updatedProducts);
+      setProductDialogOpen(false);
+      setProductImageFile(null);
+    } catch (error) {
+      console.error("Error saving product:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save product.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Case Study handlers
@@ -269,18 +315,31 @@ const Admin = () => {
     setCaseStudyDialogOpen(true);
   };
 
-  const handleDeleteCaseStudy = (id: number) => {
+  const handleDeleteCaseStudy = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this case study?")) {
-      deleteCaseStudy(id);
-      setCaseStudies(getCaseStudies());
-      toast({
-        title: "Case Study Deleted",
-        description: "The case study has been successfully deleted.",
-      });
+      try {
+        setLoading(true);
+        await deleteCaseStudy(id);
+        const updatedCaseStudies = await getCaseStudies();
+        setCaseStudies(updatedCaseStudies);
+        toast({
+          title: "Case Study Deleted",
+          description: "The case study has been successfully deleted.",
+        });
+      } catch (error) {
+        console.error("Error deleting case study:", error);
+        toast({
+          title: "Error",
+          description: "Failed to delete case study.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  const handleSaveCaseStudy = () => {
+  const handleSaveCaseStudy = async () => {
     const statsArray = caseStudyForm.stats
       .split(",")
       .map((s) => {
@@ -303,43 +362,57 @@ const Admin = () => {
       return;
     }
 
-    if (editingCaseStudy) {
-      updateCaseStudy(editingCaseStudy.id, {
-        title: caseStudyForm.title,
-        client: caseStudyForm.client,
-        category: caseStudyForm.category,
-        location: caseStudyForm.location,
-        image: caseStudyForm.image,
-        problem: caseStudyForm.problem,
-        solution: caseStudyForm.solution,
-        outcome: caseStudyForm.outcome,
-        stats: statsArray,
-      });
-      toast({
-        title: "Case Study Updated",
-        description: "The case study has been successfully updated.",
-      });
-    } else {
-      addCaseStudy({
-        title: caseStudyForm.title,
-        client: caseStudyForm.client,
-        category: caseStudyForm.category,
-        location: caseStudyForm.location,
-        image: caseStudyForm.image,
-        problem: caseStudyForm.problem,
-        solution: caseStudyForm.solution,
-        outcome: caseStudyForm.outcome,
-        stats: statsArray,
-      });
-      toast({
-        title: "Case Study Added",
-        description: "The case study has been successfully added.",
-      });
-    }
+    try {
+      setLoading(true);
 
-    setCaseStudies(getCaseStudies());
-    setCaseStudyDialogOpen(false);
-    setCaseStudyImageFile(null);
+      if (editingCaseStudy) {
+        await updateCaseStudy(editingCaseStudy.id, {
+          title: caseStudyForm.title,
+          client: caseStudyForm.client,
+          category: caseStudyForm.category,
+          location: caseStudyForm.location,
+          image: caseStudyForm.image,
+          problem: caseStudyForm.problem,
+          solution: caseStudyForm.solution,
+          outcome: caseStudyForm.outcome,
+          stats: statsArray,
+        });
+        toast({
+          title: "Case Study Updated",
+          description: "The case study has been successfully updated.",
+        });
+      } else {
+        await addCaseStudy({
+          title: caseStudyForm.title,
+          client: caseStudyForm.client,
+          category: caseStudyForm.category,
+          location: caseStudyForm.location,
+          image: caseStudyForm.image,
+          problem: caseStudyForm.problem,
+          solution: caseStudyForm.solution,
+          outcome: caseStudyForm.outcome,
+          stats: statsArray,
+        });
+        toast({
+          title: "Case Study Added",
+          description: "The case study has been successfully added.",
+        });
+      }
+
+      const updatedCaseStudies = await getCaseStudies();
+      setCaseStudies(updatedCaseStudies);
+      setCaseStudyDialogOpen(false);
+      setCaseStudyImageFile(null);
+    } catch (error) {
+      console.error("Error saving case study:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save case study.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -363,6 +436,13 @@ const Admin = () => {
       {/* Admin Content */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
+          {loading && (
+            <div className="flex justify-center items-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          )}
+
+          {!loading && (
           <Tabs defaultValue="products" className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
               <TabsTrigger value="products">Products</TabsTrigger>
@@ -494,6 +574,7 @@ const Admin = () => {
               </div>
             </TabsContent>
           </Tabs>
+          )}
         </div>
       </section>
 
@@ -576,10 +657,17 @@ const Admin = () => {
                 accept="image/*"
                 onChange={handleProductImageUpload}
                 className="cursor-pointer"
+                disabled={uploading}
               />
-              {productForm.image && (
+              {uploading && (
+                <p className="text-sm text-primary mt-1 flex items-center gap-2">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Uploading to Cloudinary...
+                </p>
+              )}
+              {productForm.image && !uploading && (
                 <p className="text-sm text-muted-foreground mt-1">
-                  Path: {productForm.image}
+                  URL: {productForm.image}
                 </p>
               )}
             </div>
@@ -600,11 +688,19 @@ const Admin = () => {
             <Button
               variant="outline"
               onClick={() => setProductDialogOpen(false)}
+              disabled={uploading || loading}
             >
               Cancel
             </Button>
-            <Button onClick={handleSaveProduct}>
-              {editingProduct ? "Update" : "Add"} Product
+            <Button onClick={handleSaveProduct} disabled={uploading || loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                `${editingProduct ? "Update" : "Add"} Product`
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -688,10 +784,17 @@ const Admin = () => {
                 accept="image/*"
                 onChange={handleCaseStudyImageUpload}
                 className="cursor-pointer"
+                disabled={uploading}
               />
-              {caseStudyForm.image && (
+              {uploading && (
+                <p className="text-sm text-primary mt-1 flex items-center gap-2">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Uploading to Cloudinary...
+                </p>
+              )}
+              {caseStudyForm.image && !uploading && (
                 <p className="text-sm text-muted-foreground mt-1">
-                  Path: {caseStudyForm.image}
+                  URL: {caseStudyForm.image}
                 </p>
               )}
             </div>
@@ -759,11 +862,19 @@ const Admin = () => {
             <Button
               variant="outline"
               onClick={() => setCaseStudyDialogOpen(false)}
+              disabled={uploading || loading}
             >
               Cancel
             </Button>
-            <Button onClick={handleSaveCaseStudy}>
-              {editingCaseStudy ? "Update" : "Add"} Case Study
+            <Button onClick={handleSaveCaseStudy} disabled={uploading || loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                `${editingCaseStudy ? "Update" : "Add"} Case Study`
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
