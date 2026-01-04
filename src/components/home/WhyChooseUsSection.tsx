@@ -5,15 +5,17 @@ import {
   Globe,
   CheckCircle,
   TrendingUp,
+  Factory,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const reasons = [
   {
-    icon: Award,
-    title: "10+ Years Expertise",
+    icon: Clock,
+    title: "Responsive Service",
     description:
-      "Decade of experience crafting premium architectural hardware for luxury projects.",
+      "Quick quotes, sample availability, and dedicated support for all your hardware needs.",
   },
   {
     icon: Globe,
@@ -28,10 +30,10 @@ const reasons = [
       "Tailored solutions for architects, designers, and construction professionals.",
   },
   {
-    icon: Clock,
-    title: "Responsive Service",
+    icon: Award,
+    title: "10+ Years Expertise",
     description:
-      "Quick quotes, sample availability, and dedicated support for all your hardware needs.",
+      "Decade of experience crafting premium architectural hardware for luxury projects.",
   },
 ];
 
@@ -44,83 +46,126 @@ const stats = [
 
 export function WhyChooseUsSection() {
   return (
-    <section className="py-20 lg:py-28 bg-background">
+    <section className="py-16 lg:py-20 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left Content */}
-          <div>
-            <span className="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-4">
+        <div className="grid lg:grid-cols-2 gap-10 items-stretch">
+          {/* Industry Expertise (left) */}
+          <div className="bg-card rounded-3xl p-6 lg:p-8 shadow-card border border-border/50 flex flex-col justify-between">
+            <div>
+              <span className="inline-block text-accent font-semibold text-xs uppercase tracking-wider mb-3">
+                Industry Expertise
+              </span>
+              <h3 className="font-heading text-2xl lg:text-3xl font-bold text-foreground mb-3">
+                Specialized in Architectural Hardware
+              </h3>
+              <p className="text-muted-foreground text-sm lg:text-base mb-5 leading-relaxed">
+                Since 2025, we've been crafting premium architectural hardware
+                for luxury residential and commercial projects. Our expertise in
+                material selection, finish quality, and ergonomic design ensures
+                hardware that performs beautifully for decades.
+              </p>
+              <div className="flex flex-wrap gap-2.5 mb-6">
+                {[
+                  "Brass Knobs",
+                  "Wooden Knobs",
+                  "Door Handles",
+                  "Pull Handles",
+                  "PVD Finishes",
+                  "Custom Solutions",
+                ].map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1.5 rounded-full text-xs font-semibold border border-accent/40 bg-accent/10 text-foreground shadow-sm shadow-accent/10 hover:bg-accent hover:text-accent-foreground transition-colors"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-secondary rounded-2xl p-5 text-center">
+                <Factory className="w-10 h-10 text-accent mx-auto mb-3" />
+                <div className="text-xl font-heading font-bold text-foreground">
+                  10+
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Years Experience
+                </div>
+              </div>
+              <div className="bg-secondary rounded-2xl p-5 text-center">
+                <Shield className="w-10 h-10 text-accent mx-auto mb-3" />
+                <div className="text-xl font-heading font-bold text-foreground">
+                  100%
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Quality Assured
+                </div>
+              </div>
+              <div className="bg-primary rounded-2xl p-5 text-center col-span-2">
+                <div className="text-lg font-heading font-bold text-primary-foreground mb-1">
+                  UK & UAE Markets
+                </div>
+                <div className="text-xs text-primary-foreground/70">
+                  Serving B2B Partners Across Two Regions
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Why Choose Us (right) */}
+          <div className="bg-secondary rounded-3xl p-6 lg:p-8 shadow-card border border-border/50">
+            <span className="inline-block text-accent font-semibold text-xs uppercase tracking-wider mb-3">
               Why Choose Us
             </span>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground mb-6">
+            <h2 className="font-heading text-3xl lg:text-3xl font-bold text-foreground mb-3">
               Craftsmanship Meets Design Excellence
             </h2>
-            <p className="text-muted-foreground text-lg mb-10">
+            <p className="text-muted-foreground text-sm lg:text-base mb-6">
               We combine traditional craftsmanship with modern design to deliver
               architectural hardware that enhances every space with beauty,
               function, and lasting quality.
             </p>
 
-            <div className="grid sm:grid-cols-2 gap-6">
+            <div className="grid sm:grid-cols-2 gap-5 mb-6">
               {reasons.map((reason, index) => (
                 <div
                   key={reason.title}
                   className={cn("flex gap-4 opacity-0 animate-fade-in")}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                    <reason.icon className="w-6 h-6 text-accent" />
+                  <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <reason.icon className="w-5 h-5 text-accent" />
                   </div>
                   <div>
-                    <h3 className="font-heading font-semibold text-foreground mb-1">
+                    <h3 className="font-heading font-semibold text-foreground mb-0.5">
                       {reason.title}
                     </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
+                    <p className="text-muted-foreground text-xs lg:text-sm leading-relaxed">
                       {reason.description}
                     </p>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
 
-          {/* Right Content - Stats Grid */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 rounded-3xl blur-xl" />
-
-            <div className="relative bg-card rounded-3xl p-8 lg:p-10 shadow-card border border-border/50">
-              <div className="text-center mb-10">
-                <h3 className="font-heading text-2xl font-bold text-foreground mb-2">
-                  Our Impact in Numbers
-                </h3>
-                <p className="text-muted-foreground">
-                  Measurable results that speak to our commitment
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
-                {stats.map((stat, index) => (
-                  <div
-                    key={stat.label}
-                    className={cn(
-                      "text-center p-6 rounded-2xl bg-secondary opacity-0 animate-scale-in"
-                    )}
-                    style={{ animationDelay: `${0.3 + index * 0.1}s` }}
-                  >
-                    <stat.icon className="w-8 h-8 text-accent mx-auto mb-3" />
-                    <div className="text-3xl lg:text-4xl font-heading font-bold text-foreground mb-1">
-                      {stat.value}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {stat.label}
-                    </div>
+            <div className="grid grid-cols-2 gap-3">
+              {stats.map((stat, index) => (
+                <div
+                  key={stat.label}
+                  className={cn(
+                    "text-center p-5 rounded-2xl bg-card border border-border/60 opacity-0 animate-scale-in"
+                  )}
+                  style={{ animationDelay: `${0.2 + index * 0.1}s` }}
+                >
+                  <stat.icon className="w-6 h-6 text-accent mx-auto mb-2" />
+                  <div className="text-xl lg:text-2xl font-heading font-bold text-foreground mb-0.5">
+                    {stat.value}
                   </div>
-                ))}
-              </div>
-
-              {/* Decorative Element */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-accent/10 rounded-full blur-2xl" />
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
+                  <div className="text-xs text-muted-foreground">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

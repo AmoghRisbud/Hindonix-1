@@ -1,56 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const testimonials = [
-  {
-    id: 1,
-    name: "David Richardson",
-    role: "Lead Architect",
-    company: "Richardson & Partners",
-    location: "London, UK",
-    image: "/images/testimonials/client-1.jpg",
-    content:
-      "Hindonix hardware has become our go-to specification for luxury residential projects. The PVD finishes are exceptional and the quality is consistently outstanding.",
-    rating: 5,
-  },
-  {
-    id: 2,
-    name: "Sarah Mitchell",
-    role: "Interior Designer",
-    company: "Mitchell Design Studio",
-    location: "Dubai, UAE",
-    image: "/images/testimonials/client-2.jpg",
-    content:
-      "The attention to detail in Hindonix products is remarkable. Their brass knobs and door handles add that perfect finishing touch to our high-end projects.",
-    rating: 5,
-  },
-  {
-    id: 3,
-    name: "James Thompson",
-    role: "Project Manager",
-    company: "Thompson Construction",
-    location: "Manchester, UK",
-    image: "/images/testimonials/client-3.jpg",
-    content:
-      "Reliable delivery and consistent quality. Hindonix has never let us down on our commercial projects. Their range of finishes meets all our specification needs.",
-    rating: 5,
-  },
-  {
-    id: 4,
-    name: "Fatima Al-Mansoori",
-    role: "Procurement Director",
-    company: "Al-Mansoori Developments",
-    location: "Abu Dhabi, UAE",
-    image: "/images/testimonials/client-4.jpg",
-    content:
-      "Outstanding B2B partnership. Hindonix understands the demands of large-scale projects and delivers premium hardware that exceeds expectations every time.",
-    rating: 5,
-  },
-];
+import { getTestimonials, type Testimonial } from "@/lib/data";
+import { ImageDisplay } from "@/components/ImageDisplay";
 
 export function TestimonialsSection() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(
+    getTestimonials()
+  );
   const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const reload = () => setTestimonials(getTestimonials());
+    reload();
+    window.addEventListener("storage", reload);
+    window.addEventListener("dataUpdated", reload);
+    return () => {
+      window.removeEventListener("storage", reload);
+      window.removeEventListener("dataUpdated", reload);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (activeIndex >= testimonials.length) {
+      setActiveIndex(0);
+    }
+  }, [testimonials.length, activeIndex]);
+
+  if (!testimonials.length) return null;
 
   const nextSlide = () => {
     setActiveIndex((prev) => (prev + 1) % testimonials.length);
@@ -95,6 +72,15 @@ export function TestimonialsSection() {
 
               {/* Author */}
               <div className="flex items-center gap-4">
+                {testimonials[activeIndex].image ? (
+                  <div className="w-14 h-14 rounded-full overflow-hidden bg-secondary flex-shrink-0">
+                    <ImageDisplay
+                      src={testimonials[activeIndex].image as string}
+                      alt={testimonials[activeIndex].name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : null}
                 <div>
                   <div className="font-heading font-semibold text-foreground text-lg">
                     {testimonials[activeIndex].name}
@@ -106,6 +92,18 @@ export function TestimonialsSection() {
                   <div className="text-accent text-sm font-medium">
                     {testimonials[activeIndex].location}
                   </div>
+                  {testimonials[activeIndex].rating ? (
+                    <div className="flex items-center gap-1 mt-2">
+                      {Array.from({
+                        length: testimonials[activeIndex].rating,
+                      }).map((_, idx) => (
+                        <Star
+                          key={idx}
+                          className="w-4 h-4 fill-accent text-accent"
+                        />
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>

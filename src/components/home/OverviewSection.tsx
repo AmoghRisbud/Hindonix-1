@@ -1,4 +1,12 @@
-import { Package, Truck, Users, Globe, Factory, Shield } from "lucide-react";
+import {
+  Package,
+  Truck,
+  Users,
+  Globe,
+  Factory,
+  Shield,
+  Settings,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const overviewCards = [
@@ -17,6 +25,15 @@ const overviewCards = [
       "Reliable logistics ensuring timely delivery to UK and UAE markets with careful handling.",
     stat: "98%",
     statLabel: "On-Time Delivery",
+  },
+  {
+    icon: Settings,
+    title: "Customizations",
+    description:
+      "Bespoke hardware tailored to your exact specifications with personalized finishes and designs.",
+    stat: "100%",
+    statLabel: "Customizable",
+    featured: true,
   },
   {
     icon: Users,
@@ -55,104 +72,86 @@ export function OverviewSection() {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
           {overviewCards.map((card, index) => (
             <div
               key={card.title}
               className={cn(
-                "group bg-card rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border border-border/50 hover:border-accent/30",
-                "opacity-0 animate-fade-in"
+                "group rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border",
+                "opacity-0 animate-fade-in",
+                card.featured
+                  ? "bg-gradient-to-br from-accent to-accent/80 border-accent shadow-lg"
+                  : "bg-card border-border/50 hover:border-accent/30"
               )}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center mb-5 group-hover:bg-accent group-hover:scale-110 transition-all duration-300">
-                <card.icon className="w-7 h-7 text-accent group-hover:text-accent-foreground transition-colors" />
+              <div
+                className={cn(
+                  "w-14 h-14 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-all duration-300",
+                  card.featured
+                    ? "bg-accent-foreground/10"
+                    : "bg-accent/10 group-hover:bg-accent"
+                )}
+              >
+                <card.icon
+                  className={cn(
+                    "w-7 h-7 transition-colors",
+                    card.featured
+                      ? "text-accent-foreground"
+                      : "text-accent group-hover:text-accent-foreground"
+                  )}
+                />
               </div>
 
-              <h3 className="font-heading text-xl font-semibold text-foreground mb-3">
+              <h3
+                className={cn(
+                  "font-heading text-xl font-semibold mb-3",
+                  card.featured ? "text-accent-foreground" : "text-foreground"
+                )}
+              >
                 {card.title}
               </h3>
 
-              <p className="text-muted-foreground text-sm mb-5 leading-relaxed">
+              <p
+                className={cn(
+                  "text-sm mb-5 leading-relaxed",
+                  card.featured
+                    ? "text-accent-foreground/90"
+                    : "text-muted-foreground"
+                )}
+              >
                 {card.description}
               </p>
 
-              <div className="pt-4 border-t border-border">
-                <div className="text-2xl font-heading font-bold text-accent">
+              <div
+                className={cn(
+                  "pt-4 border-t",
+                  card.featured
+                    ? "border-accent-foreground/20"
+                    : "border-border"
+                )}
+              >
+                <div
+                  className={cn(
+                    "text-2xl font-heading font-bold",
+                    card.featured ? "text-accent-foreground" : "text-accent"
+                  )}
+                >
                   {card.stat}
                 </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider">
+                <div
+                  className={cn(
+                    "text-xs uppercase tracking-wider",
+                    card.featured
+                      ? "text-accent-foreground/80"
+                      : "text-muted-foreground"
+                  )}
+                >
                   {card.statLabel}
                 </div>
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Industry Focus */}
-        <div className="mt-20 bg-card rounded-3xl p-8 lg:p-12 shadow-card border border-border/50">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
-            <div>
-              <span className="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-4">
-                Industry Expertise
-              </span>
-              <h3 className="font-heading text-2xl lg:text-3xl font-bold text-foreground mb-4">
-                Specialized in Architectural Hardware
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                Since 2025, we've been crafting premium architectural hardware
-                for luxury residential and commercial projects. Our expertise in
-                material selection, finish quality, and ergonomic design ensures
-                hardware that performs beautifully for decades.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {[
-                  "Brass Knobs",
-                  "Wooden Knobs",
-                  "Door Handles",
-                  "Pull Handles",
-                  "PVD Finishes",
-                  "Custom Solutions",
-                ].map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-4 py-2 bg-secondary rounded-full text-sm font-medium text-secondary-foreground"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-secondary rounded-2xl p-6 text-center">
-                <Factory className="w-10 h-10 text-accent mx-auto mb-3" />
-                <div className="text-2xl font-heading font-bold text-foreground">
-                  10+
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Years Experience
-                </div>
-              </div>
-              <div className="bg-secondary rounded-2xl p-6 text-center">
-                <Shield className="w-10 h-10 text-accent mx-auto mb-3" />
-                <div className="text-2xl font-heading font-bold text-foreground">
-                  100%
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Quality Assured
-                </div>
-              </div>
-              <div className="bg-primary rounded-2xl p-6 text-center col-span-2">
-                <div className="text-xl font-heading font-bold text-primary-foreground mb-1">
-                  UK & UAE Markets
-                </div>
-                <div className="text-sm text-primary-foreground/70">
-                  Serving B2B Partners Across Two Regions
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

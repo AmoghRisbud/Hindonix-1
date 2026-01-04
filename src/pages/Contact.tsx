@@ -1,10 +1,48 @@
-import { useState } from "react";
+import {
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type SVGProps,
+} from "react";
+import { useNavigate } from "react-router-dom";
+import { MapPin, Phone, Mail, Send } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { MapPin, Phone, Mail, Clock, Send, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+const WhatsAppLogo = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    role="img"
+    aria-hidden="true"
+    focusable="false"
+    {...props}
+  >
+    <circle cx="12" cy="12" r="12" fill="currentColor" />
+    <path
+      fill="#ffffff"
+      d="M17.57 14.357c-.297-.149-1.758-.867-2.031-.967-.273-.099-.471-.149-.669.149-.198.297-.769.967-.941 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.199-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.611-.916-2.204-.242-.579-.487-.5-.669-.51-.173-.009-.371-.01-.57-.01-.198 0-.52.074-.792.372-.273.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.718 2.006-1.413.248-.695.248-1.29.173-1.413-.074-.124-.272-.198-.57-.347z"
+    />
+    <path
+      fill="#ffffff"
+      d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.16 5.536 5.478.213 12.057.213c3.17.001 6.167 1.233 8.413 3.48 2.244 2.248 3.476 5.245 3.475 8.414-.003 6.579-5.326 11.897-11.908 11.897-1.99-.001-3.951-.5-5.688-1.448L.057 24zm6.346-4.588l.305.181a8.13 8.13 0 0 0 4.264 1.233h.003c4.476 0 8.118-3.64 8.12-8.114a8.04 8.04 0 0 0-2.361-5.743 8.1 8.1 0 0 0-5.262-2.24c-4.476 0-8.118 3.64-8.12 8.114a8.1 8.1 0 0 0 1.238 4.287l.196.311-.59 2.154 2.207-.579z"
+    />
+  </svg>
+);
+
+const LinkedInLogo = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    role="img"
+    aria-hidden="true"
+    focusable="false"
+    fill="currentColor"
+    {...props}
+  >
+    <path d="M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.454C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0zM7.09 20.452H3.56V9h3.53v11.452zM5.323 7.433a2.047 2.047 0 1 1 .003-4.095 2.047 2.047 0 0 1-.003 4.095zM20.452 20.452h-3.53v-5.569c0-1.328-.027-3.038-1.85-3.038-1.85 0-2.133 1.445-2.133 2.937v5.67H9.41V9h3.389v1.561h.047c.472-.896 1.623-1.84 3.34-1.84 3.574 0 4.266 2.352 4.266 5.408v6.323z" />
+  </svg>
+);
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +50,8 @@ const Contact = () => {
     email: "",
     phone: "",
     company: "",
+    country: "",
+    city: "",
     subject: "",
     message: "",
   });
@@ -30,32 +70,16 @@ const Contact = () => {
       newErrors.email = "Please enter a valid email";
     }
     if (!formData.phone.trim()) newErrors.phone = "Phone is required";
+    if (!formData.country.trim()) newErrors.country = "Country is required";
+    if (!formData.city.trim()) newErrors.city = "City is required";
     if (!formData.message.trim()) newErrors.message = "Message is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
-    setIsSubmitting(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    toast({
-      title: "Inquiry Submitted!",
-      description: "We'll get back to you within 24 hours.",
-    });
-
-    setIsSubmitting(false);
-    navigate("/thank-you");
-  };
-
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -64,11 +88,24 @@ const Contact = () => {
     }
   };
 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    toast({
+      title: "Inquiry Submitted!",
+      description: "We'll get back to you within 24 hours.",
+    });
+    setIsSubmitting(false);
+    navigate("/thank-you");
+  };
+
   return (
     <main className="min-h-screen">
       <Navbar />
 
-      {/* Hero Section */}
       <section className="pt-32 pb-12 gradient-hero">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
@@ -86,18 +123,15 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Form Section */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-12">
-            {/* Contact Form */}
             <div className="lg:col-span-2">
               <div className="bg-card rounded-3xl p-6 lg:p-10 shadow-card border border-border/50">
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">
                   Send us a message
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Name & Email Row */}
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div>
                       <label
@@ -146,7 +180,6 @@ const Contact = () => {
                     </div>
                   </div>
 
-                  {/* Phone & Company Row */}
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div>
                       <label
@@ -190,7 +223,54 @@ const Contact = () => {
                     </div>
                   </div>
 
-                  {/* Subject */}
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    <div>
+                      <label
+                        htmlFor="country"
+                        className="block text-sm font-medium text-foreground mb-2"
+                      >
+                        Country *
+                      </label>
+                      <input
+                        type="text"
+                        id="country"
+                        name="country"
+                        value={formData.country}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
+                        placeholder="United Kingdom"
+                      />
+                      {errors.country && (
+                        <p className="text-destructive text-sm mt-1">
+                          {errors.country}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="city"
+                        className="block text-sm font-medium text-foreground mb-2"
+                      >
+                        City *
+                      </label>
+                      <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
+                        placeholder="London"
+                      />
+                      {errors.city && (
+                        <p className="text-destructive text-sm mt-1">
+                          {errors.city}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
                   <div>
                     <label
                       htmlFor="subject"
@@ -209,7 +289,6 @@ const Contact = () => {
                     />
                   </div>
 
-                  {/* Message */}
                   <div>
                     <label
                       htmlFor="message"
@@ -233,7 +312,6 @@ const Contact = () => {
                     )}
                   </div>
 
-                  {/* Submit Button */}
                   <Button
                     type="submit"
                     size="lg"
@@ -253,14 +331,84 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* Contact Info Sidebar */}
             <div className="space-y-6">
-              {/* Contact Card */}
               <div className="bg-card rounded-2xl p-6 shadow-card border border-border/50">
                 <h3 className="font-heading text-xl font-bold text-foreground mb-6">
                   Contact Information
                 </h3>
                 <div className="space-y-5">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                      <WhatsAppLogo className="w-5 h-5 text-accent" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground mb-1">
+                        WhatsApp
+                      </h4>
+                      <a
+                        href="https://wa.me/+918850765050"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-accent font-medium hover:underline"
+                      >
+                        +91 8850765050
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                      <Phone className="w-5 h-5 text-accent" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground mb-1">
+                        Phone
+                      </h4>
+                      <a
+                        href="tel:+918850765050"
+                        className="text-muted-foreground text-sm hover:text-accent transition-colors"
+                      >
+                        +91 8850765050
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                      <Mail className="w-5 h-5 text-accent" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground mb-1">
+                        Email
+                      </h4>
+                      <a
+                        href="mailto:sales@hindonix.com"
+                        className="text-foreground hover:text-accent transition-colors"
+                      >
+                        sales@hindonix.com
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                      <LinkedInLogo className="w-5 h-5 text-accent" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground mb-1">
+                        LinkedIn
+                      </h4>
+                      <a
+                        href="https://www.linkedin.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-accent font-medium hover:underline"
+                      >
+                        Hindonix
+                      </a>
+                    </div>
+                  </div>
+
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
                       <MapPin className="w-5 h-5 text-accent" />
@@ -276,86 +424,9 @@ const Contact = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-5 h-5 text-accent" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-foreground mb-1">
-                        Phone
-                      </h4>
-                      <a
-                        href="tel:+91 8850765050"
-                        className="text-muted-foreground text-sm hover:text-accent transition-colors"
-                      >
-                        +91 8850765050
-                      </a>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-5 h-5 text-accent" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-foreground mb-1">
-                        Email
-                      </h4>
-                      <a
-                        href="mailto:info@hindonix.com"
-                        className="text-foreground hover:text-accent transition-colors"
-                      >
-                        info@hindonix.com
-                      </a>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                      <Clock className="w-5 h-5 text-accent" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-foreground mb-1">
-                        Working Hours
-                      </h4>
-                      <p className="text-muted-foreground text-sm">
-                        Sun - Thu: 9:00 AM - 6:00 PM
-                        <br />
-                        Fri - Sat: Closed
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </div>
 
-              {/* Quick Actions */}
-              <div className="bg-primary rounded-2xl p-6">
-                <h3 className="font-heading text-lg font-bold text-primary-foreground mb-4">
-                  Need Immediate Help?
-                </h3>
-                <div className="space-y-3">
-                  <a
-                    href="tel:+918850765050"
-                    className="flex items-center gap-3 bg-primary-foreground/10 rounded-xl p-4 hover:bg-primary-foreground/20 transition-colors"
-                  >
-                    <Phone className="w-5 h-5 text-accent" />
-                    <span className="text-primary-foreground font-medium">
-                      Call Us Now
-                    </span>
-                  </a>
-                  <a
-                    href="https://wa.me/+918850765050"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 bg-primary-foreground/10 rounded-xl p-4 hover:bg-primary-foreground/20 transition-colors"
-                  >
-                    <MessageCircle className="w-5 h-5 text-accent" />
-                    <span className="text-primary-foreground font-medium">
-                      WhatsApp Chat
-                    </span>
-                  </a>
-                </div>
-              </div>
-
-              {/* Map Placeholder */}
               <div className="bg-secondary rounded-2xl overflow-hidden h-64">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.178509324792!2d55.26585607538467!3d25.197201977706!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43348a67e24b%3A0xff45e502e1ceb7e2!2sBusiness%20Bay%20-%20Dubai%20-%20United%20Arab%20Emirates!5e0!3m2!1sen!2s!4v1704123456789!5m2!1sen!2s"

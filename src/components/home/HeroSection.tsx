@@ -1,152 +1,68 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Globe, Ship, Plane, TrendingUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { getHeroImage } from "@/lib/data";
+import { ImageDisplay } from "@/components/ImageDisplay";
 
 export function HeroSection() {
+  const [heroImage, setHeroImage] = useState<string>(getHeroImage());
+
+  useEffect(() => {
+    // Listen for hero image updates from admin
+    const handleHeroImageUpdate = () => {
+      setHeroImage(getHeroImage());
+    };
+
+    window.addEventListener("heroImageUpdated", handleHeroImageUpdate);
+    return () =>
+      window.removeEventListener("heroImageUpdated", handleHeroImageUpdate);
+  }, []);
+
   return (
-    <section className="relative min-h-screen flex items-center gradient-hero overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-accent rounded-full blur-3xl animate-float" />
-        <div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-primary-foreground rounded-full blur-3xl animate-float"
-          style={{ animationDelay: "1s" }}
-        />
-      </div>
-
-      {/* Removed grid pattern overlay for plain background */}
-
-      <div className="container mx-auto px-4 lg:px-8 pt-24 pb-16 relative z-10">
+    <section className="relative min-h-screen flex items-center bg-background">
+      {/* ===== Content ===== */}
+      <div className="container mx-auto px-6 lg:px-12 pt-28 pb-20">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left Content */}
+          {/* LEFT - TEXT CONTENT */}
           <div className="text-center lg:text-left">
-            <h1
-              className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight mb-6 animate-fade-in"
-              style={{ animationDelay: "0.1s" }}
-            >
-              Precision-Crafted{" "}
-              <span className="text-accent">Architectural Hardware</span>
+            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-medium text-foreground leading-tight mb-6">
+              Precision-Crafted
+              <span className="block text-foreground">
+                Architectural Hardware
+              </span>
             </h1>
 
-            <p
-              className="text-lg lg:text-xl text-primary-foreground/80 mb-8 max-w-xl mx-auto lg:mx-0 animate-fade-in"
-              style={{ animationDelay: "0.2s" }}
-            >
+            <p className="text-lg lg:text-xl text-foreground/70 mb-8 max-w-xl mx-auto lg:mx-0">
               Elevating spaces with meticulously designed knobs, door handles,
               and pull handles. Where functionality meets timeless aesthetics.
             </p>
 
-            <div
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in"
-              style={{ animationDelay: "0.3s" }}
-            >
-              <Button variant="hero" size="xl" asChild>
-                <Link to="/contact" className="gap-2">
-                  Request a Quote
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              </Button>
-              <Button variant="hero-outline" size="xl" asChild>
-                <Link to="/products">View Collection</Link>
-              </Button>
-            </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 font-medium hover:bg-foreground/90 transition"
+              >
+                Request a Quote
+                <ArrowRight className="w-5 h-5" />
+              </Link>
 
-            {/* Trust Indicators */}
-            <div
-              className="mt-12 pt-8 border-t border-primary-foreground/10 animate-fade-in"
-              style={{ animationDelay: "0.4s" }}
-            >
-              <p className="text-primary-foreground/60 text-sm mb-4">
-                Premium Finishes & Materials
-              </p>
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6">
-                <div className="flex items-center gap-2 text-primary-foreground/80">
-                  <div className="w-8 h-8 rounded bg-primary-foreground/10 flex items-center justify-center">
-                    <span className="font-bold text-xs">PVD</span>
-                  </div>
-                  <span className="text-sm">PVD Finishes</span>
-                </div>
-                <div className="flex items-center gap-2 text-primary-foreground/80">
-                  <div className="w-8 h-8 rounded bg-primary-foreground/10 flex items-center justify-center">
-                    <span className="font-bold text-xs">B2B</span>
-                  </div>
-                  <span className="text-sm">Trade Only</span>
-                </div>
-                <div className="flex items-center gap-2 text-primary-foreground/80">
-                  <div className="w-8 h-8 rounded bg-primary-foreground/10 flex items-center justify-center">
-                    <span className="font-bold text-xs">UK</span>
-                  </div>
-                  <span className="text-sm">UK & UAE</span>
-                </div>
-              </div>
+              <Link
+                to="/products"
+                className="inline-flex items-center justify-center px-6 py-3 border border-foreground/30 text-foreground hover:bg-foreground/5 transition"
+              >
+                View Collection
+              </Link>
             </div>
           </div>
 
-          {/* Right Content - Stats Cards */}
-          <div className="relative hidden lg:block">
-            <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-transparent rounded-3xl blur-2xl" />
-
-            <div className="relative grid grid-cols-2 gap-4">
-              <div
-                className="bg-primary-foreground/10 backdrop-blur-md rounded-2xl p-6 border border-primary-foreground/10 animate-fade-in"
-                style={{ animationDelay: "0.3s" }}
-              >
-                <Ship className="w-10 h-10 text-accent mb-4" />
-                <div className="text-3xl font-heading font-bold text-primary-foreground mb-1">
-                  50+
-                </div>
-                <p className="text-primary-foreground/70 text-sm">
-                  Countries Served
-                </p>
-              </div>
-
-              <div
-                className="bg-primary-foreground/10 backdrop-blur-md rounded-2xl p-6 border border-primary-foreground/10 animate-fade-in mt-8"
-                style={{ animationDelay: "0.4s" }}
-              >
-                <Plane className="w-10 h-10 text-accent mb-4" />
-                <div className="text-3xl font-heading font-bold text-primary-foreground mb-1">
-                  15K+
-                </div>
-                <p className="text-primary-foreground/70 text-sm">
-                  Shipments/Year
-                </p>
-              </div>
-
-              <div
-                className="bg-primary-foreground/10 backdrop-blur-md rounded-2xl p-6 border border-primary-foreground/10 animate-fade-in"
-                style={{ animationDelay: "0.5s" }}
-              >
-                <Globe className="w-10 h-10 text-accent mb-4" />
-                <div className="text-3xl font-heading font-bold text-primary-foreground mb-1">
-                  500+
-                </div>
-                <p className="text-primary-foreground/70 text-sm">
-                  Global Partners
-                </p>
-              </div>
-
-              <div
-                className="bg-primary-foreground/10 backdrop-blur-md rounded-2xl p-6 border border-primary-foreground/10 animate-fade-in mt-8"
-                style={{ animationDelay: "0.6s" }}
-              >
-                <TrendingUp className="w-10 h-10 text-accent mb-4" />
-                <div className="text-3xl font-heading font-bold text-primary-foreground mb-1">
-                  14+
-                </div>
-                <p className="text-primary-foreground/70 text-sm">
-                  Years Experience
-                </p>
-              </div>
-            </div>
+          {/* RIGHT - IMAGE */}
+          <div className="relative w-full hidden lg:block">
+            <ImageDisplay
+              src={heroImage}
+              alt="Architectural Hardware Collection"
+              className="w-full h-[450px] object-cover"
+            />
           </div>
-        </div>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 rounded-full border-2 border-primary-foreground/30 flex items-start justify-center p-2">
-          <div className="w-1.5 h-3 bg-accent rounded-full animate-pulse" />
         </div>
       </div>
     </section>

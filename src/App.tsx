@@ -7,9 +7,9 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import About from "./pages/About";
-import Services from "./pages/Services";
 import Products from "./pages/Products";
-import CaseStudies from "./pages/CaseStudies";
+import ProductDetail from "./pages/ProductDetail";
+import Blogs from "./pages/Blogs";
 import Contact from "./pages/Contact";
 import ThankYou from "./pages/ThankYou";
 import Admin from "./pages/Admin";
@@ -29,9 +29,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
-          <Route path="/services" element={<Services />} />
           <Route path="/products" element={<Products />} />
-          <Route path="/case-studies" element={<CaseStudies />} />
+          <Route path="/products/:id" element={<ProductDetail />} />
+          <Route path="/blogs" element={<Blogs />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/thank-you" element={<ThankYou />} />
           <Route path="/login" element={<Login />} />
