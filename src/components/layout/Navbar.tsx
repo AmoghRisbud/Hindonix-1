@@ -114,21 +114,13 @@ export function Navbar() {
                 >
                   <Link to="/login">Sign In</Link>
                 </Button>
-                <Button
-                  variant="accent"
-                  size="default"
-                  asChild
-                >
+                <Button variant="accent" size="default" asChild>
                   <Link to="/contact">Get a Quote</Link>
                 </Button>
               </>
             ) : (
               <>
-                <Button
-                  variant="accent"
-                  size="default"
-                  asChild
-                >
+                <Button variant="accent" size="default" asChild>
                   <Link to="/contact">Get a Quote</Link>
                 </Button>
                 <UserButton

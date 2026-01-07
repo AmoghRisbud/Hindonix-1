@@ -3,7 +3,17 @@ import { Footer } from "@/components/layout/Footer";
 import { ImageDisplay } from "@/components/ImageDisplay";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Package, FileText, Tags, Layers, Paintbrush, Loader2 } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Package,
+  FileText,
+  Tags,
+  Layers,
+  Paintbrush,
+  Loader2,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import {
   getProducts,
@@ -91,25 +101,27 @@ const Admin = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  
+
   // Taxonomy state
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [materialsList, setMaterialsList] = useState<Material[]>([]);
   const [finishesList, setFinishesList] = useState<Finish[]>([]);
-  const [finishCategoriesList, setFinishCategoriesList] = useState<FinishCategory[]>([]);
-  
+  const [finishCategoriesList, setFinishCategoriesList] = useState<
+    FinishCategory[]
+  >([]);
+
   const [heroImage, setHeroImageState] = useState<string>("");
   const [selectedHeroImage, setSelectedHeroImage] = useState<string>("");
-  
+
   // Controlled tabs state to persist current selection
   const [mainTab, setMainTab] = useState<string>("products");
   const [taxonomyTab, setTaxonomyTab] = useState<string>("categories");
-  
+
   // Loading and uploading states
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  
+
   // Dialog states
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [blogDialogOpen, setBlogDialogOpen] = useState(false);
@@ -118,19 +130,22 @@ const Admin = () => {
   const [subcategoryDialogOpen, setSubcategoryDialogOpen] = useState(false);
   const [materialDialogOpen, setMaterialDialogOpen] = useState(false);
   const [finishDialogOpen, setFinishDialogOpen] = useState(false);
-  const [finishCategoryDialogOpen, setFinishCategoryDialogOpen] = useState(false);
-  
+  const [finishCategoryDialogOpen, setFinishCategoryDialogOpen] =
+    useState(false);
+
   // Editing states
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
   const [editingTestimonial, setEditingTestimonial] =
     useState<Testimonial | null>(null);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [editingSubcategory, setEditingSubcategory] = useState<Subcategory | null>(null);
+  const [editingSubcategory, setEditingSubcategory] =
+    useState<Subcategory | null>(null);
   const [editingMaterial, setEditingMaterial] = useState<Material | null>(null);
   const [editingFinish, setEditingFinish] = useState<Finish | null>(null);
-  const [editingFinishCategory, setEditingFinishCategory] = useState<FinishCategory | null>(null);
-  
+  const [editingFinishCategory, setEditingFinishCategory] =
+    useState<FinishCategory | null>(null);
+
   // Image file states
   const [productImageFile, setProductImageFile] = useState<File | null>(null);
   const [blogImageFile, setBlogImageFile] = useState<File | null>(null);
@@ -139,7 +154,7 @@ const Admin = () => {
   );
   const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
   const [finishImageFile, setFinishImageFile] = useState<File | null>(null);
-  
+
   const { toast } = useToast();
 
   // Load data on component mount
@@ -156,7 +171,7 @@ const Admin = () => {
           materialsData,
           finishesData,
           finishCategoriesData,
-          heroImageData
+          heroImageData,
         ] = await Promise.all([
           getProducts(),
           getBlogs(),
@@ -166,9 +181,9 @@ const Admin = () => {
           getMaterials(),
           getFinishes(),
           getFinishCategories(),
-          getHeroImage()
+          getHeroImage(),
         ]);
-        
+
         setProducts(productsData);
         setBlogs(blogsData);
         setTestimonials(testimonialsData);
@@ -180,7 +195,7 @@ const Admin = () => {
         setHeroImageState(heroImageData);
         setSelectedHeroImage(heroImageData);
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error("Error loading data:", error);
         toast({
           title: "Error",
           description: "Failed to load data. Please refresh the page.",
@@ -283,7 +298,7 @@ const Admin = () => {
           description: "Product image uploaded successfully.",
         });
       } catch (error) {
-        console.error('Error uploading image:', error);
+        console.error("Error uploading image:", error);
         toast({
           title: "Upload Error",
           description: "Failed to upload image. Please try again.",
@@ -310,7 +325,7 @@ const Admin = () => {
           description: "Blog image uploaded successfully.",
         });
       } catch (error) {
-        console.error('Error uploading image:', error);
+        console.error("Error uploading image:", error);
         toast({
           title: "Upload Error",
           description: "Failed to upload image. Please try again.",
@@ -337,7 +352,7 @@ const Admin = () => {
           description: "Testimonial image uploaded successfully.",
         });
       } catch (error) {
-        console.error('Error uploading image:', error);
+        console.error("Error uploading image:", error);
         toast({
           title: "Upload Error",
           description: "Failed to upload image. Please try again.",
@@ -350,7 +365,9 @@ const Admin = () => {
   };
 
   // Hero Image handler
-  const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleHeroImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (!file) {
       return;
@@ -366,7 +383,7 @@ const Admin = () => {
         description: `${file.name} uploaded successfully. Click "Update Hero Image" to save.`,
       });
     } catch (error) {
-      console.error('Error uploading hero image:', error);
+      console.error("Error uploading hero image:", error);
       toast({
         title: "Upload Error",
         description: "Failed to upload image. Please try again.",
@@ -390,7 +407,7 @@ const Admin = () => {
         // Notify home page to refresh
         window.dispatchEvent(new Event("heroImageUpdated"));
       } catch (error) {
-        console.error('Error saving hero image:', error);
+        console.error("Error saving hero image:", error);
         toast({
           title: "Error",
           description: "Failed to save hero image.",
@@ -429,13 +446,27 @@ const Admin = () => {
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
     // Map existing string-based fields to IDs when possible
-    const categoryId = product.categoryId ?? categories.find(c => c.name === product.category)?.id;
-    const subcategoryId = product.subcategoryId ?? (product.subcategory ? subcategories.find(s => s.name === product.subcategory)?.id : undefined);
-    const materialId = product.materialId ?? materialsList.find(m => m.name === product.material)?.id;
-    const finishIds = product.finishIds ?? (product.finishes ? product.finishes.map(name => {
-      const f = finishesList.find(x => x.name === name);
-      return f?.id;
-    }).filter((id): id is number => !!id) : []);
+    const categoryId =
+      product.categoryId ??
+      categories.find((c) => c.name === product.category)?.id;
+    const subcategoryId =
+      product.subcategoryId ??
+      (product.subcategory
+        ? subcategories.find((s) => s.name === product.subcategory)?.id
+        : undefined);
+    const materialId =
+      product.materialId ??
+      materialsList.find((m) => m.name === product.material)?.id;
+    const finishIds =
+      product.finishIds ??
+      (product.finishes
+        ? product.finishes
+            .map((name) => {
+              const f = finishesList.find((x) => x.name === name);
+              return f?.id;
+            })
+            .filter((id): id is number => !!id)
+        : []);
 
     setProductForm({
       name: product.name,
@@ -484,16 +515,21 @@ const Admin = () => {
     ) {
       toast({
         title: "Validation Error",
-        description: "Please fill in all required fields (name, category, material, description).",
+        description:
+          "Please fill in all required fields (name, category, material, description).",
         variant: "destructive",
       });
       return;
     }
 
     // Validate subcategory if selected category has subcategories
-    const selectedCategory = categories.find(c => c.id === productForm.categoryId);
-    const hasSubcategories = selectedCategory && subcategories.some(sub => sub.categoryId === selectedCategory.id);
-    
+    const selectedCategory = categories.find(
+      (c) => c.id === productForm.categoryId
+    );
+    const hasSubcategories =
+      selectedCategory &&
+      subcategories.some((sub) => sub.categoryId === selectedCategory.id);
+
     if (hasSubcategories && !productForm.subcategoryId) {
       toast({
         title: "Validation Error",
@@ -507,10 +543,18 @@ const Admin = () => {
       setLoading(true);
       if (editingProduct) {
         // Derive string fields from IDs for backward compatibility
-        const catName = categories.find(c => c.id === productForm.categoryId)?.name || "";
-        const subName = productForm.subcategoryId ? subcategories.find(s => s.id === productForm.subcategoryId)?.name || "" : "";
-        const matName = materialsList.find(m => m.id === productForm.materialId)?.name || "";
-        const finishNames = productForm.finishIds.map(id => finishesList.find(f => f.id === id)?.name || "").filter(n => !!n);
+        const catName =
+          categories.find((c) => c.id === productForm.categoryId)?.name || "";
+        const subName = productForm.subcategoryId
+          ? subcategories.find((s) => s.id === productForm.subcategoryId)
+              ?.name || ""
+          : "";
+        const matName =
+          materialsList.find((m) => m.id === productForm.materialId)?.name ||
+          "";
+        const finishNames = productForm.finishIds
+          .map((id) => finishesList.find((f) => f.id === id)?.name || "")
+          .filter((n) => !!n);
 
         await updateProduct(editingProduct.id, {
           name: productForm.name,
@@ -533,10 +577,18 @@ const Admin = () => {
           description: "The product has been successfully updated.",
         });
       } else {
-        const catName = categories.find(c => c.id === productForm.categoryId)?.name || "";
-        const subName = productForm.subcategoryId ? subcategories.find(s => s.id === productForm.subcategoryId)?.name || "" : "";
-        const matName = materialsList.find(m => m.id === productForm.materialId)?.name || "";
-        const finishNames = productForm.finishIds.map(id => finishesList.find(f => f.id === id)?.name || "").filter(n => !!n);
+        const catName =
+          categories.find((c) => c.id === productForm.categoryId)?.name || "";
+        const subName = productForm.subcategoryId
+          ? subcategories.find((s) => s.id === productForm.subcategoryId)
+              ?.name || ""
+          : "";
+        const matName =
+          materialsList.find((m) => m.id === productForm.materialId)?.name ||
+          "";
+        const finishNames = productForm.finishIds
+          .map((id) => finishesList.find((f) => f.id === id)?.name || "")
+          .filter((n) => !!n);
 
         await addProduct({
           name: productForm.name,
@@ -565,7 +617,7 @@ const Admin = () => {
       setProductDialogOpen(false);
       setProductImageFile(null);
     } catch (error) {
-      console.error('Error saving product:', error);
+      console.error("Error saving product:", error);
       toast({
         title: "Error",
         description: "Failed to save product. Please try again.",
@@ -629,7 +681,7 @@ const Admin = () => {
           description: "The testimonial has been successfully deleted.",
         });
       } catch (error) {
-        console.error('Error deleting testimonial:', error);
+        console.error("Error deleting testimonial:", error);
         toast({
           title: "Error",
           description: "Failed to delete testimonial. Please try again.",
@@ -662,7 +714,7 @@ const Admin = () => {
           description: "The blog has been successfully deleted.",
         });
       } catch (error) {
-        console.error('Error deleting blog:', error);
+        console.error("Error deleting blog:", error);
         toast({
           title: "Error",
           description: "Failed to delete blog. Please try again.",
@@ -711,7 +763,7 @@ const Admin = () => {
       setBlogDialogOpen(false);
       setBlogImageFile(null);
     } catch (error) {
-      console.error('Error saving blog:', error);
+      console.error("Error saving blog:", error);
       toast({
         title: "Error",
         description: "Failed to save blog. Please try again.",
@@ -775,7 +827,7 @@ const Admin = () => {
       setTestimonialDialogOpen(false);
       setTestimonialImageFile(null);
     } catch (error) {
-      console.error('Error saving testimonial:', error);
+      console.error("Error saving testimonial:", error);
       toast({
         title: "Error",
         description: "Failed to save testimonial. Please try again.",
@@ -799,21 +851,29 @@ const Admin = () => {
 
   const handleEditCategory = (category: Category) => {
     setEditingCategory(category);
-    setCategoryForm({ name: category.name, description: category.description || "" });
+    setCategoryForm({
+      name: category.name,
+      description: category.description || "",
+    });
     setCategoryDialogOpen(true);
   };
 
   const handleDeleteCategory = async (id: number) => {
-    if (window.confirm("Are you sure? This will also delete related subcategories and materials if they have no products.")) {
+    if (
+      window.confirm(
+        "Are you sure? This will also delete related subcategories and materials if they have no products."
+      )
+    ) {
       try {
         setLoading(true);
         const success = await deleteCategory(id);
         if (success) {
-          const [categoriesData, subcategoriesData, materialsData] = await Promise.all([
-            getCategories(),
-            getSubcategories(),
-            getMaterials()
-          ]);
+          const [categoriesData, subcategoriesData, materialsData] =
+            await Promise.all([
+              getCategories(),
+              getSubcategories(),
+              getMaterials(),
+            ]);
           setCategories(categoriesData);
           setSubcategories(subcategoriesData);
           setMaterialsList(materialsData);
@@ -824,12 +884,13 @@ const Admin = () => {
         } else {
           toast({
             title: "Cannot Delete",
-            description: "This category has products. Please reassign or delete products first.",
+            description:
+              "This category has products. Please reassign or delete products first.",
             variant: "destructive",
           });
         }
       } catch (error) {
-        console.error('Error deleting category:', error);
+        console.error("Error deleting category:", error);
         toast({
           title: "Error",
           description: "Failed to delete category. Please try again.",
@@ -855,20 +916,23 @@ const Admin = () => {
       setLoading(true);
       if (editingCategory) {
         await updateCategory(editingCategory.id, categoryForm);
-        toast({ title: "Category Updated", description: "The category has been updated." });
+        toast({
+          title: "Category Updated",
+          description: "The category has been updated.",
+        });
       } else {
         await addCategory(categoryForm);
-        toast({ title: "Category Added", description: "The category has been added." });
+        toast({
+          title: "Category Added",
+          description: "The category has been added.",
+        });
       }
 
       const categoriesData = await getCategories();
       setCategories(categoriesData);
-      // Stay on Taxonomy > Categories
-      setMainTab("taxonomy");
-      setTaxonomyTab("categories");
       setCategoryDialogOpen(false);
     } catch (error) {
-      console.error('Error saving category:', error);
+      console.error("Error saving category:", error);
       toast({
         title: "Error",
         description: "Failed to save category. Please try again.",
@@ -882,7 +946,11 @@ const Admin = () => {
   // Subcategory handlers
   const handleAddSubcategory = () => {
     setEditingSubcategory(null);
-    setSubcategoryForm({ name: "", categoryId: categories[0]?.id || 0, description: "" });
+    setSubcategoryForm({
+      name: "",
+      categoryId: categories[0]?.id || 0,
+      description: "",
+    });
     setSubcategoryDialogOpen(true);
   };
 
@@ -897,27 +965,35 @@ const Admin = () => {
   };
 
   const handleDeleteSubcategory = async (id: number) => {
-    if (window.confirm("Are you sure? This will also delete related materials if they have no products.")) {
+    if (
+      window.confirm(
+        "Are you sure? This will also delete related materials if they have no products."
+      )
+    ) {
       try {
         setLoading(true);
         const success = await deleteSubcategory(id);
         if (success) {
           const [subcategoriesData, materialsData] = await Promise.all([
             getSubcategories(),
-            getMaterials()
+            getMaterials(),
           ]);
           setSubcategories(subcategoriesData);
           setMaterialsList(materialsData);
-          toast({ title: "Subcategory Deleted", description: "The subcategory has been deleted." });
+          toast({
+            title: "Subcategory Deleted",
+            description: "The subcategory has been deleted.",
+          });
         } else {
           toast({
             title: "Cannot Delete",
-            description: "This subcategory has products. Please reassign or delete products first.",
+            description:
+              "This subcategory has products. Please reassign or delete products first.",
             variant: "destructive",
           });
         }
       } catch (error) {
-        console.error('Error deleting subcategory:', error);
+        console.error("Error deleting subcategory:", error);
         toast({
           title: "Error",
           description: "Failed to delete subcategory. Please try again.",
@@ -943,20 +1019,23 @@ const Admin = () => {
       setLoading(true);
       if (editingSubcategory) {
         await updateSubcategory(editingSubcategory.id, subcategoryForm);
-        toast({ title: "Subcategory Updated", description: "The subcategory has been updated." });
+        toast({
+          title: "Subcategory Updated",
+          description: "The subcategory has been updated.",
+        });
       } else {
         await addSubcategory(subcategoryForm);
-        toast({ title: "Subcategory Added", description: "The subcategory has been added." });
+        toast({
+          title: "Subcategory Added",
+          description: "The subcategory has been added.",
+        });
       }
 
       const subcategoriesData = await getSubcategories();
       setSubcategories(subcategoriesData);
-      // Stay on Taxonomy > Subcategories
-      setMainTab("taxonomy");
-      setTaxonomyTab("subcategories");
       setSubcategoryDialogOpen(false);
     } catch (error) {
-      console.error('Error saving subcategory:', error);
+      console.error("Error saving subcategory:", error);
       toast({
         title: "Error",
         description: "Failed to save subcategory. Please try again.",
@@ -970,7 +1049,12 @@ const Admin = () => {
   // Material handlers
   const handleAddMaterial = () => {
     setEditingMaterial(null);
-    setMaterialForm({ name: "", categoryId: undefined, subcategoryId: undefined, description: "" });
+    setMaterialForm({
+      name: "",
+      categoryId: undefined,
+      subcategoryId: undefined,
+      description: "",
+    });
     setMaterialDialogOpen(true);
   };
 
@@ -993,16 +1077,20 @@ const Admin = () => {
         if (success) {
           const materialsData = await getMaterials();
           setMaterialsList(materialsData);
-          toast({ title: "Material Deleted", description: "The material has been deleted." });
+          toast({
+            title: "Material Deleted",
+            description: "The material has been deleted.",
+          });
         } else {
           toast({
             title: "Cannot Delete",
-            description: "This material has products. Please reassign or delete products first.",
+            description:
+              "This material has products. Please reassign or delete products first.",
             variant: "destructive",
           });
         }
       } catch (error) {
-        console.error('Error deleting material:', error);
+        console.error("Error deleting material:", error);
         toast({
           title: "Error",
           description: "Failed to delete material. Please try again.",
@@ -1028,20 +1116,23 @@ const Admin = () => {
       setLoading(true);
       if (editingMaterial) {
         await updateMaterial(editingMaterial.id, materialForm);
-        toast({ title: "Material Updated", description: "The material has been updated." });
+        toast({
+          title: "Material Updated",
+          description: "The material has been updated.",
+        });
       } else {
         await addMaterial(materialForm);
-        toast({ title: "Material Added", description: "The material has been added." });
+        toast({
+          title: "Material Added",
+          description: "The material has been added.",
+        });
       }
 
       const materialsData = await getMaterials();
       setMaterialsList(materialsData);
-      // Stay on Taxonomy > Materials
-      setMainTab("taxonomy");
-      setTaxonomyTab("materials");
       setMaterialDialogOpen(false);
     } catch (error) {
-      console.error('Error saving material:', error);
+      console.error("Error saving material:", error);
       toast({
         title: "Error",
         description: "Failed to save material. Please try again.",
@@ -1056,7 +1147,12 @@ const Admin = () => {
   const handleAddFinish = () => {
     setEditingFinish(null);
     setFinishImageFile(null);
-    setFinishForm({ name: "", categoryId: finishCategoriesList[0]?.id || 0, image: "", description: "" });
+    setFinishForm({
+      name: "",
+      categoryId: finishCategoriesList[0]?.id || 0,
+      image: "",
+      description: "",
+    });
     setFinishDialogOpen(true);
   };
 
@@ -1078,9 +1174,12 @@ const Admin = () => {
         await deleteFinish(id);
         const finishesData = await getFinishes();
         setFinishesList(finishesData);
-        toast({ title: "Finish Deleted", description: "The finish has been deleted." });
+        toast({
+          title: "Finish Deleted",
+          description: "The finish has been deleted.",
+        });
       } catch (error) {
-        console.error('Error deleting finish:', error);
+        console.error("Error deleting finish:", error);
         toast({
           title: "Error",
           description: "Failed to delete finish. Please try again.",
@@ -1092,7 +1191,9 @@ const Admin = () => {
     }
   };
 
-  const handleFinishImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFinishImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
@@ -1105,7 +1206,7 @@ const Admin = () => {
           description: "Finish image uploaded successfully.",
         });
       } catch (error) {
-        console.error('Error uploading finish image:', error);
+        console.error("Error uploading finish image:", error);
         toast({
           title: "Upload Error",
           description: "Failed to upload image. Please try again.",
@@ -1121,7 +1222,8 @@ const Admin = () => {
     if (!finishForm.name || !finishForm.categoryId || !finishForm.image) {
       toast({
         title: "Validation Error",
-        description: "Please enter a name, select a category, and upload an image.",
+        description:
+          "Please enter a name, select a category, and upload an image.",
         variant: "destructive",
       });
       return;
@@ -1131,21 +1233,24 @@ const Admin = () => {
       setLoading(true);
       if (editingFinish) {
         await updateFinish(editingFinish.id, finishForm);
-        toast({ title: "Finish Updated", description: "The finish has been updated." });
+        toast({
+          title: "Finish Updated",
+          description: "The finish has been updated.",
+        });
       } else {
         await addFinish(finishForm);
-        toast({ title: "Finish Added", description: "The finish has been added." });
+        toast({
+          title: "Finish Added",
+          description: "The finish has been added.",
+        });
       }
 
       const finishesData = await getFinishes();
       setFinishesList(finishesData);
-      // Stay on Taxonomy > Finishes
-      setMainTab("taxonomy");
-      setTaxonomyTab("finishes");
       setFinishDialogOpen(false);
       setFinishImageFile(null);
     } catch (error) {
-      console.error('Error saving finish:', error);
+      console.error("Error saving finish:", error);
       toast({
         title: "Error",
         description: "Failed to save finish. Please try again.",
@@ -1165,28 +1270,39 @@ const Admin = () => {
 
   const handleEditFinishCategory = (category: FinishCategory) => {
     setEditingFinishCategory(category);
-    setFinishCategoryForm({ name: category.name, description: category.description || "" });
+    setFinishCategoryForm({
+      name: category.name,
+      description: category.description || "",
+    });
     setFinishCategoryDialogOpen(true);
   };
 
   const handleDeleteFinishCategory = async (id: number) => {
-    if (window.confirm("Are you sure? This will prevent deleting if finishes exist in this category.")) {
+    if (
+      window.confirm(
+        "Are you sure? This will prevent deleting if finishes exist in this category."
+      )
+    ) {
       try {
         setLoading(true);
         const success = await deleteFinishCategory(id);
         if (success) {
           const finishCategoriesData = await getFinishCategories();
           setFinishCategoriesList(finishCategoriesData);
-          toast({ title: "Finish Category Deleted", description: "The finish category has been deleted." });
+          toast({
+            title: "Finish Category Deleted",
+            description: "The finish category has been deleted.",
+          });
         } else {
           toast({
             title: "Cannot Delete",
-            description: "This finish category has finishes. Please reassign or delete finishes first.",
+            description:
+              "This finish category has finishes. Please reassign or delete finishes first.",
             variant: "destructive",
           });
         }
       } catch (error) {
-        console.error('Error deleting finish category:', error);
+        console.error("Error deleting finish category:", error);
         toast({
           title: "Error",
           description: "Failed to delete finish category. Please try again.",
@@ -1211,21 +1327,27 @@ const Admin = () => {
     try {
       setLoading(true);
       if (editingFinishCategory) {
-        await updateFinishCategory(editingFinishCategory.id, finishCategoryForm);
-        toast({ title: "Category Updated", description: "The finish category has been updated." });
+        await updateFinishCategory(
+          editingFinishCategory.id,
+          finishCategoryForm
+        );
+        toast({
+          title: "Category Updated",
+          description: "The finish category has been updated.",
+        });
       } else {
         await addFinishCategory(finishCategoryForm);
-        toast({ title: "Category Added", description: "The finish category has been added." });
+        toast({
+          title: "Category Added",
+          description: "The finish category has been added.",
+        });
       }
 
       const finishCategoriesData = await getFinishCategories();
       setFinishCategoriesList(finishCategoriesData);
-      // Stay on Taxonomy > Finish Categories
-      setMainTab("taxonomy");
-      setTaxonomyTab("finish-categories");
       setFinishCategoryDialogOpen(false);
     } catch (error) {
-      console.error('Error saving finish category:', error);
+      console.error("Error saving finish category:", error);
       toast({
         title: "Error",
         description: "Failed to save finish category. Please try again.",
@@ -1360,13 +1482,24 @@ const Admin = () => {
                         {product.name}
                       </h3>
                       <p className="text-sm text-muted-foreground mb-2">
-                        {(product.categoryId ? categories.find(c => c.id === product.categoryId)?.name : product.category) || ""}
+                        {(product.categoryId
+                          ? categories.find((c) => c.id === product.categoryId)
+                              ?.name
+                          : product.category) || ""}
                         {(() => {
-                          const subName = product.subcategoryId ? subcategories.find(s => s.id === product.subcategoryId)?.name : product.subcategory;
+                          const subName = product.subcategoryId
+                            ? subcategories.find(
+                                (s) => s.id === product.subcategoryId
+                              )?.name
+                            : product.subcategory;
                           return subName ? ` • ${subName}` : "";
                         })()}
                         {(() => {
-                          const matName = product.materialId ? materialsList.find(m => m.id === product.materialId)?.name : product.material;
+                          const matName = product.materialId
+                            ? materialsList.find(
+                                (m) => m.id === product.materialId
+                              )?.name
+                            : product.material;
                           return matName ? ` • ${matName}` : "";
                         })()}
                       </p>
@@ -1374,12 +1507,14 @@ const Admin = () => {
                         {product.description}
                       </p>
                       <div className="flex flex-wrap gap-1 mt-2">
-                        {(
-                          product.finishIds && product.finishIds.length > 0
-                            ? product.finishIds
-                                .map((id) => finishesList.find((f) => f.id === id)?.name)
-                                .filter((n): n is string => !!n)
-                            : product.finishes || []
+                        {(product.finishIds && product.finishIds.length > 0
+                          ? product.finishIds
+                              .map(
+                                (id) =>
+                                  finishesList.find((f) => f.id === id)?.name
+                              )
+                              .filter((n): n is string => !!n)
+                          : product.finishes || []
                         ).map((finish, idx) => (
                           <span
                             key={idx}
@@ -1413,12 +1548,18 @@ const Admin = () => {
 
             {/* Taxonomy Tab */}
             <TabsContent value="taxonomy">
-              <Tabs value={taxonomyTab} onValueChange={setTaxonomyTab} className="w-full">
+              <Tabs
+                value={taxonomyTab}
+                onValueChange={setTaxonomyTab}
+                className="w-full"
+              >
                 <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-5 mb-8">
                   <TabsTrigger value="categories">Categories</TabsTrigger>
                   <TabsTrigger value="subcategories">Subcategories</TabsTrigger>
                   <TabsTrigger value="materials">Materials</TabsTrigger>
-                  <TabsTrigger value="finish-categories">Finish Categories</TabsTrigger>
+                  <TabsTrigger value="finish-categories">
+                    Finish Categories
+                  </TabsTrigger>
                   <TabsTrigger value="finishes">Finishes</TabsTrigger>
                 </TabsList>
 
@@ -1445,7 +1586,9 @@ const Admin = () => {
                             {category.name}
                           </h3>
                           {category.description && (
-                            <p className="text-sm text-muted-foreground">{category.description}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {category.description}
+                            </p>
                           )}
                         </div>
                         <div className="flex gap-2">
@@ -1483,7 +1626,9 @@ const Admin = () => {
 
                   <div className="grid gap-4">
                     {subcategories.map((subcategory) => {
-                      const category = categories.find((c) => c.id === subcategory.categoryId);
+                      const category = categories.find(
+                        (c) => c.id === subcategory.categoryId
+                      );
                       return (
                         <div
                           key={subcategory.id}
@@ -1497,7 +1642,9 @@ const Admin = () => {
                               Category: {category?.name || "Unknown"}
                             </p>
                             {subcategory.description && (
-                              <p className="text-sm text-muted-foreground">{subcategory.description}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {subcategory.description}
+                              </p>
                             )}
                           </div>
                           <div className="flex gap-2">
@@ -1511,7 +1658,9 @@ const Admin = () => {
                             <Button
                               variant="destructive"
                               size="sm"
-                              onClick={() => handleDeleteSubcategory(subcategory.id)}
+                              onClick={() =>
+                                handleDeleteSubcategory(subcategory.id)
+                              }
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -1536,8 +1685,14 @@ const Admin = () => {
 
                   <div className="grid gap-4">
                     {materialsList.map((material) => {
-                      const category = material.categoryId ? categories.find((c) => c.id === material.categoryId) : null;
-                      const subcategory = material.subcategoryId ? subcategories.find((s) => s.id === material.subcategoryId) : null;
+                      const category = material.categoryId
+                        ? categories.find((c) => c.id === material.categoryId)
+                        : null;
+                      const subcategory = material.subcategoryId
+                        ? subcategories.find(
+                            (s) => s.id === material.subcategoryId
+                          )
+                        : null;
                       return (
                         <div
                           key={material.id}
@@ -1551,11 +1706,14 @@ const Admin = () => {
                               <p className="text-sm text-muted-foreground mb-1">
                                 {category && `Category: ${category.name}`}
                                 {category && subcategory && " • "}
-                                {subcategory && `Subcategory: ${subcategory.name}`}
+                                {subcategory &&
+                                  `Subcategory: ${subcategory.name}`}
                               </p>
                             )}
                             {material.description && (
-                              <p className="text-sm text-muted-foreground">{material.description}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {material.description}
+                              </p>
                             )}
                           </div>
                           <div className="flex gap-2">
@@ -1603,10 +1761,17 @@ const Admin = () => {
                             {category.name}
                           </h3>
                           {category.description && (
-                            <p className="text-sm text-muted-foreground">{category.description}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {category.description}
+                            </p>
                           )}
                           <p className="text-xs text-muted-foreground mt-2">
-                            {finishesList.filter(f => f.categoryId === category.id).length} finish(es)
+                            {
+                              finishesList.filter(
+                                (f) => f.categoryId === category.id
+                              ).length
+                            }{" "}
+                            finish(es)
                           </p>
                         </div>
                         <div className="flex gap-2">
@@ -1620,7 +1785,9 @@ const Admin = () => {
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleDeleteFinishCategory(category.id)}
+                            onClick={() =>
+                              handleDeleteFinishCategory(category.id)
+                            }
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -1644,7 +1811,9 @@ const Admin = () => {
 
                   <div className="grid gap-4">
                     {finishesList.map((finish) => {
-                      const category = finishCategoriesList.find(c => c.id === finish.categoryId);
+                      const category = finishCategoriesList.find(
+                        (c) => c.id === finish.categoryId
+                      );
                       return (
                         <div
                           key={finish.id}
@@ -1665,7 +1834,9 @@ const Admin = () => {
                               Category: {category?.name || "Unknown"}
                             </p>
                             {finish.description && (
-                              <p className="text-sm text-muted-foreground">{finish.description}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {finish.description}
+                              </p>
                             )}
                           </div>
                           <div className="flex gap-2">
@@ -1836,7 +2007,10 @@ const Admin = () => {
                 id="modelNumber"
                 value={productForm.modelNumber}
                 onChange={(e) =>
-                  setProductForm({ ...productForm, modelNumber: e.target.value })
+                  setProductForm({
+                    ...productForm,
+                    modelNumber: e.target.value,
+                  })
                 }
                 placeholder="BK-2024-01"
               />
@@ -1847,11 +2021,11 @@ const Admin = () => {
                 <Select
                   value={productForm.categoryId?.toString() || ""}
                   onValueChange={(value) => {
-                    setProductForm({ 
-                      ...productForm, 
+                    setProductForm({
+                      ...productForm,
                       categoryId: Number(value),
                       // Clear subcategory if switching categories
-                      subcategoryId: undefined
+                      subcategoryId: undefined,
                     });
                   }}
                 >
@@ -1872,7 +2046,10 @@ const Admin = () => {
                 <Select
                   value={productForm.materialId?.toString() || ""}
                   onValueChange={(value) =>
-                    setProductForm({ ...productForm, materialId: Number(value) })
+                    setProductForm({
+                      ...productForm,
+                      materialId: Number(value),
+                    })
                   }
                 >
                   <SelectTrigger>
@@ -1889,37 +2066,45 @@ const Admin = () => {
               </div>
             </div>
             {/* Show subcategory dropdown if selected category has subcategories */}
-            {productForm.categoryId && subcategories.some(sub => 
-              productForm.categoryId === sub.categoryId
-            ) && (
-              <div>
-                <Label htmlFor="subcategory">Subcategory {subcategories.some(sub => 
-                  productForm.categoryId === sub.categoryId
-                ) ? "*" : "(optional)"}</Label>
-                <Select
-                  value={productForm.subcategoryId?.toString() || ""}
-                  onValueChange={(value) =>
-                    setProductForm({
-                      ...productForm,
-                      subcategoryId: Number(value),
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select subcategory" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {subcategories
-                      .filter(sub => productForm.categoryId === sub.categoryId)
-                      .map((sub) => (
-                        <SelectItem key={sub.id} value={sub.id.toString()}>
-                          {sub.name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+            {productForm.categoryId &&
+              subcategories.some(
+                (sub) => productForm.categoryId === sub.categoryId
+              ) && (
+                <div>
+                  <Label htmlFor="subcategory">
+                    Subcategory{" "}
+                    {subcategories.some(
+                      (sub) => productForm.categoryId === sub.categoryId
+                    )
+                      ? "*"
+                      : "(optional)"}
+                  </Label>
+                  <Select
+                    value={productForm.subcategoryId?.toString() || ""}
+                    onValueChange={(value) =>
+                      setProductForm({
+                        ...productForm,
+                        subcategoryId: Number(value),
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select subcategory" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subcategories
+                        .filter(
+                          (sub) => productForm.categoryId === sub.categoryId
+                        )
+                        .map((sub) => (
+                          <SelectItem key={sub.id} value={sub.id.toString()}>
+                            {sub.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             <div>
               <Label htmlFor="description">Description *</Label>
               <Textarea
@@ -1936,7 +2121,9 @@ const Admin = () => {
               />
             </div>
             <div>
-              <Label htmlFor="longDescription">Long Description (optional)</Label>
+              <Label htmlFor="longDescription">
+                Long Description (optional)
+              </Label>
               <Textarea
                 id="longDescription"
                 value={productForm.longDescription}
@@ -2038,7 +2225,9 @@ const Admin = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="blog-image" className="text-foreground">Blog Image *</Label>
+              <Label htmlFor="blog-image" className="text-foreground">
+                Blog Image *
+              </Label>
               <Input
                 id="blog-image"
                 type="file"
@@ -2060,7 +2249,9 @@ const Admin = () => {
               )}
             </div>
             <div>
-              <Label htmlFor="content" className="text-foreground">Blog Content *</Label>
+              <Label htmlFor="content" className="text-foreground">
+                Blog Content *
+              </Label>
               <Textarea
                 id="content"
                 value={blogForm.content}
@@ -2098,7 +2289,9 @@ const Admin = () => {
           <div className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="testimonial-name" className="text-foreground">Name *</Label>
+                <Label htmlFor="testimonial-name" className="text-foreground">
+                  Name *
+                </Label>
                 <Input
                   id="testimonial-name"
                   value={testimonialForm.name}
@@ -2113,7 +2306,9 @@ const Admin = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="testimonial-role" className="text-foreground">Role *</Label>
+                <Label htmlFor="testimonial-role" className="text-foreground">
+                  Role *
+                </Label>
                 <Input
                   id="testimonial-role"
                   value={testimonialForm.role}
@@ -2131,7 +2326,12 @@ const Admin = () => {
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="testimonial-company" className="text-foreground">Company *</Label>
+                <Label
+                  htmlFor="testimonial-company"
+                  className="text-foreground"
+                >
+                  Company *
+                </Label>
                 <Input
                   id="testimonial-company"
                   value={testimonialForm.company}
@@ -2146,7 +2346,12 @@ const Admin = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="testimonial-location" className="text-foreground">Location *</Label>
+                <Label
+                  htmlFor="testimonial-location"
+                  className="text-foreground"
+                >
+                  Location *
+                </Label>
                 <Input
                   id="testimonial-location"
                   value={testimonialForm.location}
@@ -2163,7 +2368,9 @@ const Admin = () => {
             </div>
 
             <div>
-              <Label htmlFor="testimonial-rating" className="text-foreground">Rating (1-5)</Label>
+              <Label htmlFor="testimonial-rating" className="text-foreground">
+                Rating (1-5)
+              </Label>
               <Input
                 id="testimonial-rating"
                 type="number"
@@ -2181,7 +2388,9 @@ const Admin = () => {
             </div>
 
             <div>
-              <Label htmlFor="testimonial-image" className="text-foreground">Author Image (optional)</Label>
+              <Label htmlFor="testimonial-image" className="text-foreground">
+                Author Image (optional)
+              </Label>
               <Input
                 id="testimonial-image"
                 type="file"
@@ -2204,7 +2413,9 @@ const Admin = () => {
             </div>
 
             <div>
-              <Label htmlFor="testimonial-content" className="text-foreground">Testimonial *</Label>
+              <Label htmlFor="testimonial-content" className="text-foreground">
+                Testimonial *
+              </Label>
               <Textarea
                 id="testimonial-content"
                 value={testimonialForm.content}
@@ -2238,25 +2449,38 @@ const Admin = () => {
       <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-foreground">{editingCategory ? "Edit Category" : "Add New Category"}</DialogTitle>
+            <DialogTitle className="text-foreground">
+              {editingCategory ? "Edit Category" : "Add New Category"}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="category-name" className="text-foreground">Category Name *</Label>
+              <Label htmlFor="category-name" className="text-foreground">
+                Category Name *
+              </Label>
               <Input
                 id="category-name"
                 value={categoryForm.name}
-                onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
+                onChange={(e) =>
+                  setCategoryForm({ ...categoryForm, name: e.target.value })
+                }
                 placeholder="e.g., Door Handle, Knob"
                 className="bg-background text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="category-description" className="text-foreground">Description (optional)</Label>
+              <Label htmlFor="category-description" className="text-foreground">
+                Description (optional)
+              </Label>
               <Textarea
                 id="category-description"
                 value={categoryForm.description}
-                onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
+                onChange={(e) =>
+                  setCategoryForm({
+                    ...categoryForm,
+                    description: e.target.value,
+                  })
+                }
                 placeholder="Brief description of this category"
                 rows={3}
                 className="bg-background text-foreground"
@@ -2264,7 +2488,10 @@ const Admin = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCategoryDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setCategoryDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handleSaveCategory}>
@@ -2275,17 +2502,29 @@ const Admin = () => {
       </Dialog>
 
       {/* Subcategory Dialog */}
-      <Dialog open={subcategoryDialogOpen} onOpenChange={setSubcategoryDialogOpen}>
+      <Dialog
+        open={subcategoryDialogOpen}
+        onOpenChange={setSubcategoryDialogOpen}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-foreground">{editingSubcategory ? "Edit Subcategory" : "Add New Subcategory"}</DialogTitle>
+            <DialogTitle className="text-foreground">
+              {editingSubcategory ? "Edit Subcategory" : "Add New Subcategory"}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="subcategory-category" className="text-foreground">Parent Category *</Label>
+              <Label htmlFor="subcategory-category" className="text-foreground">
+                Parent Category *
+              </Label>
               <Select
                 value={subcategoryForm.categoryId.toString()}
-                onValueChange={(value) => setSubcategoryForm({ ...subcategoryForm, categoryId: Number(value) })}
+                onValueChange={(value) =>
+                  setSubcategoryForm({
+                    ...subcategoryForm,
+                    categoryId: Number(value),
+                  })
+                }
               >
                 <SelectTrigger className="bg-background text-foreground">
                   <SelectValue placeholder="Select parent category" />
@@ -2300,21 +2539,38 @@ const Admin = () => {
               </Select>
             </div>
             <div>
-              <Label htmlFor="subcategory-name" className="text-foreground">Subcategory Name *</Label>
+              <Label htmlFor="subcategory-name" className="text-foreground">
+                Subcategory Name *
+              </Label>
               <Input
                 id="subcategory-name"
                 value={subcategoryForm.name}
-                onChange={(e) => setSubcategoryForm({ ...subcategoryForm, name: e.target.value })}
+                onChange={(e) =>
+                  setSubcategoryForm({
+                    ...subcategoryForm,
+                    name: e.target.value,
+                  })
+                }
                 placeholder="e.g., Cabinet Handle, Door Handle"
                 className="bg-background text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="subcategory-description" className="text-foreground">Description (optional)</Label>
+              <Label
+                htmlFor="subcategory-description"
+                className="text-foreground"
+              >
+                Description (optional)
+              </Label>
               <Textarea
                 id="subcategory-description"
                 value={subcategoryForm.description}
-                onChange={(e) => setSubcategoryForm({ ...subcategoryForm, description: e.target.value })}
+                onChange={(e) =>
+                  setSubcategoryForm({
+                    ...subcategoryForm,
+                    description: e.target.value,
+                  })
+                }
                 placeholder="Brief description of this subcategory"
                 rows={3}
                 className="bg-background text-foreground"
@@ -2322,7 +2578,10 @@ const Admin = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSubcategoryDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setSubcategoryDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handleSaveSubcategory}>
@@ -2336,28 +2595,37 @@ const Admin = () => {
       <Dialog open={materialDialogOpen} onOpenChange={setMaterialDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-foreground">{editingMaterial ? "Edit Material" : "Add New Material"}</DialogTitle>
+            <DialogTitle className="text-foreground">
+              {editingMaterial ? "Edit Material" : "Add New Material"}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="material-name" className="text-foreground">Material Name *</Label>
+              <Label htmlFor="material-name" className="text-foreground">
+                Material Name *
+              </Label>
               <Input
                 id="material-name"
                 value={materialForm.name}
-                onChange={(e) => setMaterialForm({ ...materialForm, name: e.target.value })}
+                onChange={(e) =>
+                  setMaterialForm({ ...materialForm, name: e.target.value })
+                }
                 placeholder="e.g., Stainless Steel, Brass"
                 className="bg-background text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="material-category" className="text-foreground">Category (optional)</Label>
+              <Label htmlFor="material-category" className="text-foreground">
+                Category (optional)
+              </Label>
               <Select
                 value={materialForm.categoryId?.toString() || "none"}
-                onValueChange={(value) => 
-                  setMaterialForm({ 
-                    ...materialForm, 
+                onValueChange={(value) =>
+                  setMaterialForm({
+                    ...materialForm,
                     categoryId: value === "none" ? undefined : Number(value),
-                    subcategoryId: value === "none" ? undefined : materialForm.subcategoryId
+                    subcategoryId:
+                      value === "none" ? undefined : materialForm.subcategoryId,
                   })
                 }
               >
@@ -2376,20 +2644,30 @@ const Admin = () => {
             </div>
             {materialForm.categoryId && (
               <div>
-                <Label htmlFor="material-subcategory">Subcategory (optional)</Label>
+                <Label htmlFor="material-subcategory">
+                  Subcategory (optional)
+                </Label>
                 <Select
                   value={materialForm.subcategoryId?.toString() || "none"}
-                  onValueChange={(value) => 
-                    setMaterialForm({ ...materialForm, subcategoryId: value === "none" ? undefined : Number(value) })
+                  onValueChange={(value) =>
+                    setMaterialForm({
+                      ...materialForm,
+                      subcategoryId:
+                        value === "none" ? undefined : Number(value),
+                    })
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select subcategory (optional)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">None (All Subcategories)</SelectItem>
+                    <SelectItem value="none">
+                      None (All Subcategories)
+                    </SelectItem>
                     {subcategories
-                      .filter((sub) => sub.categoryId === materialForm.categoryId)
+                      .filter(
+                        (sub) => sub.categoryId === materialForm.categoryId
+                      )
                       .map((sub) => (
                         <SelectItem key={sub.id} value={sub.id.toString()}>
                           {sub.name}
@@ -2400,18 +2678,28 @@ const Admin = () => {
               </div>
             )}
             <div>
-              <Label htmlFor="material-description">Description (optional)</Label>
+              <Label htmlFor="material-description">
+                Description (optional)
+              </Label>
               <Textarea
                 id="material-description"
                 value={materialForm.description}
-                onChange={(e) => setMaterialForm({ ...materialForm, description: e.target.value })}
+                onChange={(e) =>
+                  setMaterialForm({
+                    ...materialForm,
+                    description: e.target.value,
+                  })
+                }
                 placeholder="Brief description of this material"
                 rows={3}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setMaterialDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setMaterialDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handleSaveMaterial}>
@@ -2425,14 +2713,20 @@ const Admin = () => {
       <Dialog open={finishDialogOpen} onOpenChange={setFinishDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-foreground">{editingFinish ? "Edit Finish" : "Add New Finish"}</DialogTitle>
+            <DialogTitle className="text-foreground">
+              {editingFinish ? "Edit Finish" : "Add New Finish"}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="finish-category" className="text-foreground">Finish Category *</Label>
+              <Label htmlFor="finish-category" className="text-foreground">
+                Finish Category *
+              </Label>
               <Select
                 value={finishForm.categoryId.toString()}
-                onValueChange={(value) => setFinishForm({ ...finishForm, categoryId: Number(value) })}
+                onValueChange={(value) =>
+                  setFinishForm({ ...finishForm, categoryId: Number(value) })
+                }
               >
                 <SelectTrigger className="bg-background text-foreground">
                   <SelectValue placeholder="Select finish category" />
@@ -2447,17 +2741,23 @@ const Admin = () => {
               </Select>
             </div>
             <div>
-              <Label htmlFor="finish-name" className="text-foreground">Finish Name *</Label>
+              <Label htmlFor="finish-name" className="text-foreground">
+                Finish Name *
+              </Label>
               <Input
                 id="finish-name"
                 value={finishForm.name}
-                onChange={(e) => setFinishForm({ ...finishForm, name: e.target.value })}
+                onChange={(e) =>
+                  setFinishForm({ ...finishForm, name: e.target.value })
+                }
                 placeholder="e.g., Matt, Glossy Chrome, PVD Gold"
                 className="bg-background text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="finish-image" className="text-foreground">Finish Image *</Label>
+              <Label htmlFor="finish-image" className="text-foreground">
+                Finish Image *
+              </Label>
               <Input
                 id="finish-image"
                 type="file"
@@ -2474,7 +2774,9 @@ const Admin = () => {
               )}
               {finishForm.image && !uploading && (
                 <div className="mt-2">
-                  <p className="text-sm text-muted-foreground mb-2">Current image: {finishForm.image.substring(0, 50)}...</p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Current image: {finishForm.image.substring(0, 50)}...
+                  </p>
                   <div className="w-32 h-32 rounded-lg overflow-hidden bg-secondary">
                     <ImageDisplay
                       src={finishForm.image}
@@ -2486,11 +2788,15 @@ const Admin = () => {
               )}
             </div>
             <div>
-              <Label htmlFor="finish-description" className="text-foreground">Description (optional)</Label>
+              <Label htmlFor="finish-description" className="text-foreground">
+                Description (optional)
+              </Label>
               <Textarea
                 id="finish-description"
                 value={finishForm.description}
-                onChange={(e) => setFinishForm({ ...finishForm, description: e.target.value })}
+                onChange={(e) =>
+                  setFinishForm({ ...finishForm, description: e.target.value })
+                }
                 placeholder="Brief description of this finish"
                 rows={3}
                 className="bg-background text-foreground"
@@ -2498,7 +2804,10 @@ const Admin = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setFinishDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setFinishDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handleSaveFinish}>
@@ -2509,28 +2818,52 @@ const Admin = () => {
       </Dialog>
 
       {/* Finish Category Dialog */}
-      <Dialog open={finishCategoryDialogOpen} onOpenChange={setFinishCategoryDialogOpen}>
+      <Dialog
+        open={finishCategoryDialogOpen}
+        onOpenChange={setFinishCategoryDialogOpen}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-foreground">{editingFinishCategory ? "Edit Finish Category" : "Add New Finish Category"}</DialogTitle>
+            <DialogTitle className="text-foreground">
+              {editingFinishCategory
+                ? "Edit Finish Category"
+                : "Add New Finish Category"}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="finish-category-name" className="text-foreground">Category Name *</Label>
+              <Label htmlFor="finish-category-name" className="text-foreground">
+                Category Name *
+              </Label>
               <Input
                 id="finish-category-name"
                 value={finishCategoryForm.name}
-                onChange={(e) => setFinishCategoryForm({ ...finishCategoryForm, name: e.target.value })}
+                onChange={(e) =>
+                  setFinishCategoryForm({
+                    ...finishCategoryForm,
+                    name: e.target.value,
+                  })
+                }
                 placeholder="e.g., Stainless Steel Finish, Brass Finish"
                 className="bg-background text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="finish-category-description" className="text-foreground">Description (optional)</Label>
+              <Label
+                htmlFor="finish-category-description"
+                className="text-foreground"
+              >
+                Description (optional)
+              </Label>
               <Textarea
                 id="finish-category-description"
                 value={finishCategoryForm.description}
-                onChange={(e) => setFinishCategoryForm({ ...finishCategoryForm, description: e.target.value })}
+                onChange={(e) =>
+                  setFinishCategoryForm({
+                    ...finishCategoryForm,
+                    description: e.target.value,
+                  })
+                }
                 placeholder="Brief description of this finish category"
                 rows={3}
                 className="bg-background text-foreground"
@@ -2538,7 +2871,10 @@ const Admin = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setFinishCategoryDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setFinishCategoryDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handleSaveFinishCategory}>

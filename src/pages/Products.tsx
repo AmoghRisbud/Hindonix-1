@@ -58,12 +58,18 @@ const Products = () => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [productsData, categoriesData, subcategoriesData, materialsData, finishesData] = await Promise.all([
+        const [
+          productsData,
+          categoriesData,
+          subcategoriesData,
+          materialsData,
+          finishesData,
+        ] = await Promise.all([
           getProducts(),
           getCategories(),
           getSubcategories(),
           getMaterials(),
-          getFinishes()
+          getFinishes(),
         ]);
         setProducts(productsData);
         setCategories(categoriesData);
@@ -71,7 +77,7 @@ const Products = () => {
         setMaterials(materialsData);
         setFinishes(finishesData);
       } catch (error) {
-        console.error('Error loading products data:', error);
+        console.error("Error loading products data:", error);
       } finally {
         setLoading(false);
       }
@@ -93,7 +99,9 @@ const Products = () => {
   const getAvailableMaterials = () => {
     // Get the selected category ID
     const selectedCat = categories.find((c) => c.name === selectedCategory);
-    const selectedSubcat = subcategories.find((s) => s.name === selectedSubcategory);
+    const selectedSubcat = subcategories.find(
+      (s) => s.name === selectedSubcategory
+    );
 
     // Get materials linked to the category/subcategory directly
     const linkedMaterials = materials.filter((m) => {
@@ -155,7 +163,7 @@ const Products = () => {
     });
 
     const finishesSet = new Set<string>();
-    
+
     // Add finishes from filtered products
     filteredProducts.forEach((product) => {
       // From legacy string list
@@ -296,367 +304,376 @@ const Products = () => {
         </div>
       ) : (
         <>
-      {/* Products Section */}
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-4 lg:px-8">
-          {/* Breadcrumb Navigation */}
-          {(selectedCategory ||
-            selectedSubcategory ||
-            selectedMaterial ||
-            selectedFinish) && (
-            <div className="mb-8 flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
-              <button
-                onClick={handleReset}
-                className="hover:text-accent transition-colors"
-              >
-                All Products
-              </button>
-              {selectedCategory && (
-                <>
-                  <ChevronRight className="w-4 h-4" />
+          {/* Products Section */}
+          <section className="py-16 bg-background">
+            <div className="container mx-auto px-4 lg:px-8">
+              {/* Breadcrumb Navigation */}
+              {(selectedCategory ||
+                selectedSubcategory ||
+                selectedMaterial ||
+                selectedFinish) && (
+                <div className="mb-8 flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
                   <button
-                    onClick={() => {
-                      setSelectedSubcategory(null);
-                      setSelectedMaterial(null);
-                      setSelectedFinish(null);
-                      setCurrentStep(
-                        selectedCategory === "Door Handle"
-                          ? "subcategory"
-                          : "material"
-                      );
-                    }}
+                    onClick={handleReset}
                     className="hover:text-accent transition-colors"
                   >
-                    {selectedCategory}
+                    All Products
                   </button>
-                </>
-              )}
-              {selectedSubcategory && (
-                <>
-                  <ChevronRight className="w-4 h-4" />
-                  <button
-                    onClick={() => {
-                      setSelectedMaterial(null);
-                      setSelectedFinish(null);
-                      setCurrentStep("material");
-                    }}
-                    className="hover:text-accent transition-colors"
-                  >
-                    {selectedSubcategory}
-                  </button>
-                </>
-              )}
-              {selectedMaterial && (
-                <>
-                  <ChevronRight className="w-4 h-4" />
-                  <button
-                    onClick={() => {
-                      setSelectedFinish(null);
-                      setCurrentStep("finish");
-                    }}
-                    className="hover:text-accent transition-colors"
-                  >
-                    {selectedMaterial}
-                  </button>
-                </>
-              )}
-              {selectedFinish && (
-                <>
-                  <ChevronRight className="w-4 h-4" />
-                  <span className="text-foreground font-medium">
-                    {selectedFinish}
-                  </span>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Search - Only show on products view */}
-          {currentStep === "products" && (
-            <div className="mb-8 max-w-md">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Category Selection */}
-          {currentStep === "category" && (
-            <div className="bg-card rounded-2xl p-8 border border-border/50">
-              <div className="text-center mb-8">
-                <h2 className="font-heading text-2xl font-semibold text-foreground mb-2">
-                  Select a Category
-                </h2>
-                <p className="text-muted-foreground">
-                  Choose the type of product you're looking for
-                </p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => handleCategoryClick(category.name)}
-                    className="group bg-background border-2 border-border rounded-xl p-8 hover:border-accent hover:shadow-lg transition-all duration-300 text-center"
-                  >
-                    <h3 className="font-heading text-xl font-semibold text-foreground group-hover:text-accent transition-colors mb-2">
-                      {category.name}
-                    </h3>
-                    {category.description && (
-                      <p className="text-sm text-muted-foreground">
-                        {category.description}
-                      </p>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Subcategory Selection */}
-          {currentStep === "subcategory" &&
-            selectedCategory &&
-            getAvailableSubcategories().length > 0 && (
-              <div className="bg-card rounded-2xl p-8 border border-border/50">
-                <div className="text-center mb-8">
-                  <h2 className="font-heading text-2xl font-semibold text-foreground mb-2">
-                    Select {selectedCategory} Type
-                  </h2>
-                  <p className="text-muted-foreground">
-                    Choose the specific type
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                  {getAvailableSubcategories().map((subcategory) => (
-                    <button
-                      key={subcategory}
-                      onClick={() => handleSubcategoryClick(subcategory)}
-                      className="group bg-background border-2 border-border rounded-xl p-8 hover:border-accent hover:shadow-lg transition-all duration-300 text-center"
-                    >
-                      <h3 className="font-heading text-xl font-semibold text-foreground group-hover:text-accent transition-colors mb-2">
-                        {subcategory}
-                      </h3>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-          {/* Material Selection */}
-          {currentStep === "material" && (
-            <div className="bg-card rounded-2xl p-8 border border-border/50">
-              <div className="text-center mb-8">
-                <h2 className="font-heading text-2xl font-semibold text-foreground mb-2">
-                  Select Material
-                </h2>
-                <p className="text-muted-foreground">
-                  Choose the material type
-                </p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                {getAvailableMaterials().map((material) => (
-                  <button
-                    key={material}
-                    onClick={() => handleMaterialClick(material)}
-                    className="group bg-background border-2 border-border rounded-xl p-8 hover:border-accent hover:shadow-lg transition-all duration-300 text-center"
-                  >
-                    <h3 className="font-heading text-xl font-semibold text-foreground group-hover:text-accent transition-colors mb-2">
-                      {material}
-                    </h3>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Finish Selection */}
-          {currentStep === "finish" && (
-            <div className="bg-card rounded-2xl p-8 border border-border/50">
-              <div className="text-center mb-8">
-                <h2 className="font-heading text-2xl font-semibold text-foreground mb-2">
-                  Select a Finish
-                </h2>
-                <p className="text-muted-foreground">
-                  Choose from available finishes
-                </p>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {getAvailableFinishes().map((finishName) => {
-                  // Find the finish object to get the image
-                  const finishObj = finishes.find((f) => f.name === finishName);
-                  return (
-                    <button
-                      key={finishName}
-                      onClick={() => handleFinishClick(finishName)}
-                      className="group bg-background border border-border rounded-xl p-4 hover:border-accent hover:shadow-md transition-all duration-300 text-left"
-                    >
-                      <div className="aspect-square rounded-lg overflow-hidden mb-3 bg-secondary">
-                        {finishObj ? (
-                          <ImageDisplay
-                            src={finishObj.image}
-                            alt={finishName}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
-                            No Image
-                          </div>
-                        )}
-                      </div>
-                      <p className="font-medium text-sm text-foreground group-hover:text-accent transition-colors">
-                        {finishName}
-                      </p>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Products Grid */}
-          {currentStep === "products" && (
-            <>
-              {filteredProducts.length > 0 ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {filteredProducts.map((product, index) => {
-                    // Build the product detail URL with current state
-                    const productUrl = `/products/${
-                      product.id
-                    }?from=${encodeURIComponent(
-                      location.pathname + location.search
-                    )}`;
-
-                    return (
-                      <div
-                        key={product.id}
-                        className="bg-card rounded-2xl overflow-hidden shadow-card border border-border/50 group hover:shadow-card-hover transition-all duration-300"
+                  {selectedCategory && (
+                    <>
+                      <ChevronRight className="w-4 h-4" />
+                      <button
+                        onClick={() => {
+                          setSelectedSubcategory(null);
+                          setSelectedMaterial(null);
+                          setSelectedFinish(null);
+                          setCurrentStep(
+                            selectedCategory === "Door Handle"
+                              ? "subcategory"
+                              : "material"
+                          );
+                        }}
+                        className="hover:text-accent transition-colors"
                       >
-                        <Link to={productUrl} className="block">
-                          <div className="aspect-[4/3] overflow-hidden">
-                            <ImageDisplay
-                              src={product.image}
-                              alt={product.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 animate-slide-in-left"
-                              style={{ animationDelay: `${index * 0.1}s` }}
-                            />
-                          </div>
-                          <div className="p-6 pb-4">
-                            <div className="flex items-center gap-2 mb-3 flex-wrap">
-                              <span className="px-3 py-1 bg-secondary rounded-full text-xs font-medium text-secondary-foreground">
-                                {product.category}
-                              </span>
-                              {product.subcategory && (
-                                <span className="px-3 py-1 bg-secondary rounded-full text-xs font-medium text-secondary-foreground">
-                                  {product.subcategory}
-                                </span>
-                              )}
-                              <span className="px-3 py-1 bg-accent/10 text-accent rounded-full text-xs font-medium">
-                                {product.material}
-                              </span>
-                            </div>
-                            <h3 className="font-heading text-xl font-semibold text-foreground mb-2 group-hover:text-accent transition-colors">
-                              {product.name}
-                            </h3>
-                            <p className="text-muted-foreground text-sm mb-3">
-                              {product.description}
-                            </p>
-                            <div className="mb-0">
-                              <p className="text-xs text-muted-foreground mb-2">
-                                Available Finishes:
-                              </p>
-                              <div className="flex flex-wrap gap-1">
-                                {(() => {
-                                  const names = (product.finishIds && product.finishIds.length > 0)
-                                    ? product.finishIds
-                                        .map((fid) => finishes.find((f) => f.id === fid)?.name)
-                                        .filter((n): n is string => !!n)
-                                    : (product.finishes || []);
-                                  const visible = names.slice(0, 3);
-                                  return (
-                                    <>
-                                      {visible.map((finish, index) => (
-                                        <span
-                                          key={index}
-                                          className="text-xs px-2 py-1 bg-muted rounded text-muted-foreground"
-                                        >
-                                          {finish}
-                                        </span>
-                                      ))}
-                                      {names.length > 3 && (
-                                        <span className="text-xs px-2 py-1 bg-muted rounded text-muted-foreground">
-                                          +{names.length - 3} more
-                                        </span>
-                                      )}
-                                    </>
-                                  );
-                                })()}
-                              </div>
-                            </div>
-                          </div>
-                        </Link>
-                        <div className="px-6 pb-6 pt-0">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full gap-2"
-                            asChild
-                          >
-                            <Link to="/contact">
-                              Request Quote
-                              <ArrowRight className="w-4 h-4" />
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center py-20">
-                  <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="font-heading text-xl font-semibold text-foreground mb-2">
-                    No products found
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
-                    Try adjusting your search or filter criteria.
-                  </p>
-                  <Button onClick={handleReset} variant="outline">
-                    Reset Filters
-                  </Button>
+                        {selectedCategory}
+                      </button>
+                    </>
+                  )}
+                  {selectedSubcategory && (
+                    <>
+                      <ChevronRight className="w-4 h-4" />
+                      <button
+                        onClick={() => {
+                          setSelectedMaterial(null);
+                          setSelectedFinish(null);
+                          setCurrentStep("material");
+                        }}
+                        className="hover:text-accent transition-colors"
+                      >
+                        {selectedSubcategory}
+                      </button>
+                    </>
+                  )}
+                  {selectedMaterial && (
+                    <>
+                      <ChevronRight className="w-4 h-4" />
+                      <button
+                        onClick={() => {
+                          setSelectedFinish(null);
+                          setCurrentStep("finish");
+                        }}
+                        className="hover:text-accent transition-colors"
+                      >
+                        {selectedMaterial}
+                      </button>
+                    </>
+                  )}
+                  {selectedFinish && (
+                    <>
+                      <ChevronRight className="w-4 h-4" />
+                      <span className="text-foreground font-medium">
+                        {selectedFinish}
+                      </span>
+                    </>
+                  )}
                 </div>
               )}
-            </>
-          )}
-        </div>
-      </section>
 
-      {/* Custom Sourcing CTA */}
-      <section className="py-20 bg-secondary">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="bg-primary rounded-3xl p-8 lg:p-12 text-center">
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-primary-foreground mb-4">
-              Looking for Custom Solutions?
-            </h2>
-            <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
-              We offer bespoke architectural hardware tailored to your project
-              specifications. Contact our team to discuss custom finishes,
-              sizes, and designs.
-            </p>
-            <Button variant="hero" size="xl" asChild>
-              <Link to="/contact" className="gap-2">
-                Request Custom Quote
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+              {/* Search - Only show on products view */}
+              {currentStep === "products" && (
+                <div className="mb-8 max-w-md">
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Category Selection */}
+              {currentStep === "category" && (
+                <div className="bg-card rounded-2xl p-8 border border-border/50">
+                  <div className="text-center mb-8">
+                    <h2 className="font-heading text-2xl font-semibold text-foreground mb-2">
+                      Select a Category
+                    </h2>
+                    <p className="text-muted-foreground">
+                      Choose the type of product you're looking for
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                    {categories.map((category) => (
+                      <button
+                        key={category.id}
+                        onClick={() => handleCategoryClick(category.name)}
+                        className="group bg-background border-2 border-border rounded-xl p-8 hover:border-accent hover:shadow-lg transition-all duration-300 text-center"
+                      >
+                        <h3 className="font-heading text-xl font-semibold text-foreground group-hover:text-accent transition-colors mb-2">
+                          {category.name}
+                        </h3>
+                        {category.description && (
+                          <p className="text-sm text-muted-foreground">
+                            {category.description}
+                          </p>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Subcategory Selection */}
+              {currentStep === "subcategory" &&
+                selectedCategory &&
+                getAvailableSubcategories().length > 0 && (
+                  <div className="bg-card rounded-2xl p-8 border border-border/50">
+                    <div className="text-center mb-8">
+                      <h2 className="font-heading text-2xl font-semibold text-foreground mb-2">
+                        Select {selectedCategory} Type
+                      </h2>
+                      <p className="text-muted-foreground">
+                        Choose the specific type
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                      {getAvailableSubcategories().map((subcategory) => (
+                        <button
+                          key={subcategory}
+                          onClick={() => handleSubcategoryClick(subcategory)}
+                          className="group bg-background border-2 border-border rounded-xl p-8 hover:border-accent hover:shadow-lg transition-all duration-300 text-center"
+                        >
+                          <h3 className="font-heading text-xl font-semibold text-foreground group-hover:text-accent transition-colors mb-2">
+                            {subcategory}
+                          </h3>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              {/* Material Selection */}
+              {currentStep === "material" && (
+                <div className="bg-card rounded-2xl p-8 border border-border/50">
+                  <div className="text-center mb-8">
+                    <h2 className="font-heading text-2xl font-semibold text-foreground mb-2">
+                      Select Material
+                    </h2>
+                    <p className="text-muted-foreground">
+                      Choose the material type
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                    {getAvailableMaterials().map((material) => (
+                      <button
+                        key={material}
+                        onClick={() => handleMaterialClick(material)}
+                        className="group bg-background border-2 border-border rounded-xl p-8 hover:border-accent hover:shadow-lg transition-all duration-300 text-center"
+                      >
+                        <h3 className="font-heading text-xl font-semibold text-foreground group-hover:text-accent transition-colors mb-2">
+                          {material}
+                        </h3>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Finish Selection */}
+              {currentStep === "finish" && (
+                <div className="bg-card rounded-2xl p-8 border border-border/50">
+                  <div className="text-center mb-8">
+                    <h2 className="font-heading text-2xl font-semibold text-foreground mb-2">
+                      Select a Finish
+                    </h2>
+                    <p className="text-muted-foreground">
+                      Choose from available finishes
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {getAvailableFinishes().map((finishName) => {
+                      // Find the finish object to get the image
+                      const finishObj = finishes.find(
+                        (f) => f.name === finishName
+                      );
+                      return (
+                        <button
+                          key={finishName}
+                          onClick={() => handleFinishClick(finishName)}
+                          className="group bg-background border border-border rounded-xl p-4 hover:border-accent hover:shadow-md transition-all duration-300 text-left"
+                        >
+                          <div className="aspect-square rounded-lg overflow-hidden mb-3 bg-secondary">
+                            {finishObj ? (
+                              <ImageDisplay
+                                src={finishObj.image}
+                                alt={finishName}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+                                No Image
+                              </div>
+                            )}
+                          </div>
+                          <p className="font-medium text-sm text-foreground group-hover:text-accent transition-colors">
+                            {finishName}
+                          </p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Products Grid */}
+              {currentStep === "products" && (
+                <>
+                  {filteredProducts.length > 0 ? (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      {filteredProducts.map((product, index) => {
+                        // Build the product detail URL with current state
+                        const productUrl = `/products/${
+                          product.id
+                        }?from=${encodeURIComponent(
+                          location.pathname + location.search
+                        )}`;
+
+                        return (
+                          <div
+                            key={product.id}
+                            className="bg-card rounded-2xl overflow-hidden shadow-card border border-border/50 group hover:shadow-card-hover transition-all duration-300"
+                          >
+                            <Link to={productUrl} className="block">
+                              <div className="aspect-[4/3] overflow-hidden">
+                                <ImageDisplay
+                                  src={product.image}
+                                  alt={product.name}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 animate-slide-in-left"
+                                  style={{ animationDelay: `${index * 0.1}s` }}
+                                />
+                              </div>
+                              <div className="p-6 pb-4">
+                                <div className="flex items-center gap-2 mb-3 flex-wrap">
+                                  <span className="px-3 py-1 bg-secondary rounded-full text-xs font-medium text-secondary-foreground">
+                                    {product.category}
+                                  </span>
+                                  {product.subcategory && (
+                                    <span className="px-3 py-1 bg-secondary rounded-full text-xs font-medium text-secondary-foreground">
+                                      {product.subcategory}
+                                    </span>
+                                  )}
+                                  <span className="px-3 py-1 bg-accent/10 text-accent rounded-full text-xs font-medium">
+                                    {product.material}
+                                  </span>
+                                </div>
+                                <h3 className="font-heading text-xl font-semibold text-foreground mb-2 group-hover:text-accent transition-colors">
+                                  {product.name}
+                                </h3>
+                                <p className="text-muted-foreground text-sm mb-3">
+                                  {product.description}
+                                </p>
+                                <div className="mb-0">
+                                  <p className="text-xs text-muted-foreground mb-2">
+                                    Available Finishes:
+                                  </p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {(() => {
+                                      const names =
+                                        product.finishIds &&
+                                        product.finishIds.length > 0
+                                          ? product.finishIds
+                                              .map(
+                                                (fid) =>
+                                                  finishes.find(
+                                                    (f) => f.id === fid
+                                                  )?.name
+                                              )
+                                              .filter((n): n is string => !!n)
+                                          : product.finishes || [];
+                                      const visible = names.slice(0, 3);
+                                      return (
+                                        <>
+                                          {visible.map((finish, index) => (
+                                            <span
+                                              key={index}
+                                              className="text-xs px-2 py-1 bg-muted rounded text-muted-foreground"
+                                            >
+                                              {finish}
+                                            </span>
+                                          ))}
+                                          {names.length > 3 && (
+                                            <span className="text-xs px-2 py-1 bg-muted rounded text-muted-foreground">
+                                              +{names.length - 3} more
+                                            </span>
+                                          )}
+                                        </>
+                                      );
+                                    })()}
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                            <div className="px-6 pb-6 pt-0">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="w-full gap-2"
+                                asChild
+                              >
+                                <Link to="/contact">
+                                  Request Quote
+                                  <ArrowRight className="w-4 h-4" />
+                                </Link>
+                              </Button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center py-20">
+                      <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="font-heading text-xl font-semibold text-foreground mb-2">
+                        No products found
+                      </h3>
+                      <p className="text-muted-foreground mb-4">
+                        Try adjusting your search or filter criteria.
+                      </p>
+                      <Button onClick={handleReset} variant="outline">
+                        Reset Filters
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </section>
+
+          {/* Custom Sourcing CTA */}
+          <section className="py-20 bg-secondary">
+            <div className="container mx-auto px-4 lg:px-8">
+              <div className="bg-primary rounded-3xl p-8 lg:p-12 text-center">
+                <h2 className="font-heading text-3xl lg:text-4xl font-bold text-primary-foreground mb-4">
+                  Looking for Custom Solutions?
+                </h2>
+                <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
+                  We offer bespoke architectural hardware tailored to your
+                  project specifications. Contact our team to discuss custom
+                  finishes, sizes, and designs.
+                </p>
+                <Button variant="hero" size="xl" asChild>
+                  <Link to="/contact" className="gap-2">
+                    Request Custom Quote
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </section>
         </>
       )}
 
