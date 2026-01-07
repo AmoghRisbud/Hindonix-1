@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ImageDisplay } from "@/components/ImageDisplay";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Package, FileText, Tags, Layers, Paintbrush } from "lucide-react";
+import { Plus, Edit, Trash2, Package, FileText, Tags, Layers, Paintbrush, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import {
   getProducts,
@@ -88,23 +88,23 @@ const availableFinishes = [
 ];
 
 const Admin = () => {
-  const [products, setProducts] = useState<Product[]>(getProducts());
-  const [blogs, setBlogs] = useState<Blog[]>(getBlogs());
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(
-    getTestimonials()
-  );
+  const [products, setProducts] = useState<Product[]>([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   
   // Taxonomy state
-  const [categories, setCategories] = useState<Category[]>(getCategories());
-  const [subcategories, setSubcategories] = useState<Subcategory[]>(getSubcategories());
-  const [materialsList, setMaterialsList] = useState<Material[]>(getMaterials());
-  const [finishesList, setFinishesList] = useState<Finish[]>(getFinishes());
-  const [finishCategoriesList, setFinishCategoriesList] = useState<FinishCategory[]>(getFinishCategories());
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+  const [materialsList, setMaterialsList] = useState<Material[]>([]);
+  const [finishesList, setFinishesList] = useState<Finish[]>([]);
+  const [finishCategoriesList, setFinishCategoriesList] = useState<FinishCategory[]>([]);
   
-  const [heroImage, setHeroImageState] = useState<string>(getHeroImage());
-  const [selectedHeroImage, setSelectedHeroImage] = useState<string>(
-    getHeroImage()
-  );
+  const [heroImage, setHeroImageState] = useState<string>("");
+  const [selectedHeroImage, setSelectedHeroImage] = useState<string>("");
+  
+  // Loading and uploading states
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   
   // Dialog states
   const [productDialogOpen, setProductDialogOpen] = useState(false);
@@ -140,15 +140,51 @@ const Admin = () => {
 
   // Load data on component mount
   useEffect(() => {
-    const reloadData = () => {
-      setProducts(getProducts());
-      setBlogs(getBlogs());
-      setTestimonials(getTestimonials());
-      setCategories(getCategories());
-      setSubcategories(getSubcategories());
-      setMaterialsList(getMaterials());
-      setFinishesList(getFinishes());
-      setFinishCategoriesList(getFinishCategories());
+    const reloadData = async () => {
+      try {
+        setLoading(true);
+        const [
+          productsData,
+          blogsData,
+          testimonialsData,
+          categoriesData,
+          subcategoriesData,
+          materialsData,
+          finishesData,
+          finishCategoriesData,
+          heroImageData
+        ] = await Promise.all([
+          getProducts(),
+          getBlogs(),
+          getTestimonials(),
+          getCategories(),
+          getSubcategories(),
+          getMaterials(),
+          getFinishes(),
+          getFinishCategories(),
+          getHeroImage()
+        ]);
+        
+        setProducts(productsData);
+        setBlogs(blogsData);
+        setTestimonials(testimonialsData);
+        setCategories(categoriesData);
+        setSubcategories(subcategoriesData);
+        setMaterialsList(materialsData);
+        setFinishesList(finishesData);
+        setFinishCategoriesList(finishCategoriesData);
+        setHeroImageState(heroImageData);
+        setSelectedHeroImage(heroImageData);
+      } catch (error) {
+        console.error('Error loading data:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load data. Please refresh the page.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     };
 
     // Reload on mount
@@ -233,20 +269,25 @@ const Admin = () => {
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      setProductImageFile(file);
-
-      // Convert image to base64
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        // Store with unique key
-        const imageKey = `product_image_${Date.now()}_${file.name}`;
-        if (typeof window !== "undefined") {
-          localStorage.setItem(imageKey, base64String);
-        }
-        setProductForm({ ...productForm, image: imageKey });
-      };
-      reader.readAsDataURL(file);
+      try {
+        setUploading(true);
+        setProductImageFile(file);
+        const response = await uploadImageToCloudinary(file);
+        setProductForm({ ...productForm, image: response.secure_url });
+        toast({
+          title: "Image Uploaded",
+          description: "Product image uploaded successfully.",
+        });
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        toast({
+          title: "Upload Error",
+          description: "Failed to upload image. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -255,20 +296,25 @@ const Admin = () => {
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      setBlogImageFile(file);
-
-      // Convert image to base64
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        // Store with unique key
-        const imageKey = `blog_image_${Date.now()}_${file.name}`;
-        if (typeof window !== "undefined") {
-          localStorage.setItem(imageKey, base64String);
-        }
-        setBlogForm({ ...blogForm, image: imageKey });
-      };
-      reader.readAsDataURL(file);
+      try {
+        setUploading(true);
+        setBlogImageFile(file);
+        const response = await uploadImageToCloudinary(file);
+        setBlogForm({ ...blogForm, image: response.secure_url });
+        toast({
+          title: "Image Uploaded",
+          description: "Blog image uploaded successfully.",
+        });
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        toast({
+          title: "Upload Error",
+          description: "Failed to upload image. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -277,196 +323,78 @@ const Admin = () => {
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      setTestimonialImageFile(file);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        const imageKey = `testimonial_image_${Date.now()}_${file.name}`;
-        if (typeof window !== "undefined") {
-          localStorage.setItem(imageKey, base64String);
-        }
-        setTestimonialForm({ ...testimonialForm, image: imageKey });
-      };
-      reader.readAsDataURL(file);
+      try {
+        setUploading(true);
+        setTestimonialImageFile(file);
+        const response = await uploadImageToCloudinary(file);
+        setTestimonialForm({ ...testimonialForm, image: response.secure_url });
+        toast({
+          title: "Image Uploaded",
+          description: "Testimonial image uploaded successfully.",
+        });
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        toast({
+          title: "Upload Error",
+          description: "Failed to upload image. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
   // Hero Image handler
-  const handleHeroImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) {
-      console.warn("No file selected");
       return;
     }
 
-    console.log("=== HERO IMAGE UPLOAD DEBUG ===");
-    console.log("Filename:", file.name);
-    console.log(
-      "File size:",
-      file.size,
-      "bytes",
-      `(${(file.size / 1024).toFixed(2)}KB)`
-    );
-    console.log("File type:", file.type);
-    console.log("Last modified:", new Date(file.lastModified).toLocaleString());
-
-    // Validation
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-
-    if (file.size > maxSize) {
-      toast({
-        title: "File Too Large",
-        description: `Max 5MB, your file is ${(file.size / 1024 / 1024).toFixed(
-          2
-        )}MB`,
-        variant: "destructive",
-      });
-      console.error("File size exceeds limit");
-      return;
-    }
-
-    if (!allowedTypes.includes(file.type)) {
-      toast({
-        title: "Invalid File Type",
-        description: `Type: ${file.type}. Use: JPEG, PNG, GIF, or WebP`,
-        variant: "destructive",
-      });
-      console.error("Invalid file type:", file.type);
-      return;
-    }
-
-    // Test localStorage access
     try {
-      const testKey = "test_storage_" + Date.now();
-      localStorage.setItem(testKey, "test");
-      localStorage.removeItem(testKey);
-      console.log("✓ localStorage is accessible");
-    } catch (e) {
+      setUploading(true);
+      setHeroImageFile(file);
+      const response = await uploadImageToCloudinary(file);
+      setSelectedHeroImage(response.secure_url);
       toast({
-        title: "Storage Error",
-        description: "localStorage not accessible or quota exceeded",
+        title: "Image Uploaded",
+        description: `${file.name} uploaded successfully. Click "Update Hero Image" to save.`,
+      });
+    } catch (error) {
+      console.error('Error uploading hero image:', error);
+      toast({
+        title: "Upload Error",
+        description: "Failed to upload image. Please try again.",
         variant: "destructive",
       });
-      console.error("localStorage test failed:", e);
-      return;
+    } finally {
+      setUploading(false);
     }
-
-    setHeroImageFile(file);
-
-    // Convert image to base64
-    const reader = new FileReader();
-    reader.onerror = () => {
-      console.error("FileReader error:", reader.error);
-      toast({
-        title: "Read Error",
-        description: "Failed to read file. Try a different image.",
-        variant: "destructive",
-      });
-    };
-    reader.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percentComplete = (event.loaded / event.total) * 100;
-        console.log("Read progress:", percentComplete.toFixed(2) + "%");
-      }
-    };
-    reader.onload = () => {
-      try {
-        const base64String = reader.result as string;
-
-        if (!base64String) {
-          console.error("Failed to generate base64 string");
-          toast({
-            title: "Conversion Error",
-            description: "Failed to convert image. Try a different image.",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        console.log("✓ Base64 generated, length:", base64String.length);
-
-        const imageKey = `hero_image_${Date.now()}_${file.name}`;
-        console.log("Storage key:", imageKey);
-
-        // Save to localStorage
-        try {
-          const storageBefore = Object.keys(localStorage).length;
-          console.log("localStorage items before:", storageBefore);
-
-          localStorage.setItem(imageKey, base64String);
-
-          const storageAfter = Object.keys(localStorage).length;
-          console.log("✓ Saved to localStorage");
-          console.log("localStorage items after:", storageAfter);
-
-          // Verify it was saved
-          const retrieved = localStorage.getItem(imageKey);
-          if (retrieved === base64String) {
-            console.log("✓ Verification passed - image successfully stored");
-            setSelectedHeroImage(imageKey);
-            toast({
-              title: "Success",
-              description: `Uploaded: ${file.name} - Click "Update Hero Image" to save`,
-            });
-
-            // Reset input
-            if (e.target) {
-              e.target.value = "";
-            }
-          } else {
-            console.error("✗ Verification failed - data mismatch");
-            console.error("Expected length:", base64String.length);
-            console.error("Retrieved length:", retrieved?.length || 0);
-            toast({
-              title: "Verification Error",
-              description: "Image was not saved correctly. Try again.",
-              variant: "destructive",
-            });
-          }
-        } catch (storageError) {
-          console.error("Storage error:", storageError);
-          if (storageError instanceof Error) {
-            console.error("Error name:", storageError.name);
-            console.error("Error message:", storageError.message);
-
-            if (storageError.name === "QuotaExceededError") {
-              toast({
-                title: "Storage Full",
-                description: "Delete old images first or clear browser data.",
-                variant: "destructive",
-              });
-            } else {
-              toast({
-                title: "Storage Error",
-                description: storageError.message,
-                variant: "destructive",
-              });
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Processing error:", error);
-        toast({
-          title: "Processing Error",
-          description: "Error processing image. Try again.",
-          variant: "destructive",
-        });
-      }
-    };
-    console.log("Starting file read as Data URL...");
-    reader.readAsDataURL(file);
   };
 
-  const handleSaveHeroImage = () => {
-    if (selectedHeroImage && selectedHeroImage.startsWith("hero_image_")) {
-      setHeroImage(selectedHeroImage);
-      setHeroImageState(selectedHeroImage);
-      toast({
-        title: "Hero Image Updated",
-        description: "The hero image has been successfully updated.",
-      });
+  const handleSaveHeroImage = async () => {
+    if (selectedHeroImage) {
+      try {
+        setLoading(true);
+        await setHeroImage(selectedHeroImage);
+        setHeroImageState(selectedHeroImage);
+        toast({
+          title: "Hero Image Updated",
+          description: "The hero image has been successfully updated.",
+        });
+        // Notify home page to refresh
+        window.dispatchEvent(new Event("heroImageUpdated"));
+      } catch (error) {
+        console.error('Error saving hero image:', error);
+        toast({
+          title: "Error",
+          description: "Failed to save hero image.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     } else {
       toast({
         title: "Error",
@@ -534,7 +462,7 @@ const Admin = () => {
     }
   };
 
-  const handleSaveProduct = () => {
+  const handleSaveProduct = async () => {
     if (
       !productForm.name ||
       !productForm.category ||
@@ -562,43 +490,56 @@ const Admin = () => {
       return;
     }
 
-    if (editingProduct) {
-      updateProduct(editingProduct.id, {
-        name: productForm.name,
-        category: productForm.category,
-        subcategory: productForm.subcategory,
-        material: productForm.material,
-        description: productForm.description,
-        modelNumber: productForm.modelNumber,
-        longDescription: productForm.longDescription,
-        image: productForm.image,
-        finishes: productForm.finishes,
-      });
-      toast({
-        title: "Product Updated",
-        description: "The product has been successfully updated.",
-      });
-    } else {
-      addProduct({
-        name: productForm.name,
-        category: productForm.category,
-        subcategory: productForm.subcategory,
-        material: productForm.material,
-        description: productForm.description,
-        modelNumber: productForm.modelNumber,
-        longDescription: productForm.longDescription,
-        image: productForm.image,
-        finishes: productForm.finishes,
-      });
-      toast({
-        title: "Product Added",
-        description: "The product has been successfully added.",
-      });
-    }
+    try {
+      setLoading(true);
+      if (editingProduct) {
+        await updateProduct(editingProduct.id, {
+          name: productForm.name,
+          category: productForm.category,
+          subcategory: productForm.subcategory,
+          material: productForm.material,
+          description: productForm.description,
+          modelNumber: productForm.modelNumber,
+          longDescription: productForm.longDescription,
+          image: productForm.image,
+          finishes: productForm.finishes,
+        });
+        toast({
+          title: "Product Updated",
+          description: "The product has been successfully updated.",
+        });
+      } else {
+        await addProduct({
+          name: productForm.name,
+          category: productForm.category,
+          subcategory: productForm.subcategory,
+          material: productForm.material,
+          description: productForm.description,
+          modelNumber: productForm.modelNumber,
+          longDescription: productForm.longDescription,
+          image: productForm.image,
+          finishes: productForm.finishes,
+        });
+        toast({
+          title: "Product Added",
+          description: "The product has been successfully added.",
+        });
+      }
 
-    setProducts(getProducts());
-    setProductDialogOpen(false);
-    setProductImageFile(null);
+      const updatedProducts = await getProducts();
+      setProducts(updatedProducts);
+      setProductDialogOpen(false);
+      setProductImageFile(null);
+    } catch (error) {
+      console.error('Error saving product:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save product. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Blog handlers
@@ -642,14 +583,27 @@ const Admin = () => {
     setTestimonialDialogOpen(true);
   };
 
-  const handleDeleteTestimonial = (id: number) => {
+  const handleDeleteTestimonial = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this testimonial?")) {
-      deleteTestimonial(id);
-      setTestimonials(getTestimonials());
-      toast({
-        title: "Testimonial Deleted",
-        description: "The testimonial has been successfully deleted.",
-      });
+      try {
+        setLoading(true);
+        await deleteTestimonial(id);
+        const updatedTestimonials = await getTestimonials();
+        setTestimonials(updatedTestimonials);
+        toast({
+          title: "Testimonial Deleted",
+          description: "The testimonial has been successfully deleted.",
+        });
+      } catch (error) {
+        console.error('Error deleting testimonial:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete testimonial. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -662,18 +616,31 @@ const Admin = () => {
     setBlogDialogOpen(true);
   };
 
-  const handleDeleteBlog = (id: number) => {
+  const handleDeleteBlog = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this blog?")) {
-      deleteBlog(id);
-      setBlogs(getBlogs());
-      toast({
-        title: "Blog Deleted",
-        description: "The blog has been successfully deleted.",
-      });
+      try {
+        setLoading(true);
+        await deleteBlog(id);
+        const updatedBlogs = await getBlogs();
+        setBlogs(updatedBlogs);
+        toast({
+          title: "Blog Deleted",
+          description: "The blog has been successfully deleted.",
+        });
+      } catch (error) {
+        console.error('Error deleting blog:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete blog. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  const handleSaveBlog = () => {
+  const handleSaveBlog = async () => {
     if (!blogForm.image || !blogForm.content) {
       toast({
         title: "Validation Error",
@@ -683,32 +650,45 @@ const Admin = () => {
       return;
     }
 
-    if (editingBlog) {
-      updateBlog(editingBlog.id, {
-        image: blogForm.image,
-        content: blogForm.content,
-      });
-      toast({
-        title: "Blog Updated",
-        description: "The blog has been successfully updated.",
-      });
-    } else {
-      addBlog({
-        image: blogForm.image,
-        content: blogForm.content,
-      });
-      toast({
-        title: "Blog Added",
-        description: "The blog has been successfully added.",
-      });
-    }
+    try {
+      setLoading(true);
+      if (editingBlog) {
+        await updateBlog(editingBlog.id, {
+          image: blogForm.image,
+          content: blogForm.content,
+        });
+        toast({
+          title: "Blog Updated",
+          description: "The blog has been successfully updated.",
+        });
+      } else {
+        await addBlog({
+          image: blogForm.image,
+          content: blogForm.content,
+        });
+        toast({
+          title: "Blog Added",
+          description: "The blog has been successfully added.",
+        });
+      }
 
-    setBlogs(getBlogs());
-    setBlogDialogOpen(false);
-    setBlogImageFile(null);
+      const updatedBlogs = await getBlogs();
+      setBlogs(updatedBlogs);
+      setBlogDialogOpen(false);
+      setBlogImageFile(null);
+    } catch (error) {
+      console.error('Error saving blog:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save blog. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSaveTestimonial = () => {
+  const handleSaveTestimonial = async () => {
     if (
       !testimonialForm.name ||
       !testimonialForm.role ||
@@ -724,39 +704,52 @@ const Admin = () => {
       return;
     }
 
-    if (editingTestimonial) {
-      updateTestimonial(editingTestimonial.id, {
-        name: testimonialForm.name,
-        role: testimonialForm.role,
-        company: testimonialForm.company,
-        location: testimonialForm.location,
-        content: testimonialForm.content,
-        image: testimonialForm.image || undefined,
-        rating: testimonialForm.rating,
-      });
-      toast({
-        title: "Testimonial Updated",
-        description: "The testimonial has been successfully updated.",
-      });
-    } else {
-      addTestimonial({
-        name: testimonialForm.name,
-        role: testimonialForm.role,
-        company: testimonialForm.company,
-        location: testimonialForm.location,
-        content: testimonialForm.content,
-        image: testimonialForm.image || undefined,
-        rating: testimonialForm.rating,
-      });
-      toast({
-        title: "Testimonial Added",
-        description: "The testimonial has been successfully added.",
-      });
-    }
+    try {
+      setLoading(true);
+      if (editingTestimonial) {
+        await updateTestimonial(editingTestimonial.id, {
+          name: testimonialForm.name,
+          role: testimonialForm.role,
+          company: testimonialForm.company,
+          location: testimonialForm.location,
+          content: testimonialForm.content,
+          image: testimonialForm.image || undefined,
+          rating: testimonialForm.rating,
+        });
+        toast({
+          title: "Testimonial Updated",
+          description: "The testimonial has been successfully updated.",
+        });
+      } else {
+        await addTestimonial({
+          name: testimonialForm.name,
+          role: testimonialForm.role,
+          company: testimonialForm.company,
+          location: testimonialForm.location,
+          content: testimonialForm.content,
+          image: testimonialForm.image || undefined,
+          rating: testimonialForm.rating,
+        });
+        toast({
+          title: "Testimonial Added",
+          description: "The testimonial has been successfully added.",
+        });
+      }
 
-    setTestimonials(getTestimonials());
-    setTestimonialDialogOpen(false);
-    setTestimonialImageFile(null);
+      const updatedTestimonials = await getTestimonials();
+      setTestimonials(updatedTestimonials);
+      setTestimonialDialogOpen(false);
+      setTestimonialImageFile(null);
+    } catch (error) {
+      console.error('Error saving testimonial:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save testimonial. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ========================================
@@ -776,28 +769,45 @@ const Admin = () => {
     setCategoryDialogOpen(true);
   };
 
-  const handleDeleteCategory = (id: number) => {
+  const handleDeleteCategory = async (id: number) => {
     if (window.confirm("Are you sure? This will also delete related subcategories and materials if they have no products.")) {
-      const success = deleteCategory(id);
-      if (success) {
-        setCategories(getCategories());
-        setSubcategories(getSubcategories());
-        setMaterialsList(getMaterials());
+      try {
+        setLoading(true);
+        const success = await deleteCategory(id);
+        if (success) {
+          const [categoriesData, subcategoriesData, materialsData] = await Promise.all([
+            getCategories(),
+            getSubcategories(),
+            getMaterials()
+          ]);
+          setCategories(categoriesData);
+          setSubcategories(subcategoriesData);
+          setMaterialsList(materialsData);
+          toast({
+            title: "Category Deleted",
+            description: "The category and related items have been deleted.",
+          });
+        } else {
+          toast({
+            title: "Cannot Delete",
+            description: "This category has products. Please reassign or delete products first.",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting category:', error);
         toast({
-          title: "Category Deleted",
-          description: "The category and related items have been deleted.",
-        });
-      } else {
-        toast({
-          title: "Cannot Delete",
-          description: "This category has products. Please reassign or delete products first.",
+          title: "Error",
+          description: "Failed to delete category. Please try again.",
           variant: "destructive",
         });
+      } finally {
+        setLoading(false);
       }
     }
   };
 
-  const handleSaveCategory = () => {
+  const handleSaveCategory = async () => {
     if (!categoryForm.name) {
       toast({
         title: "Validation Error",
@@ -807,16 +817,29 @@ const Admin = () => {
       return;
     }
 
-    if (editingCategory) {
-      updateCategory(editingCategory.id, categoryForm);
-      toast({ title: "Category Updated", description: "The category has been updated." });
-    } else {
-      addCategory(categoryForm);
-      toast({ title: "Category Added", description: "The category has been added." });
-    }
+    try {
+      setLoading(true);
+      if (editingCategory) {
+        await updateCategory(editingCategory.id, categoryForm);
+        toast({ title: "Category Updated", description: "The category has been updated." });
+      } else {
+        await addCategory(categoryForm);
+        toast({ title: "Category Added", description: "The category has been added." });
+      }
 
-    setCategories(getCategories());
-    setCategoryDialogOpen(false);
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
+      setCategoryDialogOpen(false);
+    } catch (error) {
+      console.error('Error saving category:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save category. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Subcategory handlers
@@ -836,24 +859,40 @@ const Admin = () => {
     setSubcategoryDialogOpen(true);
   };
 
-  const handleDeleteSubcategory = (id: number) => {
+  const handleDeleteSubcategory = async (id: number) => {
     if (window.confirm("Are you sure? This will also delete related materials if they have no products.")) {
-      const success = deleteSubcategory(id);
-      if (success) {
-        setSubcategories(getSubcategories());
-        setMaterialsList(getMaterials());
-        toast({ title: "Subcategory Deleted", description: "The subcategory has been deleted." });
-      } else {
+      try {
+        setLoading(true);
+        const success = await deleteSubcategory(id);
+        if (success) {
+          const [subcategoriesData, materialsData] = await Promise.all([
+            getSubcategories(),
+            getMaterials()
+          ]);
+          setSubcategories(subcategoriesData);
+          setMaterialsList(materialsData);
+          toast({ title: "Subcategory Deleted", description: "The subcategory has been deleted." });
+        } else {
+          toast({
+            title: "Cannot Delete",
+            description: "This subcategory has products. Please reassign or delete products first.",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting subcategory:', error);
         toast({
-          title: "Cannot Delete",
-          description: "This subcategory has products. Please reassign or delete products first.",
+          title: "Error",
+          description: "Failed to delete subcategory. Please try again.",
           variant: "destructive",
         });
+      } finally {
+        setLoading(false);
       }
     }
   };
 
-  const handleSaveSubcategory = () => {
+  const handleSaveSubcategory = async () => {
     if (!subcategoryForm.name || !subcategoryForm.categoryId) {
       toast({
         title: "Validation Error",
@@ -863,16 +902,29 @@ const Admin = () => {
       return;
     }
 
-    if (editingSubcategory) {
-      updateSubcategory(editingSubcategory.id, subcategoryForm);
-      toast({ title: "Subcategory Updated", description: "The subcategory has been updated." });
-    } else {
-      addSubcategory(subcategoryForm);
-      toast({ title: "Subcategory Added", description: "The subcategory has been added." });
-    }
+    try {
+      setLoading(true);
+      if (editingSubcategory) {
+        await updateSubcategory(editingSubcategory.id, subcategoryForm);
+        toast({ title: "Subcategory Updated", description: "The subcategory has been updated." });
+      } else {
+        await addSubcategory(subcategoryForm);
+        toast({ title: "Subcategory Added", description: "The subcategory has been added." });
+      }
 
-    setSubcategories(getSubcategories());
-    setSubcategoryDialogOpen(false);
+      const subcategoriesData = await getSubcategories();
+      setSubcategories(subcategoriesData);
+      setSubcategoryDialogOpen(false);
+    } catch (error) {
+      console.error('Error saving subcategory:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save subcategory. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Material handlers
@@ -893,23 +945,36 @@ const Admin = () => {
     setMaterialDialogOpen(true);
   };
 
-  const handleDeleteMaterial = (id: number) => {
+  const handleDeleteMaterial = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this material?")) {
-      const success = deleteMaterial(id);
-      if (success) {
-        setMaterialsList(getMaterials());
-        toast({ title: "Material Deleted", description: "The material has been deleted." });
-      } else {
+      try {
+        setLoading(true);
+        const success = await deleteMaterial(id);
+        if (success) {
+          const materialsData = await getMaterials();
+          setMaterialsList(materialsData);
+          toast({ title: "Material Deleted", description: "The material has been deleted." });
+        } else {
+          toast({
+            title: "Cannot Delete",
+            description: "This material has products. Please reassign or delete products first.",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting material:', error);
         toast({
-          title: "Cannot Delete",
-          description: "This material has products. Please reassign or delete products first.",
+          title: "Error",
+          description: "Failed to delete material. Please try again.",
           variant: "destructive",
         });
+      } finally {
+        setLoading(false);
       }
     }
   };
 
-  const handleSaveMaterial = () => {
+  const handleSaveMaterial = async () => {
     if (!materialForm.name) {
       toast({
         title: "Validation Error",
@@ -919,16 +984,29 @@ const Admin = () => {
       return;
     }
 
-    if (editingMaterial) {
-      updateMaterial(editingMaterial.id, materialForm);
-      toast({ title: "Material Updated", description: "The material has been updated." });
-    } else {
-      addMaterial(materialForm);
-      toast({ title: "Material Added", description: "The material has been added." });
-    }
+    try {
+      setLoading(true);
+      if (editingMaterial) {
+        await updateMaterial(editingMaterial.id, materialForm);
+        toast({ title: "Material Updated", description: "The material has been updated." });
+      } else {
+        await addMaterial(materialForm);
+        toast({ title: "Material Added", description: "The material has been added." });
+      }
 
-    setMaterialsList(getMaterials());
-    setMaterialDialogOpen(false);
+      const materialsData = await getMaterials();
+      setMaterialsList(materialsData);
+      setMaterialDialogOpen(false);
+    } catch (error) {
+      console.error('Error saving material:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save material. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Finish handlers
@@ -950,32 +1028,53 @@ const Admin = () => {
     setFinishDialogOpen(true);
   };
 
-  const handleDeleteFinish = (id: number) => {
+  const handleDeleteFinish = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this finish?")) {
-      deleteFinish(id);
-      setFinishesList(getFinishes());
-      toast({ title: "Finish Deleted", description: "The finish has been deleted." });
+      try {
+        setLoading(true);
+        await deleteFinish(id);
+        const finishesData = await getFinishes();
+        setFinishesList(finishesData);
+        toast({ title: "Finish Deleted", description: "The finish has been deleted." });
+      } catch (error) {
+        console.error('Error deleting finish:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete finish. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   const handleFinishImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFinishImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        const imageKey = `finish_image_${Date.now()}_${file.name}`;
-        if (typeof window !== "undefined") {
-          localStorage.setItem(imageKey, base64String);
-        }
-        setFinishForm({ ...finishForm, image: imageKey });
-      };
-      reader.readAsDataURL(file);
+      try {
+        setUploading(true);
+        setFinishImageFile(file);
+        const response = await uploadImageToCloudinary(file);
+        setFinishForm({ ...finishForm, image: response.secure_url });
+        toast({
+          title: "Image Uploaded",
+          description: "Finish image uploaded successfully.",
+        });
+      } catch (error) {
+        console.error('Error uploading finish image:', error);
+        toast({
+          title: "Upload Error",
+          description: "Failed to upload image. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
-  const handleSaveFinish = () => {
+  const handleSaveFinish = async () => {
     if (!finishForm.name || !finishForm.categoryId || !finishForm.image) {
       toast({
         title: "Validation Error",
@@ -985,17 +1084,30 @@ const Admin = () => {
       return;
     }
 
-    if (editingFinish) {
-      updateFinish(editingFinish.id, finishForm);
-      toast({ title: "Finish Updated", description: "The finish has been updated." });
-    } else {
-      addFinish(finishForm);
-      toast({ title: "Finish Added", description: "The finish has been added." });
-    }
+    try {
+      setLoading(true);
+      if (editingFinish) {
+        await updateFinish(editingFinish.id, finishForm);
+        toast({ title: "Finish Updated", description: "The finish has been updated." });
+      } else {
+        await addFinish(finishForm);
+        toast({ title: "Finish Added", description: "The finish has been added." });
+      }
 
-    setFinishesList(getFinishes());
-    setFinishDialogOpen(false);
-    setFinishImageFile(null);
+      const finishesData = await getFinishes();
+      setFinishesList(finishesData);
+      setFinishDialogOpen(false);
+      setFinishImageFile(null);
+    } catch (error) {
+      console.error('Error saving finish:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save finish. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Finish Category handlers
@@ -1011,23 +1123,36 @@ const Admin = () => {
     setFinishCategoryDialogOpen(true);
   };
 
-  const handleDeleteFinishCategory = (id: number) => {
+  const handleDeleteFinishCategory = async (id: number) => {
     if (window.confirm("Are you sure? This will prevent deleting if finishes exist in this category.")) {
-      const success = deleteFinishCategory(id);
-      if (success) {
-        setFinishCategoriesList(getFinishCategories());
-        toast({ title: "Finish Category Deleted", description: "The finish category has been deleted." });
-      } else {
+      try {
+        setLoading(true);
+        const success = await deleteFinishCategory(id);
+        if (success) {
+          const finishCategoriesData = await getFinishCategories();
+          setFinishCategoriesList(finishCategoriesData);
+          toast({ title: "Finish Category Deleted", description: "The finish category has been deleted." });
+        } else {
+          toast({
+            title: "Cannot Delete",
+            description: "This finish category has finishes. Please reassign or delete finishes first.",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting finish category:', error);
         toast({
-          title: "Cannot Delete",
-          description: "This finish category has finishes. Please reassign or delete finishes first.",
+          title: "Error",
+          description: "Failed to delete finish category. Please try again.",
           variant: "destructive",
         });
+      } finally {
+        setLoading(false);
       }
     }
   };
 
-  const handleSaveFinishCategory = () => {
+  const handleSaveFinishCategory = async () => {
     if (!finishCategoryForm.name) {
       toast({
         title: "Validation Error",
@@ -1037,17 +1162,45 @@ const Admin = () => {
       return;
     }
 
-    if (editingFinishCategory) {
-      updateFinishCategory(editingFinishCategory.id, finishCategoryForm);
-      toast({ title: "Category Updated", description: "The finish category has been updated." });
-    } else {
-      addFinishCategory(finishCategoryForm);
-      toast({ title: "Category Added", description: "The finish category has been added." });
-    }
+    try {
+      setLoading(true);
+      if (editingFinishCategory) {
+        await updateFinishCategory(editingFinishCategory.id, finishCategoryForm);
+        toast({ title: "Category Updated", description: "The finish category has been updated." });
+      } else {
+        await addFinishCategory(finishCategoryForm);
+        toast({ title: "Category Added", description: "The finish category has been added." });
+      }
 
-    setFinishCategoriesList(getFinishCategories());
-    setFinishCategoryDialogOpen(false);
+      const finishCategoriesData = await getFinishCategories();
+      setFinishCategoriesList(finishCategoriesData);
+      setFinishCategoryDialogOpen(false);
+    } catch (error) {
+      console.error('Error saving finish category:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save finish category. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-primary" />
+            <p className="text-muted-foreground">Loading admin data...</p>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen">
@@ -1593,7 +1746,6 @@ const Admin = () => {
               </div>
             </TabsContent>
           </Tabs>
-          )}
         </div>
       </section>
 
@@ -1819,28 +1971,35 @@ const Admin = () => {
       <Dialog open={blogDialogOpen} onOpenChange={setBlogDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-foreground">
               {editingBlog ? "Edit Blog" : "Add New Blog"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="blog-image">Blog Image *</Label>
+              <Label htmlFor="blog-image" className="text-foreground">Blog Image *</Label>
               <Input
                 id="blog-image"
                 type="file"
                 accept="image/*"
                 onChange={handleBlogImageUpload}
-                className="cursor-pointer"
+                className="cursor-pointer bg-background text-foreground"
+                disabled={uploading}
               />
-              {blogForm.image && (
+              {uploading && (
+                <p className="text-sm text-primary mt-1 flex items-center gap-2">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Uploading to Cloudinary...
+                </p>
+              )}
+              {blogForm.image && !uploading && (
                 <p className="text-sm text-muted-foreground mt-1">
-                  Path: {blogForm.image}
+                  URL: {blogForm.image.substring(0, 50)}...
                 </p>
               )}
             </div>
             <div>
-              <Label htmlFor="content">Blog Content *</Label>
+              <Label htmlFor="content" className="text-foreground">Blog Content *</Label>
               <Textarea
                 id="content"
                 value={blogForm.content}
@@ -1849,6 +2008,7 @@ const Admin = () => {
                 }
                 placeholder="Write your blog content here..."
                 rows={6}
+                className="bg-background text-foreground"
               />
             </div>
           </div>
@@ -1870,14 +2030,14 @@ const Admin = () => {
       >
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-foreground">
               {editingTestimonial ? "Edit Testimonial" : "Add New Testimonial"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="testimonial-name">Name *</Label>
+                <Label htmlFor="testimonial-name" className="text-foreground">Name *</Label>
                 <Input
                   id="testimonial-name"
                   value={testimonialForm.name}
@@ -1888,10 +2048,11 @@ const Admin = () => {
                     })
                   }
                   placeholder="Jane Doe"
+                  className="bg-background text-foreground"
                 />
               </div>
               <div>
-                <Label htmlFor="testimonial-role">Role *</Label>
+                <Label htmlFor="testimonial-role" className="text-foreground">Role *</Label>
                 <Input
                   id="testimonial-role"
                   value={testimonialForm.role}
@@ -1902,13 +2063,14 @@ const Admin = () => {
                     })
                   }
                   placeholder="Interior Designer"
+                  className="bg-background text-foreground"
                 />
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="testimonial-company">Company *</Label>
+                <Label htmlFor="testimonial-company" className="text-foreground">Company *</Label>
                 <Input
                   id="testimonial-company"
                   value={testimonialForm.company}
@@ -1919,10 +2081,11 @@ const Admin = () => {
                     })
                   }
                   placeholder="Design Studio"
+                  className="bg-background text-foreground"
                 />
               </div>
               <div>
-                <Label htmlFor="testimonial-location">Location *</Label>
+                <Label htmlFor="testimonial-location" className="text-foreground">Location *</Label>
                 <Input
                   id="testimonial-location"
                   value={testimonialForm.location}
@@ -1933,12 +2096,13 @@ const Admin = () => {
                     })
                   }
                   placeholder="London, UK"
+                  className="bg-background text-foreground"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="testimonial-rating">Rating (1-5)</Label>
+              <Label htmlFor="testimonial-rating" className="text-foreground">Rating (1-5)</Label>
               <Input
                 id="testimonial-rating"
                 type="number"
@@ -1951,27 +2115,35 @@ const Admin = () => {
                     rating: Number(e.target.value) || 5,
                   })
                 }
+                className="bg-background text-foreground"
               />
             </div>
 
             <div>
-              <Label htmlFor="testimonial-image">Author Image (optional)</Label>
+              <Label htmlFor="testimonial-image" className="text-foreground">Author Image (optional)</Label>
               <Input
                 id="testimonial-image"
                 type="file"
                 accept="image/*"
                 onChange={handleTestimonialImageUpload}
-                className="cursor-pointer"
+                className="cursor-pointer bg-background text-foreground"
+                disabled={uploading}
               />
-              {testimonialForm.image && (
+              {uploading && (
+                <p className="text-sm text-primary mt-1 flex items-center gap-2">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Uploading to Cloudinary...
+                </p>
+              )}
+              {testimonialForm.image && !uploading && (
                 <p className="text-sm text-muted-foreground mt-1">
-                  Stored as: {testimonialForm.image}
+                  URL: {testimonialForm.image.substring(0, 50)}...
                 </p>
               )}
             </div>
 
             <div>
-              <Label htmlFor="testimonial-content">Testimonial *</Label>
+              <Label htmlFor="testimonial-content" className="text-foreground">Testimonial *</Label>
               <Textarea
                 id="testimonial-content"
                 value={testimonialForm.content}
@@ -1983,6 +2155,7 @@ const Admin = () => {
                 }
                 placeholder="Write the testimonial here..."
                 rows={5}
+                className="bg-background text-foreground"
               />
             </div>
           </div>
@@ -2002,28 +2175,30 @@ const Admin = () => {
 
       {/* Category Dialog */}
       <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editingCategory ? "Edit Category" : "Add New Category"}</DialogTitle>
+            <DialogTitle className="text-foreground">{editingCategory ? "Edit Category" : "Add New Category"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="category-name">Category Name *</Label>
+              <Label htmlFor="category-name" className="text-foreground">Category Name *</Label>
               <Input
                 id="category-name"
                 value={categoryForm.name}
                 onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
                 placeholder="e.g., Door Handle, Knob"
+                className="bg-background text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="category-description">Description (optional)</Label>
+              <Label htmlFor="category-description" className="text-foreground">Description (optional)</Label>
               <Textarea
                 id="category-description"
                 value={categoryForm.description}
                 onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
                 placeholder="Brief description of this category"
                 rows={3}
+                className="bg-background text-foreground"
               />
             </div>
           </div>
@@ -2040,18 +2215,18 @@ const Admin = () => {
 
       {/* Subcategory Dialog */}
       <Dialog open={subcategoryDialogOpen} onOpenChange={setSubcategoryDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editingSubcategory ? "Edit Subcategory" : "Add New Subcategory"}</DialogTitle>
+            <DialogTitle className="text-foreground">{editingSubcategory ? "Edit Subcategory" : "Add New Subcategory"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="subcategory-category">Parent Category *</Label>
+              <Label htmlFor="subcategory-category" className="text-foreground">Parent Category *</Label>
               <Select
                 value={subcategoryForm.categoryId.toString()}
                 onValueChange={(value) => setSubcategoryForm({ ...subcategoryForm, categoryId: Number(value) })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-background text-foreground">
                   <SelectValue placeholder="Select parent category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -2064,22 +2239,24 @@ const Admin = () => {
               </Select>
             </div>
             <div>
-              <Label htmlFor="subcategory-name">Subcategory Name *</Label>
+              <Label htmlFor="subcategory-name" className="text-foreground">Subcategory Name *</Label>
               <Input
                 id="subcategory-name"
                 value={subcategoryForm.name}
                 onChange={(e) => setSubcategoryForm({ ...subcategoryForm, name: e.target.value })}
                 placeholder="e.g., Cabinet Handle, Door Handle"
+                className="bg-background text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="subcategory-description">Description (optional)</Label>
+              <Label htmlFor="subcategory-description" className="text-foreground">Description (optional)</Label>
               <Textarea
                 id="subcategory-description"
                 value={subcategoryForm.description}
                 onChange={(e) => setSubcategoryForm({ ...subcategoryForm, description: e.target.value })}
                 placeholder="Brief description of this subcategory"
                 rows={3}
+                className="bg-background text-foreground"
               />
             </div>
           </div>
@@ -2096,22 +2273,23 @@ const Admin = () => {
 
       {/* Material Dialog */}
       <Dialog open={materialDialogOpen} onOpenChange={setMaterialDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editingMaterial ? "Edit Material" : "Add New Material"}</DialogTitle>
+            <DialogTitle className="text-foreground">{editingMaterial ? "Edit Material" : "Add New Material"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="material-name">Material Name *</Label>
+              <Label htmlFor="material-name" className="text-foreground">Material Name *</Label>
               <Input
                 id="material-name"
                 value={materialForm.name}
                 onChange={(e) => setMaterialForm({ ...materialForm, name: e.target.value })}
                 placeholder="e.g., Stainless Steel, Brass"
+                className="bg-background text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="material-category">Category (optional)</Label>
+              <Label htmlFor="material-category" className="text-foreground">Category (optional)</Label>
               <Select
                 value={materialForm.categoryId?.toString() || "none"}
                 onValueChange={(value) => 
@@ -2122,7 +2300,7 @@ const Admin = () => {
                   })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-background text-foreground">
                   <SelectValue placeholder="Select category (optional)" />
                 </SelectTrigger>
                 <SelectContent>
@@ -2184,18 +2362,18 @@ const Admin = () => {
 
       {/* Finish Dialog */}
       <Dialog open={finishDialogOpen} onOpenChange={setFinishDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingFinish ? "Edit Finish" : "Add New Finish"}</DialogTitle>
+            <DialogTitle className="text-foreground">{editingFinish ? "Edit Finish" : "Add New Finish"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="finish-category">Finish Category *</Label>
+              <Label htmlFor="finish-category" className="text-foreground">Finish Category *</Label>
               <Select
                 value={finishForm.categoryId.toString()}
                 onValueChange={(value) => setFinishForm({ ...finishForm, categoryId: Number(value) })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-background text-foreground">
                   <SelectValue placeholder="Select finish category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -2208,26 +2386,34 @@ const Admin = () => {
               </Select>
             </div>
             <div>
-              <Label htmlFor="finish-name">Finish Name *</Label>
+              <Label htmlFor="finish-name" className="text-foreground">Finish Name *</Label>
               <Input
                 id="finish-name"
                 value={finishForm.name}
                 onChange={(e) => setFinishForm({ ...finishForm, name: e.target.value })}
                 placeholder="e.g., Matt, Glossy Chrome, PVD Gold"
+                className="bg-background text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="finish-image">Finish Image *</Label>
+              <Label htmlFor="finish-image" className="text-foreground">Finish Image *</Label>
               <Input
                 id="finish-image"
                 type="file"
                 accept="image/*"
                 onChange={handleFinishImageUpload}
-                className="cursor-pointer"
+                className="cursor-pointer bg-background text-foreground"
+                disabled={uploading}
               />
-              {finishForm.image && (
+              {uploading && (
+                <p className="text-sm text-primary mt-1 flex items-center gap-2">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Uploading to Cloudinary...
+                </p>
+              )}
+              {finishForm.image && !uploading && (
                 <div className="mt-2">
-                  <p className="text-sm text-muted-foreground mb-2">Current image: {finishForm.image}</p>
+                  <p className="text-sm text-muted-foreground mb-2">Current image: {finishForm.image.substring(0, 50)}...</p>
                   <div className="w-32 h-32 rounded-lg overflow-hidden bg-secondary">
                     <ImageDisplay
                       src={finishForm.image}
@@ -2239,13 +2425,14 @@ const Admin = () => {
               )}
             </div>
             <div>
-              <Label htmlFor="finish-description">Description (optional)</Label>
+              <Label htmlFor="finish-description" className="text-foreground">Description (optional)</Label>
               <Textarea
                 id="finish-description"
                 value={finishForm.description}
                 onChange={(e) => setFinishForm({ ...finishForm, description: e.target.value })}
                 placeholder="Brief description of this finish"
                 rows={3}
+                className="bg-background text-foreground"
               />
             </div>
           </div>
@@ -2262,28 +2449,30 @@ const Admin = () => {
 
       {/* Finish Category Dialog */}
       <Dialog open={finishCategoryDialogOpen} onOpenChange={setFinishCategoryDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editingFinishCategory ? "Edit Finish Category" : "Add New Finish Category"}</DialogTitle>
+            <DialogTitle className="text-foreground">{editingFinishCategory ? "Edit Finish Category" : "Add New Finish Category"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="finish-category-name">Category Name *</Label>
+              <Label htmlFor="finish-category-name" className="text-foreground">Category Name *</Label>
               <Input
                 id="finish-category-name"
                 value={finishCategoryForm.name}
                 onChange={(e) => setFinishCategoryForm({ ...finishCategoryForm, name: e.target.value })}
                 placeholder="e.g., Stainless Steel Finish, Brass Finish"
+                className="bg-background text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="finish-category-description">Description (optional)</Label>
+              <Label htmlFor="finish-category-description" className="text-foreground">Description (optional)</Label>
               <Textarea
                 id="finish-category-description"
                 value={finishCategoryForm.description}
                 onChange={(e) => setFinishCategoryForm({ ...finishCategoryForm, description: e.target.value })}
                 placeholder="Brief description of this finish category"
                 rows={3}
+                className="bg-background text-foreground"
               />
             </div>
           </div>

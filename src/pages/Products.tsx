@@ -35,6 +35,7 @@ const Products = () => {
   const [materials, setMaterials] = useState<Material[]>([]);
   const [finishes, setFinishes] = useState<Finish[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
 
   // Navigation state - initialize from URL params
   const [currentStep, setCurrentStep] = useState<BrowsingStep>(
@@ -54,12 +55,26 @@ const Products = () => {
   );
 
   useEffect(() => {
-    const loadData = () => {
-      setProducts(getProducts());
-      setCategories(getCategories());
-      setSubcategories(getSubcategories());
-      setMaterials(getMaterials());
-      setFinishes(getFinishes());
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [productsData, categoriesData, subcategoriesData, materialsData, finishesData] = await Promise.all([
+          getProducts(),
+          getCategories(),
+          getSubcategories(),
+          getMaterials(),
+          getFinishes()
+        ]);
+        setProducts(productsData);
+        setCategories(categoriesData);
+        setSubcategories(subcategoriesData);
+        setMaterials(materialsData);
+        setFinishes(finishesData);
+      } catch (error) {
+        console.error('Error loading products data:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadData();
@@ -76,15 +91,33 @@ const Products = () => {
 
   // Get available materials for selected category/subcategory
   const getAvailableMaterials = () => {
-    const filtered = products.filter((p) => {
+    // Get the selected category ID
+    const selectedCat = categories.find((c) => c.name === selectedCategory);
+    const selectedSubcat = subcategories.find((s) => s.name === selectedSubcategory);
+
+    // Get materials linked to the category/subcategory directly
+    const linkedMaterials = materials.filter((m) => {
+      // If subcategory is selected, match by subcategory
+      if (selectedSubcat && m.subcategoryId === selectedSubcat.id) return true;
+      // Otherwise match by category
+      if (selectedCat && m.categoryId === selectedCat.id) return true;
+      return false;
+    });
+
+    // Also get materials from products in this category
+    const productsFiltered = products.filter((p) => {
       if (selectedCategory && p.category !== selectedCategory) return false;
       if (selectedSubcategory && p.subcategory !== selectedSubcategory)
         return false;
       return true;
     });
 
-    const materialNames = new Set(filtered.map((p) => p.material));
-    return Array.from(materialNames);
+    // Combine materials from both sources
+    const allMaterialNames = new Set<string>();
+    linkedMaterials.forEach((m) => allMaterialNames.add(m.name));
+    productsFiltered.forEach((p) => allMaterialNames.add(p.material));
+
+    return Array.from(allMaterialNames);
   };
 
   // Get available subcategories for selected category
@@ -112,7 +145,8 @@ const Products = () => {
 
   // Get available finishes for selected filters
   const getAvailableFinishes = () => {
-    const filtered = products.filter((p) => {
+    // Get finishes from products matching the current filters
+    const filteredProducts = products.filter((p) => {
       if (selectedCategory && p.category !== selectedCategory) return false;
       if (selectedSubcategory && p.subcategory !== selectedSubcategory)
         return false;
@@ -121,10 +155,18 @@ const Products = () => {
     });
 
     const finishesSet = new Set<string>();
-    filtered.forEach((product) => {
+    
+    // Add finishes from filtered products
+    filteredProducts.forEach((product) => {
       product.finishes.forEach((finish) => {
         finishesSet.add(finish);
       });
+    });
+
+    // Also add all available finishes from the finishes list
+    // (so users can see all finish options even if no products exist yet)
+    finishes.forEach((finish) => {
+      finishesSet.add(finish.name);
     });
 
     return Array.from(finishesSet);
@@ -242,6 +284,12 @@ const Products = () => {
         </div>
       </section>
 
+      {loading ? (
+        <div className="container mx-auto px-4 py-20 text-center">
+          <p className="text-muted-foreground text-lg">Loading products...</p>
+        </div>
+      ) : (
+        <>
       {/* Products Section */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
@@ -593,6 +641,8 @@ const Products = () => {
           </div>
         </div>
       </section>
+        </>
+      )}
 
       <Footer />
     </main>

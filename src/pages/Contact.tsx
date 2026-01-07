@@ -10,6 +10,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { submitToGoogleSheetsWithRetry } from "@/lib/googleSheets";
 
 const WhatsAppLogo = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -93,13 +94,57 @@ const Contact = () => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    toast({
-      title: "Inquiry Submitted!",
-      description: "We'll get back to you within 24 hours.",
-    });
-    setIsSubmitting(false);
-    navigate("/thank-you");
+
+    try {
+      console.log("Submitting form to Google Sheets...");
+      
+      // Submit to Google Sheets
+      const response = await submitToGoogleSheetsWithRetry({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company || undefined,
+        country: formData.country,
+        city: formData.city,
+        subject: formData.subject || undefined,
+        message: formData.message,
+      });
+
+      console.log("Form submitted successfully:", response);
+
+      toast({
+        title: "Inquiry Submitted!",
+        description: "We'll get back to you within 24 hours.",
+      });
+
+      // Clear form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        country: "",
+        city: "",
+        subject: "",
+        message: "",
+      });
+
+      // Navigate to thank you page
+      navigate("/thank-you");
+    } catch (error) {
+      console.error("Form submission error:", error);
+      
+      toast({
+        title: "Submission Failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to submit form. Please try again or contact us directly.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

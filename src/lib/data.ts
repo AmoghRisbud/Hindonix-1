@@ -1,4 +1,46 @@
 // Shared data store for products and case studies
+import { 
+  getAllProducts, 
+  addProductToRedis, 
+  updateProductInRedis, 
+  deleteProductFromRedis,
+  getAllBlogs,
+  addBlogToRedis,
+  updateBlogInRedis,
+  deleteBlogFromRedis,
+  getAllTestimonials,
+  addTestimonialToRedis,
+  updateTestimonialInRedis,
+  deleteTestimonialFromRedis,
+  getAllCaseStudies,
+  addCaseStudyToRedis,
+  updateCaseStudyInRedis,
+  deleteCaseStudyFromRedis,
+  getAllCategories,
+  addCategoryToRedis,
+  updateCategoryInRedis,
+  deleteCategoryFromRedis,
+  getAllSubcategories,
+  addSubcategoryToRedis,
+  updateSubcategoryInRedis,
+  deleteSubcategoryFromRedis,
+  getAllMaterials,
+  addMaterialToRedis,
+  updateMaterialInRedis,
+  deleteMaterialFromRedis,
+  getAllFinishes,
+  addFinishToRedis,
+  updateFinishInRedis,
+  deleteFinishFromRedis,
+  getAllFinishCategories,
+  addFinishCategoryToRedis,
+  updateFinishCategoryInRedis,
+  deleteFinishCategoryFromRedis,
+  getHeroImageFromRedis,
+  setHeroImageInRedis,
+  getCaseStudyById,
+  getProductById
+} from './redis';
 
 // Taxonomy interfaces
 export interface Category {
@@ -319,279 +361,96 @@ const defaultFinishes: Finish[] = [
   },
 ];
 
-// Initialize data from localStorage or use defaults
-const loadProducts = (): Product[] => {
-  if (typeof window === "undefined") return defaultProducts;
-  const stored = localStorage.getItem("hindonix_products");
-  return stored ? JSON.parse(stored) : defaultProducts;
-};
+// ============================================
+// DATA ACCESS LAYER (Redis-backed)
+// ============================================
 
-const loadBlogs = (): Blog[] => {
-  if (typeof window === "undefined") return defaultBlogs;
-  const stored = localStorage.getItem("hindonix_blogs");
-  return stored ? JSON.parse(stored) : defaultBlogs;
-};
-
-const loadTestimonials = (): Testimonial[] => {
-  if (typeof window === "undefined") return defaultTestimonials;
-  const stored = localStorage.getItem("hindonix_testimonials");
-  return stored ? JSON.parse(stored) : defaultTestimonials;
-};
-
-const loadCaseStudies = (): CaseStudy[] => {
-  if (typeof window === "undefined") return defaultCaseStudies;
-  const stored = localStorage.getItem("hindonix_case_studies");
-  return stored ? JSON.parse(stored) : defaultCaseStudies;
-};
-
-// Taxonomy loaders
-const loadCategories = (): Category[] => {
-  if (typeof window === "undefined") return defaultCategories;
-  const stored = localStorage.getItem("hindonix_categories");
-  return stored ? JSON.parse(stored) : defaultCategories;
-};
-
-const loadSubcategories = (): Subcategory[] => {
-  if (typeof window === "undefined") return defaultSubcategories;
-  const stored = localStorage.getItem("hindonix_subcategories");
-  return stored ? JSON.parse(stored) : defaultSubcategories;
-};
-
-const loadMaterials = (): Material[] => {
-  if (typeof window === "undefined") return defaultMaterials;
-  const stored = localStorage.getItem("hindonix_materials");
-  return stored ? JSON.parse(stored) : defaultMaterials;
-};
-
-const loadFinishes = (): Finish[] => {
-  if (typeof window === "undefined") return defaultFinishes;
-  const stored = localStorage.getItem("hindonix_finishes");
-  return stored ? JSON.parse(stored) : defaultFinishes;
-};
-
-const loadFinishCategories = (): FinishCategory[] => {
-  if (typeof window === "undefined") return defaultFinishCategories;
-  const stored = localStorage.getItem("hindonix_finish_categories");
-  return stored ? JSON.parse(stored) : defaultFinishCategories;
-};
-
-const saveProducts = (products: Product[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("hindonix_products", JSON.stringify(products));
-    window.dispatchEvent(new Event("dataUpdated"));
-  }
-};
-
-const saveBlogs = (blogs: Blog[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("hindonix_blogs", JSON.stringify(blogs));
-    window.dispatchEvent(new Event("dataUpdated"));
-  }
-};
-
-const saveTestimonials = (testimonials: Testimonial[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("hindonix_testimonials", JSON.stringify(testimonials));
-    window.dispatchEvent(new Event("dataUpdated"));
-  }
-};
-
-const saveCaseStudies = (caseStudies: CaseStudy[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("hindonix_case_studies", JSON.stringify(caseStudies));
-    window.dispatchEvent(new Event("dataUpdated"));
-  }
-};
-
-// Taxonomy savers
-const saveCategories = (categories: Category[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("hindonix_categories", JSON.stringify(categories));
-    window.dispatchEvent(new Event("dataUpdated"));
-  }
-};
-
-const saveSubcategories = (subcategories: Subcategory[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem(
-      "hindonix_subcategories",
-      JSON.stringify(subcategories)
-    );
-    window.dispatchEvent(new Event("dataUpdated"));
-  }
-};
-
-const saveMaterials = (materials: Material[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("hindonix_materials", JSON.stringify(materials));
-    window.dispatchEvent(new Event("dataUpdated"));
-  }
-};
-
-const saveFinishes = (finishes: Finish[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("hindonix_finishes", JSON.stringify(finishes));
-    window.dispatchEvent(new Event("dataUpdated"));
-  }
-};
-
-const saveFinishCategories = (finishCategories: FinishCategory[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem(
-      "hindonix_finish_categories",
-      JSON.stringify(finishCategories)
-    );
-    window.dispatchEvent(new Event("dataUpdated"));
-  }
-};
-
-let products: Product[] = loadProducts();
-let blogs: Blog[] = loadBlogs();
-let testimonials: Testimonial[] = loadTestimonials();
-let caseStudies: CaseStudy[] = loadCaseStudies();
-let categories: Category[] = loadCategories();
-let subcategories: Subcategory[] = loadSubcategories();
-let materials: Material[] = loadMaterials();
-let finishes: Finish[] = loadFinishes();
-let finishCategories: FinishCategory[] = loadFinishCategories();
-
-// Product management functions - now async with Redis
+// Product management functions
 export const getProducts = async (): Promise<Product[]> => {
   return await getAllProducts();
 };
 
-export const addProduct = (product: Omit<Product, "id">): Product => {
-  const newProduct = { ...product, id: Date.now() };
-  products = [...products, newProduct];
-  saveProducts(products);
-  return newProduct;
+export const addProduct = async (product: Omit<Product, "id">): Promise<Product> => {
+  return await addProductToRedis(product);
 };
 
 export const updateProduct = async (
   id: number,
   updates: Partial<Product>
-): Product | null => {
-  const index = products.findIndex((p) => p.id === id);
-  if (index === -1) return null;
-  products[index] = { ...products[index], ...updates };
-  saveProducts(products);
-  return products[index];
+): Promise<Product | null> => {
+  return await updateProductInRedis(id, updates);
 };
 
-export const deleteProduct = (id: number): boolean => {
-  const initialLength = products.length;
-  products = products.filter((p) => p.id !== id);
-  saveProducts(products);
-  return products.length < initialLength;
+export const deleteProduct = async (id: number): Promise<boolean> => {
+  return await deleteProductFromRedis(id);
 };
 
 // Blog management functions
-export const getBlogs = (): Blog[] => {
-  blogs = loadBlogs();
-  return blogs;
+export const getBlogs = async (): Promise<Blog[]> => {
+  return await getAllBlogs();
 };
 
-export const addBlog = (blog: Omit<Blog, "id">): Blog => {
-  const newBlog = { ...blog, id: Date.now() };
-  blogs = [...blogs, newBlog];
-  saveBlogs(blogs);
-  return newBlog;
+export const addBlog = async (blog: Omit<Blog, "id">): Promise<Blog> => {
+  return await addBlogToRedis(blog);
 };
 
-export const updateBlog = (id: number, updates: Partial<Blog>): Blog | null => {
-  const index = blogs.findIndex((b) => b.id === id);
-  if (index === -1) return null;
-  blogs[index] = { ...blogs[index], ...updates };
-  saveBlogs(blogs);
-  return blogs[index];
+export const updateBlog = async (id: number, updates: Partial<Blog>): Promise<Blog | null> => {
+  return await updateBlogInRedis(id, updates);
 };
 
-export const deleteBlog = (id: number): boolean => {
-  const initialLength = blogs.length;
-  blogs = blogs.filter((b) => b.id !== id);
-  saveBlogs(blogs);
-  return blogs.length < initialLength;
+export const deleteBlog = async (id: number): Promise<boolean> => {
+  return await deleteBlogFromRedis(id);
 };
 
 // Testimonial management functions
-export const getTestimonials = (): Testimonial[] => {
-  testimonials = loadTestimonials();
-  return testimonials;
+export const getTestimonials = async (): Promise<Testimonial[]> => {
+  return await getAllTestimonials();
 };
 
-export const addTestimonial = (
+export const addTestimonial = async (
   testimonial: Omit<Testimonial, "id">
-): Testimonial => {
-  const newTestimonial = { ...testimonial, id: Date.now() };
-  testimonials = [...testimonials, newTestimonial];
-  saveTestimonials(testimonials);
-  return newTestimonial;
+): Promise<Testimonial> => {
+  return await addTestimonialToRedis(testimonial);
 };
 
-export const updateTestimonial = (
+export const updateTestimonial = async (
   id: number,
   updates: Partial<Testimonial>
-): Testimonial | null => {
-  const index = testimonials.findIndex((t) => t.id === id);
-  if (index === -1) return null;
-  testimonials[index] = { ...testimonials[index], ...updates };
-  saveTestimonials(testimonials);
-  return testimonials[index];
+): Promise<Testimonial | null> => {
+  return await updateTestimonialInRedis(id, updates);
 };
 
-export const deleteTestimonial = (id: number): boolean => {
-  const initialLength = testimonials.length;
-  testimonials = testimonials.filter((t) => t.id !== id);
-  saveTestimonials(testimonials);
-  return testimonials.length < initialLength;
+export const deleteTestimonial = async (id: number): Promise<boolean> => {
+  return await deleteTestimonialFromRedis(id);
 };
 
 // Case Study management functions
-export const getCaseStudies = (): CaseStudy[] => {
-  caseStudies = loadCaseStudies();
-  return caseStudies;
+export const getCaseStudies = async (): Promise<CaseStudy[]> => {
+  return await getAllCaseStudies();
 };
 
-export const addCaseStudy = (caseStudy: Omit<CaseStudy, "id">): CaseStudy => {
-  const newCaseStudy = { ...caseStudy, id: Date.now() };
-  caseStudies = [...caseStudies, newCaseStudy];
-  saveCaseStudies(caseStudies);
-  return newCaseStudy;
+export const addCaseStudy = async (caseStudy: Omit<CaseStudy, "id">): Promise<CaseStudy> => {
+  return await addCaseStudyToRedis(caseStudy);
 };
 
 export const updateCaseStudy = async (
   id: number,
   updates: Partial<CaseStudy>
-): CaseStudy | null => {
-  const index = caseStudies.findIndex((cs) => cs.id === id);
-  if (index === -1) return null;
-  caseStudies[index] = { ...caseStudies[index], ...updates };
-  saveCaseStudies(caseStudies);
-  return caseStudies[index];
+): Promise<CaseStudy | null> => {
+  return await updateCaseStudyInRedis(id, updates);
 };
 
-export const deleteCaseStudy = (id: number): boolean => {
-  const initialLength = caseStudies.length;
-  caseStudies = caseStudies.filter((cs) => cs.id !== id);
-  saveCaseStudies(caseStudies);
-  return caseStudies.length < initialLength;
+export const deleteCaseStudy = async (id: number): Promise<boolean> => {
+  return await deleteCaseStudyFromRedis(id);
 };
 
 // Hero Image management
-const HERO_IMAGE_KEY = "hindonix_hero_image";
-const DEFAULT_HERO_IMAGE = "/images/hero/hero-1.jpg";
-
-export const getHeroImage = (): string => {
-  if (typeof window === "undefined") return DEFAULT_HERO_IMAGE;
-  const stored = localStorage.getItem(HERO_IMAGE_KEY);
-  return stored || DEFAULT_HERO_IMAGE;
+export const getHeroImage = async (): Promise<string> => {
+  return await getHeroImageFromRedis();
 };
 
-export const setHeroImage = (imageKey: string): void => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem(HERO_IMAGE_KEY, imageKey);
-    window.dispatchEvent(new Event("heroImageUpdated"));
-  }
+export const setHeroImage = async (imageKey: string): Promise<void> => {
+  return await setHeroImageInRedis(imageKey);
 };
 
 // ========================================
@@ -599,208 +458,179 @@ export const setHeroImage = (imageKey: string): void => {
 // ========================================
 
 // Category management
-export const getCategories = (): Category[] => {
-  categories = loadCategories();
-  return categories;
+export const getCategories = async (): Promise<Category[]> => {
+  return await getAllCategories();
 };
 
-export const addCategory = (category: Omit<Category, "id">): Category => {
-  const newCategory = { ...category, id: Date.now() };
-  categories = [...categories, newCategory];
-  saveCategories(categories);
-  return newCategory;
+export const addCategory = async (category: Omit<Category, "id">): Promise<Category> => {
+  return await addCategoryToRedis(category);
 };
 
-export const updateCategory = (
+export const updateCategory = async (
   id: number,
   updates: Partial<Category>
-): Category | null => {
-  const index = categories.findIndex((c) => c.id === id);
-  if (index === -1) return null;
-  categories[index] = { ...categories[index], ...updates };
-  saveCategories(categories);
-  return categories[index];
+): Promise<Category | null> => {
+  return await updateCategoryInRedis(id, updates);
 };
 
-export const deleteCategory = (id: number): boolean => {
+export const deleteCategory = async (id: number): Promise<boolean> => {
   // Check if category has products
+  const products = await getAllProducts();
+  const categories = await getAllCategories();
+  const categoryName = categories.find((c) => c.id === id)?.name;
+
   const hasProducts = products.some(
-    (p) =>
-      p.categoryId === id ||
-      p.category === categories.find((c) => c.id === id)?.name
+    (p) => p.categoryId === id || (categoryName && p.category === categoryName)
   );
+
   if (hasProducts) {
     return false; // Cannot delete category with products
   }
 
   // Delete associated subcategories and materials
-  subcategories = subcategories.filter((s) => s.categoryId !== id);
-  saveSubcategories(subcategories);
-  materials = materials.filter((m) => m.categoryId !== id);
-  saveMaterials(materials);
+  const subcategories = await getAllSubcategories();
+  const materials = await getAllMaterials();
+  
+  await Promise.all(
+    subcategories
+      .filter((s) => s.categoryId === id)
+      .map((s) => deleteSubcategoryFromRedis(s.id))
+  );
+  
+  await Promise.all(
+    materials
+      .filter((m) => m.categoryId === id)
+      .map((m) => deleteMaterialFromRedis(m.id))
+  );
 
-  const initialLength = categories.length;
-  categories = categories.filter((c) => c.id !== id);
-  saveCategories(categories);
-  return categories.length < initialLength;
+  return await deleteCategoryFromRedis(id);
 };
 
 // Subcategory management
-export const getSubcategories = (): Subcategory[] => {
-  subcategories = loadSubcategories();
-  return subcategories;
+export const getSubcategories = async (): Promise<Subcategory[]> => {
+  return await getAllSubcategories();
 };
 
-export const addSubcategory = (
+export const addSubcategory = async (
   subcategory: Omit<Subcategory, "id">
-): Subcategory => {
-  const newSubcategory = { ...subcategory, id: Date.now() };
-  subcategories = [...subcategories, newSubcategory];
-  saveSubcategories(subcategories);
-  return newSubcategory;
+): Promise<Subcategory> => {
+  return await addSubcategoryToRedis(subcategory);
 };
 
-export const updateSubcategory = (
+export const updateSubcategory = async (
   id: number,
   updates: Partial<Subcategory>
-): Subcategory | null => {
-  const index = subcategories.findIndex((s) => s.id === id);
-  if (index === -1) return null;
-  subcategories[index] = { ...subcategories[index], ...updates };
-  saveSubcategories(subcategories);
-  return subcategories[index];
+): Promise<Subcategory | null> => {
+  return await updateSubcategoryInRedis(id, updates);
 };
 
-export const deleteSubcategory = (id: number): boolean => {
+export const deleteSubcategory = async (id: number): Promise<boolean> => {
   // Check if subcategory has products
+  const products = await getAllProducts();
+  const subcategories = await getAllSubcategories();
+  const subcategoryName = subcategories.find((s) => s.id === id)?.name;
+
   const hasProducts = products.some(
     (p) =>
       p.subcategoryId === id ||
-      p.subcategory === subcategories.find((s) => s.id === id)?.name
+      (subcategoryName && p.subcategory === subcategoryName)
   );
+
   if (hasProducts) {
     return false; // Cannot delete subcategory with products
   }
 
   // Delete associated materials
-  materials = materials.filter((m) => m.subcategoryId !== id);
-  saveMaterials(materials);
+  const materials = await getAllMaterials();
+  await Promise.all(
+    materials
+      .filter((m) => m.subcategoryId === id)
+      .map((m) => deleteMaterialFromRedis(m.id))
+  );
 
-  const initialLength = subcategories.length;
-  subcategories = subcategories.filter((s) => s.id !== id);
-  saveSubcategories(subcategories);
-  return subcategories.length < initialLength;
+  return await deleteSubcategoryFromRedis(id);
 };
 
 // Material management
-export const getMaterials = (): Material[] => {
-  materials = loadMaterials();
-  return materials;
+export const getMaterials = async (): Promise<Material[]> => {
+  return await getAllMaterials();
 };
 
-export const addMaterial = (material: Omit<Material, "id">): Material => {
-  const newMaterial = { ...material, id: Date.now() };
-  materials = [...materials, newMaterial];
-  saveMaterials(materials);
-  return newMaterial;
+export const addMaterial = async (material: Omit<Material, "id">): Promise<Material> => {
+  return await addMaterialToRedis(material);
 };
 
-export const updateMaterial = (
+export const updateMaterial = async (
   id: number,
   updates: Partial<Material>
-): Material | null => {
-  const index = materials.findIndex((m) => m.id === id);
-  if (index === -1) return null;
-  materials[index] = { ...materials[index], ...updates };
-  saveMaterials(materials);
-  return materials[index];
+): Promise<Material | null> => {
+  return await updateMaterialInRedis(id, updates);
 };
 
-export const deleteMaterial = (id: number): boolean => {
+export const deleteMaterial = async (id: number): Promise<boolean> => {
   // Check if material has products
+  const products = await getAllProducts();
+  const materials = await getAllMaterials();
+  const materialName = materials.find((m) => m.id === id)?.name;
+
   const hasMaterial = products.some(
     (p) =>
       p.materialId === id ||
-      p.material === materials.find((m) => m.id === id)?.name
+      (materialName && p.material === materialName)
   );
+
   if (hasMaterial) {
     return false; // Cannot delete material with products
   }
 
-  const initialLength = materials.length;
-  materials = materials.filter((m) => m.id !== id);
-  saveMaterials(materials);
-  return materials.length < initialLength;
+  return await deleteMaterialFromRedis(id);
 };
 
 // Finish management
-export const getFinishes = (): Finish[] => {
-  finishes = loadFinishes();
-  return finishes;
+export const getFinishes = async (): Promise<Finish[]> => {
+  return await getAllFinishes();
 };
 
-export const addFinish = (finish: Omit<Finish, "id">): Finish => {
-  const newFinish = { ...finish, id: Date.now() };
-  finishes = [...finishes, newFinish];
-  saveFinishes(finishes);
-  return newFinish;
+export const addFinish = async (finish: Omit<Finish, "id">): Promise<Finish> => {
+  return await addFinishToRedis(finish);
 };
 
-export const updateFinish = (
+export const updateFinish = async (
   id: number,
   updates: Partial<Finish>
-): Finish | null => {
-  const index = finishes.findIndex((f) => f.id === id);
-  if (index === -1) return null;
-  finishes[index] = { ...finishes[index], ...updates };
-  saveFinishes(finishes);
-  return finishes[index];
+): Promise<Finish | null> => {
+  return await updateFinishInRedis(id, updates);
 };
 
-export const deleteFinish = (id: number): boolean => {
-  // Note: We allow deleting finishes even if products use them
-  // Products will retain finish names in their finishes array
-  const initialLength = finishes.length;
-  finishes = finishes.filter((f) => f.id !== id);
-  saveFinishes(finishes);
-  return finishes.length < initialLength;
+export const deleteFinish = async (id: number): Promise<boolean> => {
+  return await deleteFinishFromRedis(id);
 };
 
 // Finish Category management
-export const getFinishCategories = (): FinishCategory[] => {
-  finishCategories = loadFinishCategories();
-  return finishCategories;
+export const getFinishCategories = async (): Promise<FinishCategory[]> => {
+  return await getAllFinishCategories();
 };
 
-export const addFinishCategory = (
+export const addFinishCategory = async (
   category: Omit<FinishCategory, "id">
-): FinishCategory => {
-  const newCategory = { ...category, id: Date.now() };
-  finishCategories = [...finishCategories, newCategory];
-  saveFinishCategories(finishCategories);
-  return newCategory;
+): Promise<FinishCategory> => {
+  return await addFinishCategoryToRedis(category);
 };
 
-export const updateFinishCategory = (
+export const updateFinishCategory = async (
   id: number,
   updates: Partial<FinishCategory>
-): FinishCategory | null => {
-  const index = finishCategories.findIndex((c) => c.id === id);
-  if (index === -1) return null;
-  finishCategories[index] = { ...finishCategories[index], ...updates };
-  saveFinishCategories(finishCategories);
-  return finishCategories[index];
+): Promise<FinishCategory | null> => {
+  return await updateFinishCategoryInRedis(id, updates);
 };
 
-export const deleteFinishCategory = (id: number): boolean => {
+export const deleteFinishCategory = async (id: number): Promise<boolean> => {
   // Check if category has finishes
+  const finishes = await getAllFinishes();
   const hasFinishes = finishes.some((f) => f.categoryId === id);
   if (hasFinishes) {
     return false; // Cannot delete category with finishes
   }
 
-  const initialLength = finishCategories.length;
-  finishCategories = finishCategories.filter((c) => c.id !== id);
-  saveFinishCategories(finishCategories);
-  return finishCategories.length < initialLength;
+  return await deleteFinishCategoryFromRedis(id);
 };

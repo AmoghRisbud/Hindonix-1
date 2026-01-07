@@ -16,15 +16,20 @@ export const ImageDisplay = ({
   const [imageSrc, setImageSrc] = useState<string>("");
 
   useEffect(() => {
+    // Ensure src is a string before checking startsWith
+    const srcString = typeof src === 'string' ? src : '';
+    
     // Check if it's a localStorage key (starts with product_image_, casestudy_image_, blog_image_, or hero_image_)
+    // Note: Cloudinary URLs will be treated as regular image paths and pass through
     if (
-      src.startsWith("product_image_") ||
-      src.startsWith("casestudy_image_") ||
-      src.startsWith("blog_image_") ||
-      src.startsWith("hero_image_")
+      srcString && (
+      srcString.startsWith("product_image_") ||
+      srcString.startsWith("casestudy_image_") ||
+      srcString.startsWith("blog_image_") ||
+      srcString.startsWith("hero_image_"))
     ) {
       if (typeof window !== "undefined") {
-        const storedImage = localStorage.getItem(src);
+        const storedImage = localStorage.getItem(srcString);
         if (storedImage) {
           setImageSrc(storedImage);
         } else {
@@ -33,8 +38,8 @@ export const ImageDisplay = ({
         }
       }
     } else {
-      // Regular image path
-      setImageSrc(src);
+      // Regular image path or Cloudinary URL
+      setImageSrc(srcString || "/images/placeholder.jpg");
     }
   }, [src]);
 

@@ -5,12 +5,24 @@ import { getHeroImage } from "@/lib/data";
 import { ImageDisplay } from "@/components/ImageDisplay";
 
 export function HeroSection() {
-  const [heroImage, setHeroImage] = useState<string>(getHeroImage());
+  const [heroImage, setHeroImage] = useState<string>("/images/home/hero-knobs.jpg");
 
   useEffect(() => {
+    const loadHeroImage = async () => {
+      try {
+        const imageUrl = await getHeroImage();
+        setHeroImage(imageUrl);
+      } catch (error) {
+        console.error('Error loading hero image:', error);
+      }
+    };
+
+    loadHeroImage();
+
     // Listen for hero image updates from admin
-    const handleHeroImageUpdate = () => {
-      setHeroImage(getHeroImage());
+    const handleHeroImageUpdate = async () => {
+      const imageUrl = await getHeroImage();
+      setHeroImage(imageUrl);
     };
 
     window.addEventListener("heroImageUpdated", handleHeroImageUpdate);

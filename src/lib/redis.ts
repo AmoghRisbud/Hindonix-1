@@ -1,6 +1,16 @@
 // Upstash Redis client and operations
 import { Redis } from "@upstash/redis";
-import type { Product, CaseStudy } from "./data";
+import type { 
+  Product, 
+  CaseStudy, 
+  Blog, 
+  Testimonial, 
+  Category, 
+  Subcategory, 
+  Material, 
+  Finish, 
+  FinishCategory 
+} from "./data";
 import { ENV } from "./env";
 
 // Initialize Upstash Redis client
@@ -10,10 +20,105 @@ const redis = new Redis({
 });
 
 // Redis key patterns
-const PRODUCTS_KEY = "hindonix:products:ids"; // Set of all product IDs
-const PRODUCT_KEY_PREFIX = "hindonix:products"; // Hash keys: products:{id}
-const CASE_STUDIES_KEY = "hindonix:case_studies:ids"; // Set of all case study IDs
-const CASE_STUDY_KEY_PREFIX = "hindonix:case_studies"; // Hash keys: case_studies:{id}
+const PRODUCTS_KEY = "hindonix:products:ids"; 
+const PRODUCT_KEY_PREFIX = "hindonix:products"; 
+const CASE_STUDIES_KEY = "hindonix:case_studies:ids"; 
+const CASE_STUDY_KEY_PREFIX = "hindonix:case_studies";
+const BLOGS_KEY = "hindonix:blogs:ids";
+const BLOG_KEY_PREFIX = "hindonix:blogs";
+const TESTIMONIALS_KEY = "hindonix:testimonials:ids";
+const TESTIMONIAL_KEY_PREFIX = "hindonix:testimonials";
+const CATEGORIES_KEY = "hindonix:categories:ids";
+const CATEGORY_KEY_PREFIX = "hindonix:categories";
+const SUBCATEGORIES_KEY = "hindonix:subcategories:ids";
+const SUBCATEGORY_KEY_PREFIX = "hindonix:subcategories";
+const MATERIALS_KEY = "hindonix:materials:ids";
+const MATERIAL_KEY_PREFIX = "hindonix:materials";
+const FINISHES_KEY = "hindonix:finishes:ids";
+const FINISH_KEY_PREFIX = "hindonix:finishes";
+const FINISH_CATEGORIES_KEY = "hindonix:finish_categories:ids";
+const FINISH_CATEGORY_KEY_PREFIX = "hindonix:finish_categories";
+const HERO_IMAGE_KEY = "hindonix:hero_image";
+
+// Helper for generic CRUD operations
+async function getEntityIds(key: string): Promise<number[]> {
+  try {
+    const ids = await redis.smembers(key);
+    return (ids || []) as unknown as number[];
+  } catch (error) {
+    console.error(`Error fetching IDs from ${key}:`, error);
+    return [];
+  }
+}
+
+async function getEntityById<T>(prefix: string, id: number): Promise<T | null> {
+  try {
+    const entity = await redis.hgetall(`${prefix}:${id}`);
+    if (!entity || Object.keys(entity).length === 0) return null;
+    return entity as unknown as T;
+  } catch (error) {
+    console.error(`Error fetching entity ${prefix}:${id}:`, error);
+    return null;
+  }
+}
+
+async function getAllEntities<T>(idsKey: string, prefix: string, fetcher?: (id: number) => Promise<T | null>): Promise<T[]> {
+  try {
+    const ids = await getEntityIds(idsKey);
+    if (ids.length === 0) return [];
+    
+    const fetchFn = fetcher || ((id) => getEntityById<T>(prefix, id));
+    
+    const entities = await Promise.all(ids.map(fetchFn));
+    return entities.filter((e) => e !== null) as T[];
+  } catch (error) {
+    console.error(`Error fetching all entities from ${idsKey}:`, error);
+    return [];
+  }
+}
+
+async function addEntity<T extends { id: number }>(idsKey: string, prefix: string, entity: Omit<T, "id">, transform?: (e: T) => any): Promise<T> {
+  const id = Date.now();
+  const newEntity = { ...entity, id } as T;
+  
+  try {
+    const data = transform ? transform(newEntity) : newEntity;
+    await redis.hset(`${prefix}:${id}`, data);
+    await redis.sadd(idsKey, id);
+    return newEntity;
+  } catch (error) {
+    console.error(`Error adding entity to ${prefix}:`, error);
+    throw new Error("Failed to add entity to Redis");
+  }
+}
+
+async function updateEntity<T extends { id: number }>(prefix: string, id: number, updates: Partial<T>, fetcher: (id: number) => Promise<T|null>, transform?: (e: T) => any): Promise<T | null> {
+  try {
+    const existing = await fetcher(id);
+    if (!existing) return null;
+    
+    const updated = { ...existing, ...updates };
+    const data = transform ? transform(updated) : updated;
+    
+    await redis.hset(`${prefix}:${id}`, data);
+    return updated;
+  } catch (error) {
+    console.error(`Error updating entity ${prefix}:${id}:`, error);
+    throw new Error("Failed to update entity in Redis");
+  }
+}
+
+async function deleteEntity(idsKey: string, prefix: string, id: number): Promise<boolean> {
+  try {
+    await redis.del(`${prefix}:${id}`);
+    await redis.srem(idsKey, id);
+    return true;
+  } catch (error) {
+    console.error(`Error deleting entity ${prefix}:${id}:`, error);
+    return false;
+  }
+}
+
 
 // ============================================
 // PRODUCT OPERATIONS
@@ -278,6 +383,158 @@ export const deleteCaseStudyFromRedis = async (id: number): Promise<boolean> => 
   } catch (error) {
     console.error(`Error deleting case study ${id}:`, error);
     return false;
+  }
+};
+
+// ============================================
+// BLOG OPERATIONS
+// ============================================
+
+export const getAllBlogs = async (): Promise<Blog[]> => {
+  return getAllEntities(BLOGS_KEY, BLOG_KEY_PREFIX);
+};
+
+export const addBlogToRedis = async (blog: Omit<Blog, "id">): Promise<Blog> => {
+  return addEntity(BLOGS_KEY, BLOG_KEY_PREFIX, blog);
+};
+
+export const updateBlogInRedis = async (id: number, updates: Partial<Blog>): Promise<Blog | null> => {
+  return updateEntity(BLOG_KEY_PREFIX, id, updates, (id) => getEntityById<Blog>(BLOG_KEY_PREFIX, id));
+};
+
+export const deleteBlogFromRedis = async (id: number): Promise<boolean> => {
+  return deleteEntity(BLOGS_KEY, BLOG_KEY_PREFIX, id);
+};
+
+// ============================================
+// TESTIMONIAL OPERATIONS
+// ============================================
+
+export const getAllTestimonials = async (): Promise<Testimonial[]> => {
+  return getAllEntities(TESTIMONIALS_KEY, TESTIMONIAL_KEY_PREFIX);
+};
+
+export const addTestimonialToRedis = async (testimonial: Omit<Testimonial, "id">): Promise<Testimonial> => {
+  return addEntity(TESTIMONIALS_KEY, TESTIMONIAL_KEY_PREFIX, testimonial);
+};
+
+export const updateTestimonialInRedis = async (id: number, updates: Partial<Testimonial>): Promise<Testimonial | null> => {
+  return updateEntity(TESTIMONIAL_KEY_PREFIX, id, updates, (id) => getEntityById<Testimonial>(TESTIMONIAL_KEY_PREFIX, id));
+};
+
+export const deleteTestimonialFromRedis = async (id: number): Promise<boolean> => {
+  return deleteEntity(TESTIMONIALS_KEY, TESTIMONIAL_KEY_PREFIX, id);
+};
+
+// ============================================
+// TAXONOMY OPERATIONS
+// ============================================
+
+// Categories
+export const getAllCategories = async (): Promise<Category[]> => {
+  return getAllEntities(CATEGORIES_KEY, CATEGORY_KEY_PREFIX);
+};
+
+export const addCategoryToRedis = async (category: Omit<Category, "id">): Promise<Category> => {
+  return addEntity(CATEGORIES_KEY, CATEGORY_KEY_PREFIX, category);
+};
+
+export const updateCategoryInRedis = async (id: number, updates: Partial<Category>): Promise<Category | null> => {
+  return updateEntity(CATEGORY_KEY_PREFIX, id, updates, (id) => getEntityById<Category>(CATEGORY_KEY_PREFIX, id));
+};
+
+export const deleteCategoryFromRedis = async (id: number): Promise<boolean> => {
+  return deleteEntity(CATEGORIES_KEY, CATEGORY_KEY_PREFIX, id);
+};
+
+// Subcategories
+export const getAllSubcategories = async (): Promise<Subcategory[]> => {
+  return getAllEntities(SUBCATEGORIES_KEY, SUBCATEGORY_KEY_PREFIX);
+};
+
+export const addSubcategoryToRedis = async (subcategory: Omit<Subcategory, "id">): Promise<Subcategory> => {
+  return addEntity(SUBCATEGORIES_KEY, SUBCATEGORY_KEY_PREFIX, subcategory);
+};
+
+export const updateSubcategoryInRedis = async (id: number, updates: Partial<Subcategory>): Promise<Subcategory | null> => {
+  return updateEntity(SUBCATEGORY_KEY_PREFIX, id, updates, (id) => getEntityById<Subcategory>(SUBCATEGORY_KEY_PREFIX, id));
+};
+
+export const deleteSubcategoryFromRedis = async (id: number): Promise<boolean> => {
+  return deleteEntity(SUBCATEGORIES_KEY, SUBCATEGORY_KEY_PREFIX, id);
+};
+
+// Materials
+export const getAllMaterials = async (): Promise<Material[]> => {
+  return getAllEntities(MATERIALS_KEY, MATERIAL_KEY_PREFIX);
+};
+
+export const addMaterialToRedis = async (material: Omit<Material, "id">): Promise<Material> => {
+  return addEntity(MATERIALS_KEY, MATERIAL_KEY_PREFIX, material);
+};
+
+export const updateMaterialInRedis = async (id: number, updates: Partial<Material>): Promise<Material | null> => {
+  return updateEntity(MATERIAL_KEY_PREFIX, id, updates, (id) => getEntityById<Material>(MATERIAL_KEY_PREFIX, id));
+};
+
+export const deleteMaterialFromRedis = async (id: number): Promise<boolean> => {
+  return deleteEntity(MATERIALS_KEY, MATERIAL_KEY_PREFIX, id);
+};
+
+// Finishes
+export const getAllFinishes = async (): Promise<Finish[]> => {
+  return getAllEntities(FINISHES_KEY, FINISH_KEY_PREFIX);
+};
+
+export const addFinishToRedis = async (finish: Omit<Finish, "id">): Promise<Finish> => {
+  return addEntity(FINISHES_KEY, FINISH_KEY_PREFIX, finish);
+};
+
+export const updateFinishInRedis = async (id: number, updates: Partial<Finish>): Promise<Finish | null> => {
+  return updateEntity(FINISH_KEY_PREFIX, id, updates, (id) => getEntityById<Finish>(FINISH_KEY_PREFIX, id));
+};
+
+export const deleteFinishFromRedis = async (id: number): Promise<boolean> => {
+  return deleteEntity(FINISHES_KEY, FINISH_KEY_PREFIX, id);
+};
+
+// Finish Categories
+export const getAllFinishCategories = async (): Promise<FinishCategory[]> => {
+  return getAllEntities(FINISH_CATEGORIES_KEY, FINISH_CATEGORY_KEY_PREFIX);
+};
+
+export const addFinishCategoryToRedis = async (finishCategory: Omit<FinishCategory, "id">): Promise<FinishCategory> => {
+  return addEntity(FINISH_CATEGORIES_KEY, FINISH_CATEGORY_KEY_PREFIX, finishCategory);
+};
+
+export const updateFinishCategoryInRedis = async (id: number, updates: Partial<FinishCategory>): Promise<FinishCategory | null> => {
+  return updateEntity(FINISH_CATEGORY_KEY_PREFIX, id, updates, (id) => getEntityById<FinishCategory>(FINISH_CATEGORY_KEY_PREFIX, id));
+};
+
+export const deleteFinishCategoryFromRedis = async (id: number): Promise<boolean> => {
+  return deleteEntity(FINISH_CATEGORIES_KEY, FINISH_CATEGORY_KEY_PREFIX, id);
+};
+
+// ============================================
+// HERO IMAGE OPERATIONS
+// ============================================
+
+export const getHeroImageFromRedis = async (): Promise<string> => {
+  try {
+    const image = await redis.get(HERO_IMAGE_KEY);
+    return (image as string) || "/images/home/hero-knobs.jpg";
+  } catch (error) {
+    console.error("Error fetching hero image:", error);
+    return "/images/home/hero-knobs.jpg";
+  }
+};
+
+export const setHeroImageInRedis = async (url: string): Promise<void> => {
+  try {
+    await redis.set(HERO_IMAGE_KEY, url);
+  } catch (error) {
+    console.error("Error setting hero image:", error);
+    throw new Error("Failed to set hero image");
   }
 };
 

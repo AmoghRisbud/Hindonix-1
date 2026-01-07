@@ -5,13 +5,18 @@ import { getTestimonials, type Testimonial } from "@/lib/data";
 import { ImageDisplay } from "@/components/ImageDisplay";
 
 export function TestimonialsSection() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(
-    getTestimonials()
-  );
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    const reload = () => setTestimonials(getTestimonials());
+    const reload = async () => {
+      try {
+        const testimonialsData = await getTestimonials();
+        setTestimonials(testimonialsData);
+      } catch (error) {
+        console.error('Error loading testimonials:', error);
+      }
+    };
     reload();
     window.addEventListener("storage", reload);
     window.addEventListener("dataUpdated", reload);

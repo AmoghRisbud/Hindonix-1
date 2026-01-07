@@ -7,6 +7,7 @@ interface EnvConfig {
   VITE_CLOUDINARY_CLOUD_NAME: string;
   VITE_CLOUDINARY_UPLOAD_PRESET: string;
   VITE_CLERK_PUBLISHABLE_KEY: string;
+  VITE_GOOGLE_SHEETS_WEB_APP_URL: string;
 }
 
 // Extend Window interface to include runtime env
@@ -46,5 +47,8 @@ export const ENV = {
   },
   get CLERK_PUBLISHABLE_KEY() {
     return getEnvVar('VITE_CLERK_PUBLISHABLE_KEY');
+  },
+  get GOOGLE_SHEETS_WEB_APP_URL() {
+    return getEnvVar('VITE_GOOGLE_SHEETS_WEB_APP_URL');
   },
 };
