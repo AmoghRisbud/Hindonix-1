@@ -158,15 +158,15 @@ const Products = () => {
     
     // Add finishes from filtered products
     filteredProducts.forEach((product) => {
-      product.finishes.forEach((finish) => {
+      // From legacy string list
+      (product.finishes || []).forEach((finish) => {
         finishesSet.add(finish);
       });
-    });
-
-    // Also add all available finishes from the finishes list
-    // (so users can see all finish options even if no products exist yet)
-    finishes.forEach((finish) => {
-      finishesSet.add(finish.name);
+      // From ID list
+      (product.finishIds || []).forEach((fid) => {
+        const f = finishes.find((x) => x.id === fid);
+        if (f) finishesSet.add(f.name);
+      });
     });
 
     return Array.from(finishesSet);
@@ -248,8 +248,14 @@ const Products = () => {
     if (selectedSubcategory && product.subcategory !== selectedSubcategory)
       return false;
     if (selectedMaterial && product.material !== selectedMaterial) return false;
-    if (selectedFinish && !product.finishes.includes(selectedFinish))
-      return false;
+    if (selectedFinish) {
+      const hasByName = (product.finishes || []).includes(selectedFinish);
+      const hasById = (product.finishIds || []).some((fid) => {
+        const f = finishes.find((x) => x.id === fid);
+        return f?.name === selectedFinish;
+      });
+      if (!hasByName && !hasById) return false;
+    }
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -565,21 +571,31 @@ const Products = () => {
                                 Available Finishes:
                               </p>
                               <div className="flex flex-wrap gap-1">
-                                {product.finishes
-                                  .slice(0, 3)
-                                  .map((finish, index) => (
-                                    <span
-                                      key={index}
-                                      className="text-xs px-2 py-1 bg-muted rounded text-muted-foreground"
-                                    >
-                                      {finish}
-                                    </span>
-                                  ))}
-                                {product.finishes.length > 3 && (
-                                  <span className="text-xs px-2 py-1 bg-muted rounded text-muted-foreground">
-                                    +{product.finishes.length - 3} more
-                                  </span>
-                                )}
+                                {(() => {
+                                  const names = (product.finishIds && product.finishIds.length > 0)
+                                    ? product.finishIds
+                                        .map((fid) => finishes.find((f) => f.id === fid)?.name)
+                                        .filter((n): n is string => !!n)
+                                    : (product.finishes || []);
+                                  const visible = names.slice(0, 3);
+                                  return (
+                                    <>
+                                      {visible.map((finish, index) => (
+                                        <span
+                                          key={index}
+                                          className="text-xs px-2 py-1 bg-muted rounded text-muted-foreground"
+                                        >
+                                          {finish}
+                                        </span>
+                                      ))}
+                                      {names.length > 3 && (
+                                        <span className="text-xs px-2 py-1 bg-muted rounded text-muted-foreground">
+                                          +{names.length - 3} more
+                                        </span>
+                                      )}
+                                    </>
+                                  );
+                                })()}
                               </div>
                             </div>
                           </div>

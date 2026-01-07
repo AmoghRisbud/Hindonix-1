@@ -102,6 +102,10 @@ const Admin = () => {
   const [heroImage, setHeroImageState] = useState<string>("");
   const [selectedHeroImage, setSelectedHeroImage] = useState<string>("");
   
+  // Controlled tabs state to persist current selection
+  const [mainTab, setMainTab] = useState<string>("products");
+  const [taxonomyTab, setTaxonomyTab] = useState<string>("categories");
+  
   // Loading and uploading states
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -205,14 +209,14 @@ const Admin = () => {
   // Product form state
   const [productForm, setProductForm] = useState({
     name: "",
-    category: "",
-    subcategory: "",
-    material: "",
+    categoryId: undefined as number | undefined,
+    subcategoryId: undefined as number | undefined,
+    materialId: undefined as number | undefined,
     description: "",
     modelNumber: "",
     longDescription: "",
     image: "",
-    finishes: [] as string[],
+    finishIds: [] as number[],
   });
 
   // Blog form state
@@ -410,30 +414,39 @@ const Admin = () => {
     setProductImageFile(null);
     setProductForm({
       name: "",
-      category: "",
-      subcategory: "",
-      material: "",
+      categoryId: undefined,
+      subcategoryId: undefined,
+      materialId: undefined,
       description: "",
       modelNumber: "",
       longDescription: "",
       image: "",
-      finishes: [],
+      finishIds: [],
     });
     setProductDialogOpen(true);
   };
 
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
+    // Map existing string-based fields to IDs when possible
+    const categoryId = product.categoryId ?? categories.find(c => c.name === product.category)?.id;
+    const subcategoryId = product.subcategoryId ?? (product.subcategory ? subcategories.find(s => s.name === product.subcategory)?.id : undefined);
+    const materialId = product.materialId ?? materialsList.find(m => m.name === product.material)?.id;
+    const finishIds = product.finishIds ?? (product.finishes ? product.finishes.map(name => {
+      const f = finishesList.find(x => x.name === name);
+      return f?.id;
+    }).filter((id): id is number => !!id) : []);
+
     setProductForm({
       name: product.name,
-      category: product.category,
-      subcategory: product.subcategory || "",
-      material: product.material || "",
+      categoryId,
+      subcategoryId,
+      materialId,
       description: product.description,
       modelNumber: product.modelNumber || "",
       longDescription: product.longDescription || "",
       image: product.image,
-      finishes: product.finishes || [],
+      finishIds,
     });
     setProductDialogOpen(true);
   };
@@ -465,8 +478,8 @@ const Admin = () => {
   const handleSaveProduct = async () => {
     if (
       !productForm.name ||
-      !productForm.category ||
-      !productForm.material ||
+      !productForm.categoryId ||
+      !productForm.materialId ||
       !productForm.description
     ) {
       toast({
@@ -478,10 +491,10 @@ const Admin = () => {
     }
 
     // Validate subcategory if selected category has subcategories
-    const selectedCategory = categories.find(c => c.name === productForm.category);
+    const selectedCategory = categories.find(c => c.id === productForm.categoryId);
     const hasSubcategories = selectedCategory && subcategories.some(sub => sub.categoryId === selectedCategory.id);
     
-    if (hasSubcategories && !productForm.subcategory) {
+    if (hasSubcategories && !productForm.subcategoryId) {
       toast({
         title: "Validation Error",
         description: "Please select a subcategory for this category.",
@@ -493,32 +506,53 @@ const Admin = () => {
     try {
       setLoading(true);
       if (editingProduct) {
+        // Derive string fields from IDs for backward compatibility
+        const catName = categories.find(c => c.id === productForm.categoryId)?.name || "";
+        const subName = productForm.subcategoryId ? subcategories.find(s => s.id === productForm.subcategoryId)?.name || "" : "";
+        const matName = materialsList.find(m => m.id === productForm.materialId)?.name || "";
+        const finishNames = productForm.finishIds.map(id => finishesList.find(f => f.id === id)?.name || "").filter(n => !!n);
+
         await updateProduct(editingProduct.id, {
           name: productForm.name,
-          category: productForm.category,
-          subcategory: productForm.subcategory,
-          material: productForm.material,
+          categoryId: productForm.categoryId,
+          subcategoryId: productForm.subcategoryId,
+          materialId: productForm.materialId,
           description: productForm.description,
           modelNumber: productForm.modelNumber,
           longDescription: productForm.longDescription,
           image: productForm.image,
-          finishes: productForm.finishes,
+          finishIds: productForm.finishIds,
+          // legacy string fields
+          category: catName,
+          subcategory: subName || undefined,
+          material: matName,
+          finishes: finishNames,
         });
         toast({
           title: "Product Updated",
           description: "The product has been successfully updated.",
         });
       } else {
+        const catName = categories.find(c => c.id === productForm.categoryId)?.name || "";
+        const subName = productForm.subcategoryId ? subcategories.find(s => s.id === productForm.subcategoryId)?.name || "" : "";
+        const matName = materialsList.find(m => m.id === productForm.materialId)?.name || "";
+        const finishNames = productForm.finishIds.map(id => finishesList.find(f => f.id === id)?.name || "").filter(n => !!n);
+
         await addProduct({
           name: productForm.name,
-          category: productForm.category,
-          subcategory: productForm.subcategory,
-          material: productForm.material,
+          categoryId: productForm.categoryId!,
+          subcategoryId: productForm.subcategoryId,
+          materialId: productForm.materialId!,
           description: productForm.description,
           modelNumber: productForm.modelNumber,
           longDescription: productForm.longDescription,
           image: productForm.image,
-          finishes: productForm.finishes,
+          finishIds: productForm.finishIds,
+          // legacy string fields
+          category: catName,
+          subcategory: subName || undefined,
+          material: matName,
+          finishes: finishNames,
         });
         toast({
           title: "Product Added",
@@ -829,6 +863,9 @@ const Admin = () => {
 
       const categoriesData = await getCategories();
       setCategories(categoriesData);
+      // Stay on Taxonomy > Categories
+      setMainTab("taxonomy");
+      setTaxonomyTab("categories");
       setCategoryDialogOpen(false);
     } catch (error) {
       console.error('Error saving category:', error);
@@ -914,6 +951,9 @@ const Admin = () => {
 
       const subcategoriesData = await getSubcategories();
       setSubcategories(subcategoriesData);
+      // Stay on Taxonomy > Subcategories
+      setMainTab("taxonomy");
+      setTaxonomyTab("subcategories");
       setSubcategoryDialogOpen(false);
     } catch (error) {
       console.error('Error saving subcategory:', error);
@@ -996,6 +1036,9 @@ const Admin = () => {
 
       const materialsData = await getMaterials();
       setMaterialsList(materialsData);
+      // Stay on Taxonomy > Materials
+      setMainTab("taxonomy");
+      setTaxonomyTab("materials");
       setMaterialDialogOpen(false);
     } catch (error) {
       console.error('Error saving material:', error);
@@ -1096,6 +1139,9 @@ const Admin = () => {
 
       const finishesData = await getFinishes();
       setFinishesList(finishesData);
+      // Stay on Taxonomy > Finishes
+      setMainTab("taxonomy");
+      setTaxonomyTab("finishes");
       setFinishDialogOpen(false);
       setFinishImageFile(null);
     } catch (error) {
@@ -1174,6 +1220,9 @@ const Admin = () => {
 
       const finishCategoriesData = await getFinishCategories();
       setFinishCategoriesList(finishCategoriesData);
+      // Stay on Taxonomy > Finish Categories
+      setMainTab("taxonomy");
+      setTaxonomyTab("finish-categories");
       setFinishCategoryDialogOpen(false);
     } catch (error) {
       console.error('Error saving finish category:', error);
@@ -1273,7 +1322,7 @@ const Admin = () => {
             </div>
           </div>
 
-          <Tabs defaultValue="products" className="w-full">
+          <Tabs value={mainTab} onValueChange={setMainTab} className="w-full">
             <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-6 mb-8">
               <TabsTrigger value="products">Products</TabsTrigger>
               <TabsTrigger value="taxonomy">Taxonomy</TabsTrigger>
@@ -1311,15 +1360,27 @@ const Admin = () => {
                         {product.name}
                       </h3>
                       <p className="text-sm text-muted-foreground mb-2">
-                        {product.category}
-                        {product.subcategory && ` • ${product.subcategory}`}
-                        {product.material && ` • ${product.material}`}
+                        {(product.categoryId ? categories.find(c => c.id === product.categoryId)?.name : product.category) || ""}
+                        {(() => {
+                          const subName = product.subcategoryId ? subcategories.find(s => s.id === product.subcategoryId)?.name : product.subcategory;
+                          return subName ? ` • ${subName}` : "";
+                        })()}
+                        {(() => {
+                          const matName = product.materialId ? materialsList.find(m => m.id === product.materialId)?.name : product.material;
+                          return matName ? ` • ${matName}` : "";
+                        })()}
                       </p>
                       <p className="text-sm text-foreground">
                         {product.description}
                       </p>
                       <div className="flex flex-wrap gap-1 mt-2">
-                        {product.finishes.map((finish, idx) => (
+                        {(
+                          product.finishIds && product.finishIds.length > 0
+                            ? product.finishIds
+                                .map((id) => finishesList.find((f) => f.id === id)?.name)
+                                .filter((n): n is string => !!n)
+                            : product.finishes || []
+                        ).map((finish, idx) => (
                           <span
                             key={idx}
                             className="text-xs px-2 py-1 bg-secondary rounded text-secondary-foreground"
@@ -1352,7 +1413,7 @@ const Admin = () => {
 
             {/* Taxonomy Tab */}
             <TabsContent value="taxonomy">
-              <Tabs defaultValue="categories" className="w-full">
+              <Tabs value={taxonomyTab} onValueChange={setTaxonomyTab} className="w-full">
                 <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-5 mb-8">
                   <TabsTrigger value="categories">Categories</TabsTrigger>
                   <TabsTrigger value="subcategories">Subcategories</TabsTrigger>
@@ -1784,13 +1845,13 @@ const Admin = () => {
               <div>
                 <Label htmlFor="category">Category *</Label>
                 <Select
-                  value={productForm.category}
+                  value={productForm.categoryId?.toString() || ""}
                   onValueChange={(value) => {
                     setProductForm({ 
                       ...productForm, 
-                      category: value,
+                      categoryId: Number(value),
                       // Clear subcategory if switching categories
-                      subcategory: ""
+                      subcategoryId: undefined
                     });
                   }}
                 >
@@ -1799,7 +1860,7 @@ const Admin = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.name}>
+                      <SelectItem key={cat.id} value={cat.id.toString()}>
                         {cat.name}
                       </SelectItem>
                     ))}
@@ -1809,9 +1870,9 @@ const Admin = () => {
               <div>
                 <Label htmlFor="material">Material *</Label>
                 <Select
-                  value={productForm.material}
+                  value={productForm.materialId?.toString() || ""}
                   onValueChange={(value) =>
-                    setProductForm({ ...productForm, material: value })
+                    setProductForm({ ...productForm, materialId: Number(value) })
                   }
                 >
                   <SelectTrigger>
@@ -1819,7 +1880,7 @@ const Admin = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {materialsList.map((mat) => (
-                      <SelectItem key={mat.id} value={mat.name}>
+                      <SelectItem key={mat.id} value={mat.id.toString()}>
                         {mat.name}
                       </SelectItem>
                     ))}
@@ -1828,19 +1889,19 @@ const Admin = () => {
               </div>
             </div>
             {/* Show subcategory dropdown if selected category has subcategories */}
-            {productForm.category && subcategories.some(sub => 
-              categories.find(c => c.name === productForm.category)?.id === sub.categoryId
+            {productForm.categoryId && subcategories.some(sub => 
+              productForm.categoryId === sub.categoryId
             ) && (
               <div>
                 <Label htmlFor="subcategory">Subcategory {subcategories.some(sub => 
-                  categories.find(c => c.name === productForm.category)?.id === sub.categoryId
+                  productForm.categoryId === sub.categoryId
                 ) ? "*" : "(optional)"}</Label>
                 <Select
-                  value={productForm.subcategory}
+                  value={productForm.subcategoryId?.toString() || ""}
                   onValueChange={(value) =>
                     setProductForm({
                       ...productForm,
-                      subcategory: value,
+                      subcategoryId: Number(value),
                     })
                   }
                 >
@@ -1849,9 +1910,9 @@ const Admin = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {subcategories
-                      .filter(sub => categories.find(c => c.name === productForm.category)?.id === sub.categoryId)
+                      .filter(sub => productForm.categoryId === sub.categoryId)
                       .map((sub) => (
-                        <SelectItem key={sub.id} value={sub.name}>
+                        <SelectItem key={sub.id} value={sub.id.toString()}>
                           {sub.name}
                         </SelectItem>
                       ))}
@@ -1921,18 +1982,18 @@ const Admin = () => {
                   >
                     <input
                       type="checkbox"
-                      checked={productForm.finishes.includes(finish.name)}
+                      checked={productForm.finishIds.includes(finish.id)}
                       onChange={(e) => {
                         if (e.target.checked) {
                           setProductForm({
                             ...productForm,
-                            finishes: [...productForm.finishes, finish.name],
+                            finishIds: [...productForm.finishIds, finish.id],
                           });
                         } else {
                           setProductForm({
                             ...productForm,
-                            finishes: productForm.finishes.filter(
-                              (f) => f !== finish.name
+                            finishIds: productForm.finishIds.filter(
+                              (fid) => fid !== finish.id
                             ),
                           });
                         }
