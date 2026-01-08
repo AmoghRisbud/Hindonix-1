@@ -1409,24 +1409,20 @@ const Admin = () => {
                   onChange={handleHeroImageUpload}
                   className="cursor-pointer mt-2"
                 />
-                {selectedHeroImage &&
-                  selectedHeroImage.startsWith("hero_image_") && (
-                    <p className="text-sm text-green-600 mt-2 font-medium">
-                      ✓ Image selected: {selectedHeroImage.split("_").pop()}
-                    </p>
-                  )}
+                {selectedHeroImage && (
+                  <p className="text-sm text-green-600 mt-2 font-medium">
+                    ✓ Image selected: {selectedHeroImage.split("/").pop()}
+                  </p>
+                )}
                 {heroImage && heroImage !== selectedHeroImage && (
                   <p className="text-sm text-muted-foreground mt-2">
-                    Current: {heroImage.split("_").pop()}
+                    Current: {heroImage.split("/").pop()}
                   </p>
                 )}
                 <Button
                   onClick={handleSaveHeroImage}
                   className="mt-4"
-                  disabled={
-                    !selectedHeroImage ||
-                    !selectedHeroImage.startsWith("hero_image_")
-                  }
+                  disabled={!selectedHeroImage}
                 >
                   Update Hero Image
                 </Button>
