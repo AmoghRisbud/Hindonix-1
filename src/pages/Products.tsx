@@ -621,7 +621,7 @@ const Products = () => {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="w-full gap-2"
+                                className="w-full gap-2 border-black text-black"
                                 asChild
                               >
                                 <Link to="/contact">

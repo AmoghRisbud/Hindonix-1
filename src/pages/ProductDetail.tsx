@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
+import {
+  useParams,
+  useNavigate,
+  useSearchParams,
+  Link,
+} from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -15,14 +20,21 @@ const ProductDetail = () => {
   const fromUrl = searchParams.get("from") || "/products";
 
   useEffect(() => {
-    const products = getProducts();
-    const foundProduct = products.find((p) => p.id === Number(id));
-    if (foundProduct) {
-      setProduct(foundProduct);
-    } else {
-      // Redirect to products page if product not found
-      navigate("/products");
-    }
+    const loadProduct = async () => {
+      try {
+        const products = await getProducts();
+        const foundProduct = products.find((p) => p.id === Number(id));
+        if (foundProduct) {
+          setProduct(foundProduct);
+        } else {
+          navigate("/products");
+        }
+      } catch (err) {
+        // If fetching fails, return to products page
+        navigate("/products");
+      }
+    };
+    loadProduct();
   }, [id, navigate]);
 
   if (!product) {
@@ -82,7 +94,10 @@ const ProductDetail = () => {
               {/* Model Number */}
               {product.modelNumber && (
                 <p className="text-muted-foreground text-sm mb-6">
-                  Model: <span className="font-medium text-foreground">{product.modelNumber}</span>
+                  Model:{" "}
+                  <span className="font-medium text-foreground">
+                    {product.modelNumber}
+                  </span>
                 </p>
               )}
 
@@ -129,11 +144,7 @@ const ProductDetail = () => {
 
               {/* Request Quote Button */}
               <div className="mt-auto">
-                <Button
-                  size="lg"
-                  asChild
-                  className="w-full sm:w-auto gap-2"
-                >
+                <Button size="lg" asChild className="w-full sm:w-auto gap-2">
                   <Link to="/contact">
                     Request Quote
                     <ArrowRight className="w-4 h-4" />

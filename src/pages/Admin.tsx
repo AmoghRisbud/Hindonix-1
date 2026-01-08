@@ -1529,6 +1529,7 @@ const Admin = () => {
                       <Button
                         variant="outline"
                         size="sm"
+                        className="border-black text-black"
                         onClick={() => handleEditProduct(product)}
                       >
                         <Edit className="w-4 h-4" />
@@ -1595,6 +1596,7 @@ const Admin = () => {
                           <Button
                             variant="outline"
                             size="sm"
+                            className="border-black text-black"
                             onClick={() => handleEditCategory(category)}
                           >
                             <Edit className="w-4 h-4" />
@@ -1651,6 +1653,7 @@ const Admin = () => {
                             <Button
                               variant="outline"
                               size="sm"
+                              className="border-black text-black"
                               onClick={() => handleEditSubcategory(subcategory)}
                             >
                               <Edit className="w-4 h-4" />
@@ -1720,6 +1723,7 @@ const Admin = () => {
                             <Button
                               variant="outline"
                               size="sm"
+                              className="border-black text-black"
                               onClick={() => handleEditMaterial(material)}
                             >
                               <Edit className="w-4 h-4" />
@@ -1778,6 +1782,7 @@ const Admin = () => {
                           <Button
                             variant="outline"
                             size="sm"
+                            className="border-black text-black"
                             onClick={() => handleEditFinishCategory(category)}
                           >
                             <Edit className="w-4 h-4" />
@@ -1843,6 +1848,7 @@ const Admin = () => {
                             <Button
                               variant="outline"
                               size="sm"
+                              className="border-black text-black"
                               onClick={() => handleEditFinish(finish)}
                             >
                               <Edit className="w-4 h-4" />
@@ -1897,6 +1903,7 @@ const Admin = () => {
                       <Button
                         variant="outline"
                         size="sm"
+                        className="border-black text-black"
                         onClick={() => handleEditBlog(blog)}
                       >
                         <Edit className="w-4 h-4" />
@@ -1961,6 +1968,7 @@ const Admin = () => {
                       <Button
                         variant="outline"
                         size="sm"
+                        className="border-black text-black"
                         onClick={() => handleEditTestimonial(testimonial)}
                       >
                         <Edit className="w-4 h-4" />
