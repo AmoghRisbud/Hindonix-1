@@ -39,6 +39,7 @@ const FINISH_KEY_PREFIX = "hindonix:finishes";
 const FINISH_CATEGORIES_KEY = "hindonix:finish_categories:ids";
 const FINISH_CATEGORY_KEY_PREFIX = "hindonix:finish_categories";
 const HERO_IMAGE_KEY = "hindonix:hero_image";
+const HERO_IMAGES_KEY = "hindonix:hero_images";
 
 // Helper for generic CRUD operations
 async function getEntityIds(key: string): Promise<number[]> {
@@ -519,22 +520,59 @@ export const deleteFinishCategoryFromRedis = async (id: number): Promise<boolean
 // HERO IMAGE OPERATIONS
 // ============================================
 
-export const getHeroImageFromRedis = async (): Promise<string> => {
+export const getHeroImagesFromRedis = async (): Promise<string[]> => {
   try {
-    const image = await redis.get(HERO_IMAGE_KEY);
-    return (image as string) || "/images/home/hero-knobs.jpg";
+    const imagesData = await redis.get(HERO_IMAGES_KEY);
+    console.log('🟢 Redis: Raw data from Redis:', imagesData);
+    console.log('🟢 Redis: Data type:', typeof imagesData);
+    console.log('🟢 Redis: Is array?:', Array.isArray(imagesData));
+    
+    if (imagesData) {
+      // Check if it's already an array (Upstash auto-parses JSON)
+      if (Array.isArray(imagesData)) {
+        console.log('🟢 Redis: Data is already an array:', imagesData);
+        console.log('🟢 Redis: Array length:', imagesData.length);
+        if (imagesData.length > 0) {
+          return imagesData as string[];
+        }
+      }
+      // If it's a string, try to parse it
+      else if (typeof imagesData === 'string') {
+        try {
+          const arr = JSON.parse(imagesData) as string[];
+          console.log('🟢 Redis: Parsed array from string:', arr);
+          console.log('🟢 Redis: Array length:', arr?.length);
+          if (Array.isArray(arr) && arr.length > 0) {
+            return arr;
+          }
+        } catch (e) {
+          console.error('🟢 Redis: Parse error:', e);
+        }
+      }
+    }
+    // Fallback to single image key for backward compatibility
+    console.log('🟢 Redis: Trying fallback to single image key');
+    const single = await redis.get(HERO_IMAGE_KEY);
+    const url = (single as string) || "/images/home/hero-knobs.jpg";
+    console.log('🟢 Redis: Fallback returned:', url);
+    return [url];
   } catch (error) {
-    console.error("Error fetching hero image:", error);
-    return "/images/home/hero-knobs.jpg";
+    console.error("Error fetching hero images:", error);
+    return ["/images/home/hero-knobs.jpg"];
   }
 };
 
-export const setHeroImageInRedis = async (url: string): Promise<void> => {
+export const setHeroImagesInRedis = async (urls: string[]): Promise<void> => {
   try {
-    await redis.set(HERO_IMAGE_KEY, url);
+    console.log('🔵 Redis: Saving hero images:', urls);
+    console.log('🔵 Redis: Array length:', urls.length);
+    const jsonString = JSON.stringify(urls);
+    console.log('🔵 Redis: JSON string:', jsonString);
+    await redis.set(HERO_IMAGES_KEY, jsonString);
+    console.log('🔵 Redis: Save successful');
   } catch (error) {
-    console.error("Error setting hero image:", error);
-    throw new Error("Failed to set hero image");
+    console.error("Error setting hero images:", error);
+    throw new Error("Failed to set hero images");
   }
 };
 

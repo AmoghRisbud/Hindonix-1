@@ -36,8 +36,8 @@ import {
   addFinishCategoryToRedis,
   updateFinishCategoryInRedis,
   deleteFinishCategoryFromRedis,
-  getHeroImageFromRedis,
-  setHeroImageInRedis,
+  getHeroImagesFromRedis,
+  setHeroImagesInRedis,
   getCaseStudyById,
   getProductById
 } from './redis';
@@ -444,13 +444,13 @@ export const deleteCaseStudy = async (id: number): Promise<boolean> => {
   return await deleteCaseStudyFromRedis(id);
 };
 
-// Hero Image management
-export const getHeroImage = async (): Promise<string> => {
-  return await getHeroImageFromRedis();
+// Hero Images management
+export const getHeroImages = async (): Promise<string[]> => {
+  return await getHeroImagesFromRedis();
 };
 
-export const setHeroImage = async (imageKey: string): Promise<void> => {
-  return await setHeroImageInRedis(imageKey);
+export const setHeroImages = async (images: string[]): Promise<void> => {
+  return await setHeroImagesInRedis(images);
 };
 
 // ========================================

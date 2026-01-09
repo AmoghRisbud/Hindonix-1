@@ -28,8 +28,8 @@ import {
   addTestimonial,
   updateTestimonial,
   deleteTestimonial,
-  getHeroImage,
-  setHeroImage,
+  getHeroImages,
+  setHeroImages,
   getCategories,
   addCategory,
   updateCategory,
@@ -111,8 +111,8 @@ const Admin = () => {
     FinishCategory[]
   >([]);
 
-  const [heroImage, setHeroImageState] = useState<string>("");
-  const [selectedHeroImage, setSelectedHeroImage] = useState<string>("");
+  const [heroImages, setHeroImagesState] = useState<string[]>([]);
+  const [selectedHeroImages, setSelectedHeroImages] = useState<string[]>([]);
 
   // Controlled tabs state to persist current selection
   const [mainTab, setMainTab] = useState<string>("products");
@@ -152,7 +152,7 @@ const Admin = () => {
   const [testimonialImageFile, setTestimonialImageFile] = useState<File | null>(
     null
   );
-  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
+  const [heroImageFiles, setHeroImageFiles] = useState<File[]>([]);
   const [finishImageFile, setFinishImageFile] = useState<File | null>(null);
 
   const { toast } = useToast();
@@ -171,7 +171,7 @@ const Admin = () => {
           materialsData,
           finishesData,
           finishCategoriesData,
-          heroImageData,
+          heroImagesData,
         ] = await Promise.all([
           getProducts(),
           getBlogs(),
@@ -181,7 +181,7 @@ const Admin = () => {
           getMaterials(),
           getFinishes(),
           getFinishCategories(),
-          getHeroImage(),
+          getHeroImages(),
         ]);
 
         setProducts(productsData);
@@ -192,8 +192,8 @@ const Admin = () => {
         setMaterialsList(materialsData);
         setFinishesList(finishesData);
         setFinishCategoriesList(finishCategoriesData);
-        setHeroImageState(heroImageData);
-        setSelectedHeroImage(heroImageData);
+        setHeroImagesState(heroImagesData);
+        setSelectedHeroImages(heroImagesData);
       } catch (error) {
         console.error("Error loading data:", error);
         toast({
@@ -368,25 +368,27 @@ const Admin = () => {
   const handleHeroImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = e.target.files?.[0];
-    if (!file) {
-      return;
-    }
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
     try {
       setUploading(true);
-      setHeroImageFile(file);
-      const response = await uploadImageToCloudinary(file);
-      setSelectedHeroImage(response.secure_url);
+      setHeroImageFiles(files);
+      const uploadedUrls: string[] = [];
+      for (const file of files) {
+        const response = await uploadImageToCloudinary(file);
+        uploadedUrls.push(response.secure_url);
+      }
+      setSelectedHeroImages((prev) => [...prev, ...uploadedUrls]);
       toast({
-        title: "Image Uploaded",
-        description: `${file.name} uploaded successfully. Click "Update Hero Image" to save.`,
+        title: "Images Uploaded",
+        description: `${files.length} image(s) uploaded. Click "Update Hero Images" to save.`,
       });
     } catch (error) {
-      console.error("Error uploading hero image:", error);
+      console.error("Error uploading hero images:", error);
       toast({
         title: "Upload Error",
-        description: "Failed to upload image. Please try again.",
+        description: "Failed to upload image(s). Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -394,23 +396,24 @@ const Admin = () => {
     }
   };
 
-  const handleSaveHeroImage = async () => {
-    if (selectedHeroImage) {
+  const handleSaveHeroImages = async () => {
+    if (selectedHeroImages.length > 0) {
       try {
         setLoading(true);
-        await setHeroImage(selectedHeroImage);
-        setHeroImageState(selectedHeroImage);
+        console.log('💾 Saving hero images:', selectedHeroImages);
+        console.log('📊 Total images to save:', selectedHeroImages.length);
+        await setHeroImages(selectedHeroImages);
+        setHeroImagesState(selectedHeroImages);
         toast({
-          title: "Hero Image Updated",
-          description: "The hero image has been successfully updated.",
+          title: "Hero Images Updated",
+          description: "The hero images have been successfully updated.",
         });
-        // Notify home page to refresh
         window.dispatchEvent(new Event("heroImageUpdated"));
       } catch (error) {
-        console.error("Error saving hero image:", error);
+        console.error("Error saving hero images:", error);
         toast({
           title: "Error",
-          description: "Failed to save hero image.",
+          description: "Failed to save hero images.",
           variant: "destructive",
         });
       } finally {
@@ -419,10 +422,18 @@ const Admin = () => {
     } else {
       toast({
         title: "Error",
-        description: "Please upload an image first.",
+        description: "Please upload at least one image.",
         variant: "destructive",
       });
     }
+  };
+
+  const handleRemoveHeroImage = (index: number) => {
+    setSelectedHeroImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleClearAllHeroImages = () => {
+    setSelectedHeroImages([]);
   };
 
   // Product handlers
@@ -1394,47 +1405,78 @@ const Admin = () => {
       {/* Admin Content */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
-          {/* Hero Image Management */}
+          {/* Hero Images Management */}
           <div className="mb-12 bg-card rounded-xl p-8 border border-border/50">
             <h2 className="font-heading text-2xl font-bold text-foreground mb-6">
-              Manage Hero Image
+              Manage Hero Images
             </h2>
             <div className="grid lg:grid-cols-2 gap-8">
               <div>
-                <Label htmlFor="hero-image">Hero Image</Label>
+                <Label htmlFor="hero-image">Hero Images</Label>
                 <Input
                   id="hero-image"
                   type="file"
                   accept="image/*"
+                  multiple
                   onChange={handleHeroImageUpload}
                   className="cursor-pointer mt-2"
                 />
-                {selectedHeroImage && (
+                {selectedHeroImages.length > 0 && (
                   <p className="text-sm text-green-600 mt-2 font-medium">
-                    ✓ Image selected: {selectedHeroImage.split("/").pop()}
+                    ✓ {selectedHeroImages.length} image(s) selected
                   </p>
                 )}
-                {heroImage && heroImage !== selectedHeroImage && (
+                {heroImages.length > 0 && (
                   <p className="text-sm text-muted-foreground mt-2">
-                    Current: {heroImage.split("/").pop()}
+                    Current: {heroImages.length} image(s)
                   </p>
                 )}
-                <Button
-                  onClick={handleSaveHeroImage}
-                  className="mt-4"
-                  disabled={!selectedHeroImage}
-                >
-                  Update Hero Image
-                </Button>
+                <div className="flex gap-2 mt-4">
+                  <Button
+                    onClick={handleSaveHeroImages}
+                    disabled={selectedHeroImages.length === 0}
+                  >
+                    Update Hero Images
+                  </Button>
+                  {selectedHeroImages.length > 0 && (
+                    <Button
+                      onClick={handleClearAllHeroImages}
+                      variant="outline"
+                    >
+                      Clear All
+                    </Button>
+                  )}
+                </div>
               </div>
               <div>
                 <Label>Preview</Label>
                 <div className="mt-2 bg-secondary rounded-lg overflow-hidden h-48">
-                  <ImageDisplay
-                    src={selectedHeroImage}
-                    alt="Hero Preview"
-                    className="w-full h-full object-cover"
-                  />
+                  {selectedHeroImages.length === 0 ? (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      No images selected
+                    </div>
+                  ) : selectedHeroImages.length === 1 ? (
+                    <ImageDisplay
+                      src={selectedHeroImages[0]}
+                      alt="Hero Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex w-full h-full overflow-x-auto gap-2 p-2">
+                      {selectedHeroImages.map((url, idx) => (
+                        <div key={idx} className="relative group h-full flex-shrink-0">
+                          <img src={url} alt={`Preview ${idx + 1}`} className="h-full object-cover rounded-md" />
+                          <button
+                            onClick={() => handleRemoveHeroImage(idx)}
+                            className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="Remove image"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
