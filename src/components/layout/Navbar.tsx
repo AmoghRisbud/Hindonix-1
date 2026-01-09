@@ -107,10 +107,7 @@ export function Navbar() {
                   variant={isScrolled ? "outline" : "ghost"}
                   size="default"
                   asChild
-                  className={cn(
-                    !isScrolled &&
-                      "text-white hover:bg-white/10 border-white/20"
-                  )}
+                  className="!text-black hover:!text-black"
                 >
                   <Link to="/login">Sign In</Link>
                 </Button>
@@ -189,7 +186,7 @@ export function Navbar() {
                   <Button
                     variant="outline"
                     size="lg"
-                    className="w-full"
+                    className="w-full !text-black hover:!text-black"
                     asChild
                   >
                     <Link to="/login">Sign In</Link>
