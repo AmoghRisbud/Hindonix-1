@@ -71,3 +71,49 @@ export const deleteImageFromCloudinary = async (
     publicId
   );
 };
+
+/**
+ * Upload a hero image to Cloudinary with a fixed public_id so the URL is
+ * always predictable — no database needed to track it.
+ *
+ * Requires a SEPARATE unsigned upload preset (VITE_CLOUDINARY_HERO_UPLOAD_PRESET)
+ * with Overwrite=true and Unique filename=false, so re-uploads replace the asset.
+ */
+export const uploadHeroImageToCloudinary = async (
+  file: File
+): Promise<CloudinaryUploadResponse> => {
+  const cloudName = ENV.CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = ENV.CLOUDINARY_HERO_UPLOAD_PRESET;
+
+  if (!cloudName || !uploadPreset) {
+    throw new Error(
+      "Hero Cloudinary preset not configured. Set VITE_CLOUDINARY_HERO_UPLOAD_PRESET in .env.local"
+    );
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
+  formData.append("public_id", "hero_main");
+  formData.append("folder", "hindonix");
+  formData.append("overwrite", "true");
+
+  try {
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      { method: "POST", body: formData }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || "Failed to upload hero image");
+    }
+
+    return response.json() as Promise<CloudinaryUploadResponse>;
+  } catch (error) {
+    console.error("Cloudinary hero upload error:", error);
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to upload hero image to Cloudinary"
+    );
+  }
+};

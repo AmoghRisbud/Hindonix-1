@@ -1,46 +1,46 @@
-// Shared data store for products and case studies
-import { 
-  getAllProducts, 
-  addProductToRedis, 
-  updateProductInRedis, 
-  deleteProductFromRedis,
+// Shared data store — backed by Express API + MySQL
+import {
+  getAllProducts,
+  getProductById,
+  addProductToApi,
+  updateProductInApi,
+  deleteProductFromApi,
   getAllBlogs,
-  addBlogToRedis,
-  updateBlogInRedis,
-  deleteBlogFromRedis,
+  addBlogToApi,
+  updateBlogInApi,
+  deleteBlogFromApi,
   getAllTestimonials,
-  addTestimonialToRedis,
-  updateTestimonialInRedis,
-  deleteTestimonialFromRedis,
+  addTestimonialToApi,
+  updateTestimonialInApi,
+  deleteTestimonialFromApi,
   getAllCaseStudies,
-  addCaseStudyToRedis,
-  updateCaseStudyInRedis,
-  deleteCaseStudyFromRedis,
-  getAllCategories,
-  addCategoryToRedis,
-  updateCategoryInRedis,
-  deleteCategoryFromRedis,
-  getAllSubcategories,
-  addSubcategoryToRedis,
-  updateSubcategoryInRedis,
-  deleteSubcategoryFromRedis,
-  getAllMaterials,
-  addMaterialToRedis,
-  updateMaterialInRedis,
-  deleteMaterialFromRedis,
-  getAllFinishes,
-  addFinishToRedis,
-  updateFinishInRedis,
-  deleteFinishFromRedis,
-  getAllFinishCategories,
-  addFinishCategoryToRedis,
-  updateFinishCategoryInRedis,
-  deleteFinishCategoryFromRedis,
-  getHeroImagesFromRedis,
-  setHeroImagesInRedis,
   getCaseStudyById,
-  getProductById
-} from './redis';
+  addCaseStudyToApi,
+  updateCaseStudyInApi,
+  deleteCaseStudyFromApi,
+  getAllCategories,
+  addCategoryToApi,
+  updateCategoryInApi,
+  deleteCategoryFromApi,
+  getAllSubcategories,
+  addSubcategoryToApi,
+  updateSubcategoryInApi,
+  deleteSubcategoryFromApi,
+  getAllMaterials,
+  addMaterialToApi,
+  updateMaterialInApi,
+  deleteMaterialFromApi,
+  getAllFinishes,
+  addFinishToApi,
+  updateFinishInApi,
+  deleteFinishFromApi,
+  getAllFinishCategories,
+  addFinishCategoryToApi,
+  updateFinishCategoryInApi,
+  deleteFinishCategoryFromApi,
+  getHeroImagesFromApi,
+  setHeroImagesInApi,
+} from "./api";
 
 // Taxonomy interfaces
 export interface Category {
@@ -362,7 +362,7 @@ const defaultFinishes: Finish[] = [
 ];
 
 // ============================================
-// DATA ACCESS LAYER (Redis-backed)
+// DATA ACCESS LAYER (API-backed)
 // ============================================
 
 // Product management functions
@@ -370,19 +370,21 @@ export const getProducts = async (): Promise<Product[]> => {
   return await getAllProducts();
 };
 
-export const addProduct = async (product: Omit<Product, "id">): Promise<Product> => {
-  return await addProductToRedis(product);
+export const addProduct = async (
+  product: Omit<Product, "id">,
+): Promise<Product> => {
+  return await addProductToApi(product);
 };
 
 export const updateProduct = async (
   id: number,
-  updates: Partial<Product>
+  updates: Partial<Product>,
 ): Promise<Product | null> => {
-  return await updateProductInRedis(id, updates);
+  return await updateProductInApi(id, updates);
 };
 
 export const deleteProduct = async (id: number): Promise<boolean> => {
-  return await deleteProductFromRedis(id);
+  return await deleteProductFromApi(id);
 };
 
 // Blog management functions
@@ -391,15 +393,18 @@ export const getBlogs = async (): Promise<Blog[]> => {
 };
 
 export const addBlog = async (blog: Omit<Blog, "id">): Promise<Blog> => {
-  return await addBlogToRedis(blog);
+  return await addBlogToApi(blog);
 };
 
-export const updateBlog = async (id: number, updates: Partial<Blog>): Promise<Blog | null> => {
-  return await updateBlogInRedis(id, updates);
+export const updateBlog = async (
+  id: number,
+  updates: Partial<Blog>,
+): Promise<Blog | null> => {
+  return await updateBlogInApi(id, updates);
 };
 
 export const deleteBlog = async (id: number): Promise<boolean> => {
-  return await deleteBlogFromRedis(id);
+  return await deleteBlogFromApi(id);
 };
 
 // Testimonial management functions
@@ -408,20 +413,20 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
 };
 
 export const addTestimonial = async (
-  testimonial: Omit<Testimonial, "id">
+  testimonial: Omit<Testimonial, "id">,
 ): Promise<Testimonial> => {
-  return await addTestimonialToRedis(testimonial);
+  return await addTestimonialToApi(testimonial);
 };
 
 export const updateTestimonial = async (
   id: number,
-  updates: Partial<Testimonial>
+  updates: Partial<Testimonial>,
 ): Promise<Testimonial | null> => {
-  return await updateTestimonialInRedis(id, updates);
+  return await updateTestimonialInApi(id, updates);
 };
 
 export const deleteTestimonial = async (id: number): Promise<boolean> => {
-  return await deleteTestimonialFromRedis(id);
+  return await deleteTestimonialFromApi(id);
 };
 
 // Case Study management functions
@@ -429,28 +434,30 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
   return await getAllCaseStudies();
 };
 
-export const addCaseStudy = async (caseStudy: Omit<CaseStudy, "id">): Promise<CaseStudy> => {
-  return await addCaseStudyToRedis(caseStudy);
+export const addCaseStudy = async (
+  caseStudy: Omit<CaseStudy, "id">,
+): Promise<CaseStudy> => {
+  return await addCaseStudyToApi(caseStudy);
 };
 
 export const updateCaseStudy = async (
   id: number,
-  updates: Partial<CaseStudy>
+  updates: Partial<CaseStudy>,
 ): Promise<CaseStudy | null> => {
-  return await updateCaseStudyInRedis(id, updates);
+  return await updateCaseStudyInApi(id, updates);
 };
 
 export const deleteCaseStudy = async (id: number): Promise<boolean> => {
-  return await deleteCaseStudyFromRedis(id);
+  return await deleteCaseStudyFromApi(id);
 };
 
-// Hero Images management
+// Hero Images management (stored in MySQL via API)
 export const getHeroImages = async (): Promise<string[]> => {
-  return await getHeroImagesFromRedis();
+  return await getHeroImagesFromApi();
 };
 
 export const setHeroImages = async (images: string[]): Promise<void> => {
-  return await setHeroImagesInRedis(images);
+  return await setHeroImagesInApi(images);
 };
 
 // ========================================
@@ -462,48 +469,21 @@ export const getCategories = async (): Promise<Category[]> => {
   return await getAllCategories();
 };
 
-export const addCategory = async (category: Omit<Category, "id">): Promise<Category> => {
-  return await addCategoryToRedis(category);
+export const addCategory = async (
+  category: Omit<Category, "id">,
+): Promise<Category> => {
+  return await addCategoryToApi(category);
 };
 
 export const updateCategory = async (
   id: number,
-  updates: Partial<Category>
+  updates: Partial<Category>,
 ): Promise<Category | null> => {
-  return await updateCategoryInRedis(id, updates);
+  return await updateCategoryInApi(id, updates);
 };
 
 export const deleteCategory = async (id: number): Promise<boolean> => {
-  // Check if category has products
-  const products = await getAllProducts();
-  const categories = await getAllCategories();
-  const categoryName = categories.find((c) => c.id === id)?.name;
-
-  const hasProducts = products.some(
-    (p) => p.categoryId === id || (categoryName && p.category === categoryName)
-  );
-
-  if (hasProducts) {
-    return false; // Cannot delete category with products
-  }
-
-  // Delete associated subcategories and materials
-  const subcategories = await getAllSubcategories();
-  const materials = await getAllMaterials();
-  
-  await Promise.all(
-    subcategories
-      .filter((s) => s.categoryId === id)
-      .map((s) => deleteSubcategoryFromRedis(s.id))
-  );
-  
-  await Promise.all(
-    materials
-      .filter((m) => m.categoryId === id)
-      .map((m) => deleteMaterialFromRedis(m.id))
-  );
-
-  return await deleteCategoryFromRedis(id);
+  return await deleteCategoryFromApi(id);
 };
 
 // Subcategory management
@@ -512,43 +492,20 @@ export const getSubcategories = async (): Promise<Subcategory[]> => {
 };
 
 export const addSubcategory = async (
-  subcategory: Omit<Subcategory, "id">
+  subcategory: Omit<Subcategory, "id">,
 ): Promise<Subcategory> => {
-  return await addSubcategoryToRedis(subcategory);
+  return await addSubcategoryToApi(subcategory);
 };
 
 export const updateSubcategory = async (
   id: number,
-  updates: Partial<Subcategory>
+  updates: Partial<Subcategory>,
 ): Promise<Subcategory | null> => {
-  return await updateSubcategoryInRedis(id, updates);
+  return await updateSubcategoryInApi(id, updates);
 };
 
 export const deleteSubcategory = async (id: number): Promise<boolean> => {
-  // Check if subcategory has products
-  const products = await getAllProducts();
-  const subcategories = await getAllSubcategories();
-  const subcategoryName = subcategories.find((s) => s.id === id)?.name;
-
-  const hasProducts = products.some(
-    (p) =>
-      p.subcategoryId === id ||
-      (subcategoryName && p.subcategory === subcategoryName)
-  );
-
-  if (hasProducts) {
-    return false; // Cannot delete subcategory with products
-  }
-
-  // Delete associated materials
-  const materials = await getAllMaterials();
-  await Promise.all(
-    materials
-      .filter((m) => m.subcategoryId === id)
-      .map((m) => deleteMaterialFromRedis(m.id))
-  );
-
-  return await deleteSubcategoryFromRedis(id);
+  return await deleteSubcategoryFromApi(id);
 };
 
 // Material management
@@ -556,34 +513,21 @@ export const getMaterials = async (): Promise<Material[]> => {
   return await getAllMaterials();
 };
 
-export const addMaterial = async (material: Omit<Material, "id">): Promise<Material> => {
-  return await addMaterialToRedis(material);
+export const addMaterial = async (
+  material: Omit<Material, "id">,
+): Promise<Material> => {
+  return await addMaterialToApi(material);
 };
 
 export const updateMaterial = async (
   id: number,
-  updates: Partial<Material>
+  updates: Partial<Material>,
 ): Promise<Material | null> => {
-  return await updateMaterialInRedis(id, updates);
+  return await updateMaterialInApi(id, updates);
 };
 
 export const deleteMaterial = async (id: number): Promise<boolean> => {
-  // Check if material has products
-  const products = await getAllProducts();
-  const materials = await getAllMaterials();
-  const materialName = materials.find((m) => m.id === id)?.name;
-
-  const hasMaterial = products.some(
-    (p) =>
-      p.materialId === id ||
-      (materialName && p.material === materialName)
-  );
-
-  if (hasMaterial) {
-    return false; // Cannot delete material with products
-  }
-
-  return await deleteMaterialFromRedis(id);
+  return await deleteMaterialFromApi(id);
 };
 
 // Finish management
@@ -591,19 +535,21 @@ export const getFinishes = async (): Promise<Finish[]> => {
   return await getAllFinishes();
 };
 
-export const addFinish = async (finish: Omit<Finish, "id">): Promise<Finish> => {
-  return await addFinishToRedis(finish);
+export const addFinish = async (
+  finish: Omit<Finish, "id">,
+): Promise<Finish> => {
+  return await addFinishToApi(finish);
 };
 
 export const updateFinish = async (
   id: number,
-  updates: Partial<Finish>
+  updates: Partial<Finish>,
 ): Promise<Finish | null> => {
-  return await updateFinishInRedis(id, updates);
+  return await updateFinishInApi(id, updates);
 };
 
 export const deleteFinish = async (id: number): Promise<boolean> => {
-  return await deleteFinishFromRedis(id);
+  return await deleteFinishFromApi(id);
 };
 
 // Finish Category management
@@ -612,25 +558,18 @@ export const getFinishCategories = async (): Promise<FinishCategory[]> => {
 };
 
 export const addFinishCategory = async (
-  category: Omit<FinishCategory, "id">
+  category: Omit<FinishCategory, "id">,
 ): Promise<FinishCategory> => {
-  return await addFinishCategoryToRedis(category);
+  return await addFinishCategoryToApi(category);
 };
 
 export const updateFinishCategory = async (
   id: number,
-  updates: Partial<FinishCategory>
+  updates: Partial<FinishCategory>,
 ): Promise<FinishCategory | null> => {
-  return await updateFinishCategoryInRedis(id, updates);
+  return await updateFinishCategoryInApi(id, updates);
 };
 
 export const deleteFinishCategory = async (id: number): Promise<boolean> => {
-  // Check if category has finishes
-  const finishes = await getAllFinishes();
-  const hasFinishes = finishes.some((f) => f.categoryId === id);
-  if (hasFinishes) {
-    return false; // Cannot delete category with finishes
-  }
-
-  return await deleteFinishCategoryFromRedis(id);
+  return await deleteFinishCategoryFromApi(id);
 };

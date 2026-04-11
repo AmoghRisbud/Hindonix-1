@@ -3,6 +3,7 @@
 ## 🎯 What Changed
 
 ### BEFORE (Single Image Only)
+
 ```
 Admin Panel:
 ┌─────────────────────────────────────┐
@@ -24,6 +25,7 @@ Homepage:
 ```
 
 ### AFTER (Multiple Images with Carousel)
+
 ```
 Admin Panel:
 ┌─────────────────────────────────────┐
@@ -60,7 +62,9 @@ Homepage (multiple images):
 ## 📂 Files Changed (4 files)
 
 ### 1. `src/lib/redis.ts` (Backend)
+
 **What:** Added multiple images storage functions
+
 ```diff
 + const HERO_IMAGES_KEY = "hindonix:hero_images";
 
@@ -74,7 +78,9 @@ Homepage (multiple images):
 ```
 
 ### 2. `src/lib/data.ts` (Data Layer)
+
 **What:** Exposed plural functions
+
 ```diff
 - export const getHeroImage = async (): Promise<string>
 - export const setHeroImage = async (imageKey: string): Promise<void>
@@ -84,7 +90,9 @@ Homepage (multiple images):
 ```
 
 ### 3. `src/pages/Admin.tsx` (Admin UI)
+
 **What:** Multi-file upload, preview grid, remove button
+
 ```diff
 - <input type="file" />                (single)
 + <input type="file" multiple />       (multiple!)
@@ -103,7 +111,9 @@ Preview section:
 ```
 
 ### 4. `src/components/home/HeroSection.tsx` (Homepage)
+
 **What:** Carousel with autoplay for multiple images
+
 ```diff
 - const [heroImage, setHeroImage] = useState<string>(...);
 + const [heroImages, setHeroImages] = useState<string[]>([...]);
@@ -177,6 +187,7 @@ Preview section:
 ### Admin Panel - Upload Section
 
 **BEFORE:**
+
 ```
 ┌─────────────────────────────────┐
 │ Hero Image                      │
@@ -190,6 +201,7 @@ Preview section:
 ```
 
 **AFTER:**
+
 ```
 ┌─────────────────────────────────┐
 │ Hero Images                     │
@@ -205,6 +217,7 @@ Preview section:
 ### Admin Panel - Preview Section
 
 **BEFORE:**
+
 ```
 ┌─────────────────────────────────┐
 │ Preview                         │
@@ -216,6 +229,7 @@ Preview section:
 ```
 
 **AFTER:**
+
 ```
 ┌─────────────────────────────────┐
 │ Preview                         │
@@ -231,6 +245,7 @@ Preview section:
 ### Homepage - Hero Section
 
 **BEFORE:**
+
 ```
 ┌──────────────────────────────────────────┐
 │                                          │
@@ -247,6 +262,7 @@ Preview section:
 ```
 
 **AFTER (Multiple Images):**
+
 ```
 ┌──────────────────────────────────────────┐
 │                                          │
@@ -268,22 +284,27 @@ Preview section:
 ## ⚙️ Configuration
 
 ### Autoplay Timing
+
 **Location:** `src/components/home/HeroSection.tsx:35`
+
 ```typescript
 const interval = setInterval(() => {
   carouselApi.scrollNext();
-}, 4000);  // ← Change this number (milliseconds)
+}, 4000); // ← Change this number (milliseconds)
 ```
 
 **Examples:**
+
 - 3000 = 3 seconds (faster)
 - 5000 = 5 seconds (slower)
 - 6000 = 6 seconds (more time to read)
 
 ### Carousel Options
+
 **Location:** `src/components/home/HeroSection.tsx:5`
+
 ```tsx
-<Carousel 
+<Carousel
   setApi={setCarouselApi}
   opts={{
     loop: true,        // ← Infinite loop
@@ -315,28 +336,25 @@ Before deploying to production:
 ## 💡 Usage Tips
 
 **For Admins:**
+
 1. Upload high-quality images (Cloudinary optimizes them)
 2. Use consistent aspect ratios for best results
 3. Recommended: 3-5 images for variety without overwhelming
 4. Order matters: First uploaded = First shown
 
-**For Developers:**
-5. Carousel uses Embla (no extra dependencies)
-6. Images lazy-load automatically
-7. Cloudinary URLs are cacheable
-8. Redis stores minimal data (just URLs)
+**For Developers:** 5. Carousel uses Embla (no extra dependencies) 6. Images lazy-load automatically 7. Cloudinary URLs are cacheable 8. Redis stores minimal data (just URLs)
 
 ---
 
 ## 📊 Performance Impact
 
-| Metric | Before | After (Single) | After (Multiple) |
-|--------|--------|----------------|------------------|
-| Load Time | ~1.2s | ~1.2s | ~1.3s |
-| JS Bundle | +0KB | +0KB | +2KB (Embla) |
-| Images | 1 | 1 | 3-5 (lazy) |
-| Redis Calls | 1 | 1 | 1 |
-| Autoplay CPU | 0% | 0% | ~0.1% |
+| Metric       | Before | After (Single) | After (Multiple) |
+| ------------ | ------ | -------------- | ---------------- |
+| Load Time    | ~1.2s  | ~1.2s          | ~1.3s            |
+| JS Bundle    | +0KB   | +0KB           | +2KB (Embla)     |
+| Images       | 1      | 1              | 3-5 (lazy)       |
+| Redis Calls  | 1      | 1              | 1                |
+| Autoplay CPU | 0%     | 0%             | ~0.1%            |
 
 **Conclusion:** Minimal performance impact! 🎉
 

@@ -1,32 +1,33 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getHeroImages } from "@/lib/data";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import { ImageDisplay } from "@/components/ImageDisplay";
 
 export function HeroSection() {
-  const [heroImages, setHeroImages] = useState<string[]>(["/images/home/hero-knobs.jpg"]);
+  const [heroImages, setHeroImages] = useState<string[]>([]);
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
 
   useEffect(() => {
     const loadHeroImages = async () => {
       try {
         const images = await getHeroImages();
-        console.log('Loaded hero images:', images);
-        setHeroImages(images && images.length > 0 ? images : ["/images/home/hero-knobs.jpg"]);
+        setHeroImages(images && images.length > 0 ? images : []);
       } catch (error) {
-        console.error('Error loading hero image:', error);
+        console.error("Error loading hero image:", error);
       }
     };
 
     loadHeroImages();
 
-    // Listen for hero image updates from admin
     const handleHeroImageUpdate = async () => {
       const images = await getHeroImages();
-      console.log('Updated hero images:', images);
-      setHeroImages(images && images.length > 0 ? images : ["/images/home/hero-knobs.jpg"]);
+      setHeroImages(images && images.length > 0 ? images : []);
     };
 
     window.addEventListener("heroImageUpdated", handleHeroImageUpdate);
@@ -37,9 +38,7 @@ export function HeroSection() {
   // Autoplay sliding when multiple images
   useEffect(() => {
     if (!carouselApi || heroImages.length <= 1) return;
-    
-    console.log('Setting up autoplay for', heroImages.length, 'images');
-    
+
     const interval = setInterval(() => {
       try {
         const index = carouselApi.selectedScrollSnap();
@@ -50,85 +49,98 @@ export function HeroSection() {
           carouselApi.scrollNext();
         }
       } catch (e) {
-        console.error('Autoplay error:', e);
+        console.error("Autoplay error:", e);
       }
     }, 4000);
     return () => clearInterval(interval);
   }, [carouselApi, heroImages]);
 
+  const renderHeroImage = () => {
+    if (heroImages.length === 0) return null;
+
+    if (heroImages.length === 1) {
+      return (
+        <ImageDisplay
+          src={heroImages[0]}
+          alt="Architectural Hardware"
+          className="w-full h-full object-cover"
+        />
+      );
+    }
+
+    return (
+      <Carousel
+        setApi={setCarouselApi}
+        className="w-full h-full"
+        opts={{ loop: true, align: "center" }}
+      >
+        <CarouselContent className="h-full">
+          {heroImages.map((img, idx) => (
+            <CarouselItem key={idx} className="h-full">
+              <ImageDisplay
+                src={img}
+                alt={`Hero ${idx + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+    );
+  };
+
   return (
-    <section className="relative min-h-screen flex items-center bg-background">
-      {/* ===== Content ===== */}
-      <div className="container mx-auto px-6 lg:px-12 pt-28 pb-20">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* LEFT - TEXT CONTENT */}
-          <div className="text-center lg:text-left">
-            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-medium text-foreground leading-tight mb-6">
-              Precision-Crafted
-              <span className="block text-foreground">
-                Architectural Hardware
-              </span>
+    <section className="relative min-h-screen flex items-center bg-[#eaeaea] overflow-hidden">
+      <div className="flex w-full min-h-screen">
+        {/* LEFT – IMAGE */}
+        <div className="hidden lg:block lg:w-[55%] relative min-h-screen">
+          {heroImages.length > 0 ? (
+            <div className="absolute inset-0">{renderHeroImage()}</div>
+          ) : (
+            <div className="absolute inset-0 bg-[#222]" />
+          )}
+        </div>
+
+        {/* RIGHT – TEXT CONTENT */}
+        <div className="w-full lg:w-[45%] flex items-center justify-center px-8 lg:px-16 py-32 lg:py-0">
+          <div className="text-center">
+            <h1
+              className="text-[#1a1a1a] text-3xl md:text-4xl lg:text-5xl font-light tracking-[0.3em] uppercase leading-tight mb-4"
+              style={{ fontFamily: '"Times New Roman", Times, serif' }}
+            >
+              Architectural
+              <span className="block">Doorware</span>
             </h1>
 
-            <p className="text-lg lg:text-xl text-foreground/70 mb-8 max-w-xl mx-auto lg:mx-0">
-              Elevating spaces with meticulously designed knobs, door handles,
-              and pull handles. Where functionality meets timeless aesthetics.
+            <p className="text-[#1a1a1a]/60 text-base md:text-lg tracking-wide mb-10">
+              Export Grade Craftsmanship
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 font-medium hover:bg-foreground/90 transition"
-              >
-                Request a Quote
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-
+            <div className="inline-flex items-center bg-black/[0.04] rounded-full divide-x divide-black/10">
               <Link
                 to="/products"
-                className="inline-flex items-center justify-center px-6 py-3 border border-foreground/30 text-foreground hover:bg-foreground/5 transition"
+                className="px-7 py-3 text-[#1a1a1a] text-sm tracking-wider hover:bg-black/[0.06] rounded-l-full transition-colors"
               >
-                View Collection
+                View Collections
+              </Link>
+              <span className="text-[#1a1a1a]/30 select-none">|</span>
+              <Link
+                to="/contact"
+                className="px-7 py-3 text-[#1a1a1a] text-sm tracking-wider hover:bg-black/[0.06] rounded-r-full transition-colors"
+              >
+                Get Quote
               </Link>
             </div>
           </div>
-
-          {/* RIGHT - IMAGE / CAROUSEL */}
-          <div className="relative w-full hidden lg:block">
-            {console.log('🎨 Rendering with', heroImages.length, 'images')}
-            {heroImages.length <= 1 ? (
-              <ImageDisplay
-                src={heroImages[0]}
-                alt="Architectural Hardware Collection"
-                className="w-full h-[450px] object-cover"
-              />
-            ) : (
-              <div className="relative">
-                <Carousel 
-                  setApi={setCarouselApi} 
-                  className="w-full"
-                  opts={{
-                    loop: true,
-                    align: "center"
-                  }}
-                >
-                  <CarouselContent>
-                    {heroImages.map((img, idx) => (
-                      <CarouselItem key={idx}>
-                        <ImageDisplay
-                          src={img}
-                          alt={`Hero ${idx + 1}`}
-                          className="w-full h-[450px] object-cover"
-                        />
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                </Carousel>
-              </div>
-            )}
-          </div>
         </div>
       </div>
+
+      {/* Mobile hero image (below text on small screens) */}
+      {heroImages.length > 0 && (
+        <div className="lg:hidden absolute inset-0 -z-0">
+          <div className="w-full h-full opacity-20">{renderHeroImage()}</div>
+        </div>
+      )}
     </section>
   );
 }

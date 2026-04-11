@@ -29,7 +29,6 @@ import {
   updateTestimonial,
   deleteTestimonial,
   getHeroImages,
-  setHeroImages,
   getCategories,
   addCategory,
   updateCategory,
@@ -59,7 +58,7 @@ import {
   type Finish,
   type FinishCategory,
 } from "@/lib/data";
-import { uploadImageToCloudinary } from "@/lib/cloudinary";
+import { uploadImageToCloudinary, uploadHeroImageToCloudinary } from "@/lib/cloudinary";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -112,7 +111,6 @@ const Admin = () => {
   >([]);
 
   const [heroImages, setHeroImagesState] = useState<string[]>([]);
-  const [selectedHeroImages, setSelectedHeroImages] = useState<string[]>([]);
 
   // Controlled tabs state to persist current selection
   const [mainTab, setMainTab] = useState<string>("products");
@@ -150,9 +148,8 @@ const Admin = () => {
   const [productImageFile, setProductImageFile] = useState<File | null>(null);
   const [blogImageFile, setBlogImageFile] = useState<File | null>(null);
   const [testimonialImageFile, setTestimonialImageFile] = useState<File | null>(
-    null
+    null,
   );
-  const [heroImageFiles, setHeroImageFiles] = useState<File[]>([]);
   const [finishImageFile, setFinishImageFile] = useState<File | null>(null);
 
   const { toast } = useToast();
@@ -171,7 +168,6 @@ const Admin = () => {
           materialsData,
           finishesData,
           finishCategoriesData,
-          heroImagesData,
         ] = await Promise.all([
           getProducts(),
           getBlogs(),
@@ -181,7 +177,6 @@ const Admin = () => {
           getMaterials(),
           getFinishes(),
           getFinishCategories(),
-          getHeroImages(),
         ]);
 
         setProducts(productsData);
@@ -192,8 +187,10 @@ const Admin = () => {
         setMaterialsList(materialsData);
         setFinishesList(finishesData);
         setFinishCategoriesList(finishCategoriesData);
+
+        // Load current hero image URL for preview
+        const heroImagesData = await getHeroImages();
         setHeroImagesState(heroImagesData);
-        setSelectedHeroImages(heroImagesData);
       } catch (error) {
         console.error("Error loading data:", error);
         toast({
@@ -219,7 +216,7 @@ const Admin = () => {
       window.removeEventListener("storage", reloadData);
       window.removeEventListener("dataUpdated", reloadData);
     };
-  }, []);
+  }, [toast]);
 
   // Product form state
   const [productForm, setProductForm] = useState({
@@ -284,7 +281,7 @@ const Admin = () => {
 
   // Image upload handlers with Cloudinary
   const handleProductImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -311,7 +308,7 @@ const Admin = () => {
   };
 
   const handleBlogImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -338,7 +335,7 @@ const Admin = () => {
   };
 
   const handleTestimonialImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -364,76 +361,34 @@ const Admin = () => {
     }
   };
 
-  // Hero Image handler
+  // Hero Image handler — upload directly to Cloudinary fixed public_id; no Redis needed
   const handleHeroImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     try {
       setUploading(true);
-      setHeroImageFiles(files);
-      const uploadedUrls: string[] = [];
-      for (const file of files) {
-        const response = await uploadImageToCloudinary(file);
-        uploadedUrls.push(response.secure_url);
-      }
-      setSelectedHeroImages((prev) => [...prev, ...uploadedUrls]);
+      const response = await uploadHeroImageToCloudinary(file);
+      setHeroImagesState([response.secure_url]);
       toast({
-        title: "Images Uploaded",
-        description: `${files.length} image(s) uploaded. Click "Update Hero Images" to save.`,
+        title: "Hero Image Updated",
+        description: "The hero image has been saved and is now live.",
       });
+      window.dispatchEvent(new Event("heroImageUpdated"));
     } catch (error) {
-      console.error("Error uploading hero images:", error);
+      console.error("Error uploading hero image:", error);
       toast({
         title: "Upload Error",
-        description: "Failed to upload image(s). Please try again.",
+        description: "Failed to upload hero image. Please try again.",
         variant: "destructive",
       });
     } finally {
       setUploading(false);
+      // Reset input so same file can be re-selected
+      e.target.value = "";
     }
-  };
-
-  const handleSaveHeroImages = async () => {
-    if (selectedHeroImages.length > 0) {
-      try {
-        setLoading(true);
-        console.log('💾 Saving hero images:', selectedHeroImages);
-        console.log('📊 Total images to save:', selectedHeroImages.length);
-        await setHeroImages(selectedHeroImages);
-        setHeroImagesState(selectedHeroImages);
-        toast({
-          title: "Hero Images Updated",
-          description: "The hero images have been successfully updated.",
-        });
-        window.dispatchEvent(new Event("heroImageUpdated"));
-      } catch (error) {
-        console.error("Error saving hero images:", error);
-        toast({
-          title: "Error",
-          description: "Failed to save hero images.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      toast({
-        title: "Error",
-        description: "Please upload at least one image.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleRemoveHeroImage = (index: number) => {
-    setSelectedHeroImages((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleClearAllHeroImages = () => {
-    setSelectedHeroImages([]);
   };
 
   // Product handlers
@@ -535,7 +490,7 @@ const Admin = () => {
 
     // Validate subcategory if selected category has subcategories
     const selectedCategory = categories.find(
-      (c) => c.id === productForm.categoryId
+      (c) => c.id === productForm.categoryId,
     );
     const hasSubcategories =
       selectedCategory &&
@@ -872,7 +827,7 @@ const Admin = () => {
   const handleDeleteCategory = async (id: number) => {
     if (
       window.confirm(
-        "Are you sure? This will also delete related subcategories and materials if they have no products."
+        "Are you sure? This will also delete related subcategories and materials if they have no products.",
       )
     ) {
       try {
@@ -978,7 +933,7 @@ const Admin = () => {
   const handleDeleteSubcategory = async (id: number) => {
     if (
       window.confirm(
-        "Are you sure? This will also delete related materials if they have no products."
+        "Are you sure? This will also delete related materials if they have no products.",
       )
     ) {
       try {
@@ -1203,7 +1158,7 @@ const Admin = () => {
   };
 
   const handleFinishImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -1291,7 +1246,7 @@ const Admin = () => {
   const handleDeleteFinishCategory = async (id: number) => {
     if (
       window.confirm(
-        "Are you sure? This will prevent deleting if finishes exist in this category."
+        "Are you sure? This will prevent deleting if finishes exist in this category.",
       )
     ) {
       try {
@@ -1340,7 +1295,7 @@ const Admin = () => {
       if (editingFinishCategory) {
         await updateFinishCategory(
           editingFinishCategory.id,
-          finishCategoryForm
+          finishCategoryForm,
         );
         toast({
           title: "Category Updated",
@@ -1405,76 +1360,49 @@ const Admin = () => {
       {/* Admin Content */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
-          {/* Hero Images Management */}
+          {/* Hero Image Management */}
           <div className="mb-12 bg-card rounded-xl p-8 border border-border/50">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-6">
-              Manage Hero Images
+            <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
+              Hero Image
             </h2>
-            <div className="grid lg:grid-cols-2 gap-8">
+            <p className="text-sm text-muted-foreground mb-6">
+              Upload a new image to instantly replace the hero section image on
+              the homepage. No extra save step needed.
+            </p>
+            <div className="grid lg:grid-cols-2 gap-8 items-start">
               <div>
-                <Label htmlFor="hero-image">Hero Images</Label>
+                <Label htmlFor="hero-image">
+                  Upload Hero Image{" "}
+                  <span className="text-muted-foreground font-normal">
+                    (saves immediately on upload)
+                  </span>
+                </Label>
                 <Input
                   id="hero-image"
                   type="file"
                   accept="image/*"
-                  multiple
                   onChange={handleHeroImageUpload}
+                  disabled={uploading}
                   className="cursor-pointer mt-2"
                 />
-                {selectedHeroImages.length > 0 && (
-                  <p className="text-sm text-green-600 mt-2 font-medium">
-                    ✓ {selectedHeroImages.length} image(s) selected
-                  </p>
-                )}
-                {heroImages.length > 0 && (
+                {uploading && (
                   <p className="text-sm text-muted-foreground mt-2">
-                    Current: {heroImages.length} image(s)
+                    Uploading…
                   </p>
                 )}
-                <div className="flex gap-2 mt-4">
-                  <Button
-                    onClick={handleSaveHeroImages}
-                    disabled={selectedHeroImages.length === 0}
-                  >
-                    Update Hero Images
-                  </Button>
-                  {selectedHeroImages.length > 0 && (
-                    <Button
-                      onClick={handleClearAllHeroImages}
-                      variant="outline"
-                    >
-                      Clear All
-                    </Button>
-                  )}
-                </div>
               </div>
               <div>
-                <Label>Preview</Label>
+                <Label>Current Hero Image</Label>
                 <div className="mt-2 bg-secondary rounded-lg overflow-hidden h-48">
-                  {selectedHeroImages.length === 0 ? (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      No images selected
-                    </div>
-                  ) : selectedHeroImages.length === 1 ? (
+                  {heroImages.length > 0 ? (
                     <ImageDisplay
-                      src={selectedHeroImages[0]}
-                      alt="Hero Preview"
+                      src={heroImages[0]}
+                      alt="Current Hero"
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="flex w-full h-full overflow-x-auto gap-2 p-2">
-                      {selectedHeroImages.map((url, idx) => (
-                        <div key={idx} className="relative group h-full flex-shrink-0">
-                          <img src={url} alt={`Preview ${idx + 1}`} className="h-full object-cover rounded-md" />
-                          <button
-                            onClick={() => handleRemoveHeroImage(idx)}
-                            className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                            title="Remove image"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+                      No hero image set
                     </div>
                   )}
                 </div>
@@ -1527,7 +1455,7 @@ const Admin = () => {
                         {(() => {
                           const subName = product.subcategoryId
                             ? subcategories.find(
-                                (s) => s.id === product.subcategoryId
+                                (s) => s.id === product.subcategoryId,
                               )?.name
                             : product.subcategory;
                           return subName ? ` • ${subName}` : "";
@@ -1535,7 +1463,7 @@ const Admin = () => {
                         {(() => {
                           const matName = product.materialId
                             ? materialsList.find(
-                                (m) => m.id === product.materialId
+                                (m) => m.id === product.materialId,
                               )?.name
                             : product.material;
                           return matName ? ` • ${matName}` : "";
@@ -1549,7 +1477,7 @@ const Admin = () => {
                           ? product.finishIds
                               .map(
                                 (id) =>
-                                  finishesList.find((f) => f.id === id)?.name
+                                  finishesList.find((f) => f.id === id)?.name,
                               )
                               .filter((n): n is string => !!n)
                           : product.finishes || []
@@ -1667,7 +1595,7 @@ const Admin = () => {
                   <div className="grid gap-4">
                     {subcategories.map((subcategory) => {
                       const category = categories.find(
-                        (c) => c.id === subcategory.categoryId
+                        (c) => c.id === subcategory.categoryId,
                       );
                       return (
                         <div
@@ -1731,7 +1659,7 @@ const Admin = () => {
                         : null;
                       const subcategory = material.subcategoryId
                         ? subcategories.find(
-                            (s) => s.id === material.subcategoryId
+                            (s) => s.id === material.subcategoryId,
                           )
                         : null;
                       return (
@@ -1810,7 +1738,7 @@ const Admin = () => {
                           <p className="text-xs text-muted-foreground mt-2">
                             {
                               finishesList.filter(
-                                (f) => f.categoryId === category.id
+                                (f) => f.categoryId === category.id,
                               ).length
                             }{" "}
                             finish(es)
@@ -1855,7 +1783,7 @@ const Admin = () => {
                   <div className="grid gap-4">
                     {finishesList.map((finish) => {
                       const category = finishCategoriesList.find(
-                        (c) => c.id === finish.categoryId
+                        (c) => c.id === finish.categoryId,
                       );
                       return (
                         <div
@@ -2114,13 +2042,13 @@ const Admin = () => {
             {/* Show subcategory dropdown if selected category has subcategories */}
             {productForm.categoryId &&
               subcategories.some(
-                (sub) => productForm.categoryId === sub.categoryId
+                (sub) => productForm.categoryId === sub.categoryId,
               ) && (
                 <div>
                   <Label htmlFor="subcategory">
                     Subcategory{" "}
                     {subcategories.some(
-                      (sub) => productForm.categoryId === sub.categoryId
+                      (sub) => productForm.categoryId === sub.categoryId,
                     )
                       ? "*"
                       : "(optional)"}
@@ -2140,7 +2068,7 @@ const Admin = () => {
                     <SelectContent>
                       {subcategories
                         .filter(
-                          (sub) => productForm.categoryId === sub.categoryId
+                          (sub) => productForm.categoryId === sub.categoryId,
                         )
                         .map((sub) => (
                           <SelectItem key={sub.id} value={sub.id.toString()}>
@@ -2226,7 +2154,7 @@ const Admin = () => {
                           setProductForm({
                             ...productForm,
                             finishIds: productForm.finishIds.filter(
-                              (fid) => fid !== finish.id
+                              (fid) => fid !== finish.id,
                             ),
                           });
                         }
@@ -2712,7 +2640,7 @@ const Admin = () => {
                     </SelectItem>
                     {subcategories
                       .filter(
-                        (sub) => sub.categoryId === materialForm.categoryId
+                        (sub) => sub.categoryId === materialForm.categoryId,
                       )
                       .map((sub) => (
                         <SelectItem key={sub.id} value={sub.id.toString()}>

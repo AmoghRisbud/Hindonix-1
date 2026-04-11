@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
 
 @layer base {
   :root {
@@ -14,23 +14,23 @@
     --accent: 0 0% 20%;
     --accent-foreground: 0 0% 98%;
 
-    /* Backgrounds - Neutral warm parchment/sandstone (very low saturation) */
-    --background: 41 10% 91%;
+    /* Backgrounds - Clean neutral light gray #eaeaea */
+    --background: 0 0% 92%;
     --foreground: 0 0% 9%;
 
-    /* Cards & Surfaces - Subtle warm contrast */
-    --card: 40 10% 94%;
+    /* Cards & Surfaces */
+    --card: 0 0% 95%;
     --card-foreground: 0 0% 9%;
 
-    --popover: 40 10% 94%;
+    --popover: 0 0% 95%;
     --popover-foreground: 0 0% 9%;
 
-    /* Secondary - Very subtle warm tone */
-    --secondary: 40 8% 89%;
+    /* Secondary */
+    --secondary: 0 0% 88%;
     --secondary-foreground: 0 0% 9%;
 
-    /* Muted - Very subtle warm for secondary text */
-    --muted: 40 8% 89%;
+    /* Muted */
+    --muted: 0 0% 88%;
     --muted-foreground: 0 0% 50%;
 
     /* Destructive */
