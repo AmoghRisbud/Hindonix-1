@@ -67,7 +67,7 @@ router.post("/", upload.single("file"), async (req, res) => {
 // DELETE /api/upload/:publicId — delete an image from Cloudinary
 router.delete("/:publicId(*)", async (req, res) => {
   try {
-    const publicId = req.params.publicId;
+    const publicId = (req.params as Record<string, string>)[0] || (req.params as { publicId?: string }).publicId || "";
     await cloudinary.uploader.destroy(publicId);
     res.json({ success: true });
   } catch (error) {

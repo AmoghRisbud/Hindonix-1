@@ -1,5 +1,8 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+import compression from "compression";
 import { PrismaClient } from "@prisma/client";
 import productsRouter from "./routes/products.js";
 import blogsRouter from "./routes/blogs.js";
@@ -13,12 +16,19 @@ import finishCategoriesRouter from "./routes/finishCategories.js";
 import heroImagesRouter from "./routes/heroImages.js";
 import uploadRouter from "./routes/upload.js";
 
+// ES Module dirname workaround
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export const prisma = new PrismaClient();
 
 const app = express();
 const PORT = parseInt(process.env.PORT || "3001", 10);
+const isProduction = process.env.NODE_ENV === "production";
 
+// Middleware
 app.use(cors());
+app.use(compression()); // Gzip compression
 app.use(express.json({ limit: "10mb" }));
 
 // API routes
@@ -39,6 +49,25 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
+// Serve Frontend Static Files (Production Only)
+if (isProduction) {
+  const frontendPath = path.join(__dirname, "../public");
+  
+  // Serve static files with caching
+  app.use(
+    express.static(frontendPath, {
+      maxAge: "1y",
+      etag: true,
+      index: false, // Don't auto-serve index.html for /
+    })
+  );
+
+  // Catch-all route for React Router (MUST be last)
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
+}
+
 // Graceful shutdown
 process.on("SIGTERM", async () => {
   await prisma.$disconnect();
@@ -46,5 +75,5 @@ process.on("SIGTERM", async () => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Hindonix API server running on port ${PORT}`);
+  console.log(`Hindonix server running on port ${PORT} (${process.env.NODE_ENV || "development"})`);
 });
