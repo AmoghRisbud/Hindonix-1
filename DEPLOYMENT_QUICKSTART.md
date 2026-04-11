@@ -3,20 +3,22 @@
 ## ✅ Pre-Deployment Setup (Do Once)
 
 ### 1. Cloudinary Setup
+
 - [ ] Go to [cloudinary.com/console/settings/upload](https://cloudinary.com/console/settings/upload)
 - [ ] Create unsigned preset: `hindonix_unsigned`
 - [ ] Create hero preset: `hindonix_hero` with **overwrite** enabled
 - [ ] Note your cloud name: `dlt9vf8qk`
 
 ### 2. Update Frontend ENV Config
+
 Edit `public/env-config.js` with production values:
 
 ```javascript
 window.__ENV__ = {
-  VITE_CLOUDINARY_CLOUD_NAME: 'dlt9vf8qk',
-  VITE_CLOUDINARY_UPLOAD_PRESET: 'hindonix_unsigned',
-  VITE_CLOUDINARY_HERO_UPLOAD_PRESET: 'hindonix_hero',
-  VITE_CLERK_PUBLISHABLE_KEY: 'pk_live_xxxxxxxxxxxxxxxx', // Get from Clerk dashboard
+  VITE_CLOUDINARY_CLOUD_NAME: "dlt9vf8qk",
+  VITE_CLOUDINARY_UPLOAD_PRESET: "hindonix_unsigned",
+  VITE_CLOUDINARY_HERO_UPLOAD_PRESET: "hindonix_hero",
+  VITE_CLERK_PUBLISHABLE_KEY: "pk_live_xxxxxxxxxxxxxxxx", // Get from Clerk dashboard
 };
 ```
 
@@ -24,6 +26,7 @@ window.__ENV__ = {
 - [ ] Commit this file to Git
 
 ### 3. Prepare GitHub Repository
+
 ```bash
 # Commit all changes
 git add .
@@ -41,6 +44,7 @@ git push origin main
 ## 🏗️ Hostinger Setup
 
 ### 4. Create MySQL Database
+
 - [ ] Login to hPanel → **MySQL Databases**
 - [ ] Click **Create Database**
 - [ ] Database name: `u123456_hindonix` (note the full name)
@@ -48,6 +52,7 @@ git push origin main
 - [ ] Save credentials somewhere safe
 
 ### 5. Create Node.js Application
+
 - [ ] hPanel → **Advanced** → **Node.js**
 - [ ] Click **Create Application**
 - [ ] Select your domain
@@ -59,6 +64,7 @@ git push origin main
 - [ ] Click **Create** (don't start yet)
 
 ### 6. Connect GitHub
+
 - [ ] In Node.js app settings → **GitHub Integration**
 - [ ] Click **Connect to GitHub**
 - [ ] Authorize Hostinger
@@ -69,6 +75,7 @@ git push origin main
 - [ ] Save settings
 
 ### 7. Set Environment Variables
+
 In Node.js app → **Environment Variables**, add:
 
 ```env
@@ -84,11 +91,13 @@ CLOUDINARY_API_SECRET=your_api_secret_here
 - [ ] Save
 
 ### 8. Initial Deployment
+
 - [ ] Click **Deploy** or **Start** button
 - [ ] Wait 2-3 minutes (watch **Build Logs**)
 - [ ] Status should turn green (Running)
 
 ### 9. Setup Database (First Time)
+
 Access via SSH or hPanel Terminal:
 
 ```bash
@@ -102,6 +111,7 @@ This creates tables and seeds data.
 - [ ] Check for errors in terminal
 
 ### 10. Verify Deployment
+
 - [ ] Visit `https://yourdomain.com` → Homepage loads
 - [ ] Visit `https://yourdomain.com/api/health` → Shows `{"status":"ok"}`
 - [ ] Test `/admin` → Clerk login works
@@ -131,21 +141,25 @@ git push origin main
 ## 🐛 If Something Goes Wrong
 
 ### Build Fails
+
 - [ ] Check hPanel → Node.js → **Logs** tab
 - [ ] Look for error messages
 - [ ] Common fix: Delete `node_modules` in Hostinger and redeploy
 
 ### Database Connection Error
+
 - [ ] Verify `DATABASE_URL` in environment variables
 - [ ] Check MySQL database exists
 - [ ] Test credentials match hPanel → MySQL
 
 ### Images Not Uploading
+
 - [ ] Verify Cloudinary presets exist
 - [ ] Check `CLOUDINARY_API_KEY` and `API_SECRET` set
 - [ ] Check browser console for errors
 
 ### 404 on Routes
+
 - [ ] Ensure frontend is built: `server/public/` should exist
 - [ ] Check build logs for "npm run build" success
 - [ ] Restart application in hPanel
@@ -155,18 +169,21 @@ git push origin main
 ## 📝 Important Commands Reference
 
 ### Local Development
+
 ```bash
 npm run dev                  # Start dev server (Vite + Express)
 cd server && npm run dev     # Start backend only
 ```
 
 ### Local Build (Test Before Deploy)
+
 ```bash
 npm run build               # Build frontend
 npm run deploy:build        # Full deployment build (includes backend)
 ```
 
 ### Hostinger (via SSH/Terminal)
+
 ```bash
 npm run deploy:setup        # Setup database (first time)
 npm start                   # Start server
@@ -177,6 +194,7 @@ npm start                   # Start server
 ## 🎯 Checklist Summary
 
 **Before First Deploy:**
+
 - ✅ Cloudinary presets created
 - ✅ `public/env-config.js` updated with production keys
 - ✅ Code pushed to GitHub
@@ -186,6 +204,7 @@ npm start                   # Start server
 - ✅ Database tables created
 
 **For Every Update:**
+
 - ✅ Test locally
 - ✅ Commit to Git
 - ✅ Push to GitHub

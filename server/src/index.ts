@@ -52,14 +52,14 @@ app.get("/api/health", (_req, res) => {
 // Serve Frontend Static Files (Production Only)
 if (isProduction) {
   const frontendPath = path.join(__dirname, "../public");
-  
+
   // Serve static files with caching
   app.use(
     express.static(frontendPath, {
       maxAge: "1y",
       etag: true,
       index: false, // Don't auto-serve index.html for /
-    })
+    }),
   );
 
   // Catch-all route for React Router (MUST be last)
@@ -75,5 +75,7 @@ process.on("SIGTERM", async () => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Hindonix server running on port ${PORT} (${process.env.NODE_ENV || "development"})`);
+  console.log(
+    `Hindonix server running on port ${PORT} (${process.env.NODE_ENV || "development"})`,
+  );
 });

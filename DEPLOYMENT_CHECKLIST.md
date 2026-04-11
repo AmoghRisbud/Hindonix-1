@@ -17,18 +17,21 @@ Use this checklist to ensure you don't miss any steps when deploying to Hostinge
 ## Hostinger Setup
 
 ### Database
+
 - [ ] Create MySQL database in hPanel → Databases
 - [ ] Note database credentials (host, user, password, database name)
 - [ ] Test connection via phpMyAdmin (optional)
 
 ### Cloudinary
+
 - [ ] Create unsigned upload preset: `hindonix_unsigned`
 - [ ] Create unsigned upload preset with overwrite: `hindonix_hero`
 - [ ] Note cloud name, API key, API secret
 
 ### Clerk
+
 - [ ] Switch to Production environment in Clerk dashboard
-- [ ] Copy production publishable key (starts with pk_live_)
+- [ ] Copy production publishable key (starts with pk*live*)
 - [ ] Update allowed origins to include your domain
 
 ## Upload to Hostinger
@@ -82,6 +85,7 @@ npx prisma db seed
 ## Testing
 
 ### Basic Tests
+
 - [ ] Visit `https://yourdomain.com` → Homepage loads
 - [ ] Visit `https://yourdomain.com/api/health` → Returns `{"status":"ok"}`
 - [ ] Navigate to `/about` → Page loads
@@ -90,6 +94,7 @@ npx prisma db seed
 - [ ] Navigate to `/contact` → Contact form appears
 
 ### Admin Tests
+
 - [ ] Visit `/admin` → Clerk login appears
 - [ ] Login successful with production account
 - [ ] Products list loads
@@ -99,12 +104,14 @@ npx prisma db seed
 - [ ] Can upload hero image
 
 ### Image Tests
+
 - [ ] Hero image displays on homepage
 - [ ] Product images display on products page
 - [ ] Image uploads work in admin
 - [ ] Images are optimized (check Network tab)
 
 ### Mobile Tests
+
 - [ ] Site is responsive on mobile
 - [ ] Navigation menu works
 - [ ] Images load properly

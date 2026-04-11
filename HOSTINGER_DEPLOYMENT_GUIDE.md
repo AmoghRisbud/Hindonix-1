@@ -7,6 +7,7 @@ Complete step-by-step guide to deploy your Hindonix project to Hostinger shared 
 ## 📋 Before You Start
 
 ### Required Access & Credentials
+
 - ✅ Hostinger hPanel login
 - ✅ MySQL database credentials (from Hostinger)
 - ✅ Cloudinary account credentials
@@ -37,6 +38,7 @@ xcopy /E /I dist server\public
 ```
 
 Your `server/` folder should now look like:
+
 ```
 server/
 ├── node_modules/
@@ -78,6 +80,7 @@ This creates a `server/dist/` folder with compiled JavaScript.
 ### 2.2 Note Your Database Credentials
 
 You'll need these for the `.env` file:
+
 ```
 Host: localhost
 Port: 3306
@@ -97,6 +100,7 @@ Password: [your password]
 3. Click **Add upload preset**
 
 **Create Preset 1: General Uploads**
+
 - Preset name: `hindonix_unsigned`
 - Signing mode: **Unsigned**
 - Folder: `hindonix`
@@ -105,8 +109,9 @@ Password: [your password]
 - Click **Save**
 
 **Create Preset 2: Hero Images**
+
 - Preset name: `hindonix_hero`
-- Signing mode: **Unsigned**  
+- Signing mode: **Unsigned**
 - Folder: `hindonix`
 - Overwrite: `true` ⭐ (allows replacing hero image)
 - Unique filename: `false`
@@ -115,6 +120,7 @@ Password: [your password]
 ### 3.2 Get Your Cloudinary Credentials
 
 From Cloudinary Dashboard:
+
 - Cloud name: `dlt9vf8qk` (example)
 - API Key: Found in dashboard
 - API Secret: Found in settings (keep secure!)
@@ -129,10 +135,10 @@ In `server/public/env-config.js`, update with your production values:
 
 ```javascript
 window.__ENV__ = {
-  VITE_CLOUDINARY_CLOUD_NAME: 'dlt9vf8qk',
-  VITE_CLOUDINARY_UPLOAD_PRESET: 'hindonix_unsigned',
-  VITE_CLOUDINARY_HERO_UPLOAD_PRESET: 'hindonix_hero',
-  VITE_CLERK_PUBLISHABLE_KEY: 'pk_live_xxxxxxxxxxxxxxxxxxxxxxx',
+  VITE_CLOUDINARY_CLOUD_NAME: "dlt9vf8qk",
+  VITE_CLOUDINARY_UPLOAD_PRESET: "hindonix_unsigned",
+  VITE_CLOUDINARY_HERO_UPLOAD_PRESET: "hindonix_hero",
+  VITE_CLERK_PUBLISHABLE_KEY: "pk_live_xxxxxxxxxxxxxxxxxxxxxxx",
 };
 ```
 
@@ -167,12 +173,14 @@ NODE_ENV=production
 Create a ZIP file of your `server/` folder:
 
 **Windows:**
+
 ```bash
 # In PowerShell, from project root
 Compress-Archive -Path server\* -DestinationPath hindonix-server.zip
 ```
 
 **What to include:**
+
 - ✅ `dist/` (compiled server code)
 - ✅ `public/` (built React app)
 - ✅ `prisma/` (schema and seed)
@@ -188,6 +196,7 @@ Compress-Archive -Path server\* -DestinationPath hindonix-server.zip
 ### 5.3 Upload Files
 
 **Option A: Via File Manager (Recommended for first time)**
+
 1. Click **Upload** in File Manager
 2. Select your `hindonix-server.zip`
 3. Wait for upload to complete
@@ -195,11 +204,13 @@ Compress-Archive -Path server\* -DestinationPath hindonix-server.zip
 5. Delete the ZIP file after extraction
 
 **Option B: Via FTP (For frequent updates)**
+
 1. Get FTP credentials: hPanel → **Files** → **FTP Accounts**
 2. Use FileZilla or WinSCP
 3. Upload entire `server/` folder contents to `/public_html`
 
 Your server structure should be:
+
 ```
 /public_html/         (or /home/username/domains/yourdomain.com/public_html)
 ├── dist/
@@ -248,9 +259,11 @@ CLOUDINARY_API_SECRET = your_secret_here
 ### 7.1 Access Terminal
 
 **Option A: hPanel Terminal** (if available)
+
 1. hPanel → **Advanced** → **Terminal**
 
 **Option B: SSH** (if enabled)
+
 ```bash
 ssh username@yourdomain.com
 ```
@@ -300,11 +313,13 @@ This populates your database with categories, finishes, sample products, etc.
 ### 8.2 View Logs
 
 If the app doesn't start:
+
 1. Click on your application
 2. Go to **Logs** tab
 3. Check for errors
 
 Common startup issues:
+
 - ❌ Missing dependencies → Run `npm install`
 - ❌ Database connection failed → Check DATABASE_URL
 - ❌ Port already in use → Hostinger will assign a port automatically
@@ -318,6 +333,7 @@ Common startup issues:
 Visit your domain: `https://yourdomain.com`
 
 **Expected Results:**
+
 - ✅ Homepage loads correctly
 - ✅ Images display (Cloudinary)
 - ✅ Navigation works
@@ -328,8 +344,9 @@ Visit your domain: `https://yourdomain.com`
 Visit: `https://yourdomain.com/api/health`
 
 Should return:
+
 ```json
-{"status":"ok"}
+{ "status": "ok" }
 ```
 
 ### 9.3 Test Admin Panel
@@ -419,6 +436,7 @@ npx prisma db push
 **Cause**: Static files not being served or routes misconfigured
 
 **Fix**:
+
 1. Verify `server/public/` contains your built frontend
 2. Check `dist/index.js` has the static file serving code
 3. Ensure `NODE_ENV=production` is set in environment variables
@@ -429,6 +447,7 @@ npx prisma db push
 **Cause**: Wrong DATABASE_URL
 
 **Fix**:
+
 1. Verify credentials in hPanel → MySQL Databases
 2. Ensure host is `localhost` not `127.0.0.1`
 3. Check format: `mysql://user:pass@localhost:3306/dbname`
@@ -439,6 +458,7 @@ npx prisma db push
 **Cause**: Dependencies not installed
 
 **Fix**:
+
 ```bash
 cd /public_html
 rm -rf node_modules
@@ -451,6 +471,7 @@ npx prisma generate
 **Cause**: Cloudinary credentials incorrect
 
 **Fix**:
+
 1. Check `public/env-config.js` has correct values
 2. Verify upload presets exist in Cloudinary
 3. Ensure presets are set to **Unsigned** mode
@@ -461,6 +482,7 @@ npx prisma generate
 **Cause**: Using test Clerk keys instead of production
 
 **Fix**:
+
 1. Go to Clerk Dashboard → Your App
 2. Switch to **Production** environment
 3. Copy production publishable key
@@ -472,6 +494,7 @@ npx prisma generate
 **Cause**: Database not seeded or hero images not uploaded
 
 **Fix**:
+
 1. Visit `/admin` and upload a hero image
 2. Or run: `npx prisma db seed`
 3. Check MySQL database has `HeroImage` table with data
@@ -488,13 +511,17 @@ Check `.htaccess` has correct redirect rules (see Step 10.2)
 ## 📊 Performance Optimization
 
 ### Enable Opcode Caching
+
 Already enabled by default on most Hostinger plans (OPcache for PHP, but Node.js doesn't need this)
 
 ### Database Indexing
+
 Prisma automatically creates indexes. Check `schema.prisma` for `@@index` directives.
 
 ### CDN Setup (Optional)
+
 Consider using Cloudflare for:
+
 - Faster global loading
 - DDoS protection
 - Additional caching
@@ -504,16 +531,19 @@ Consider using Cloudflare for:
 ## 📞 Support Resources
 
 ### Hostinger Support
+
 - **24/7 Live Chat**: Available in hPanel
 - **Knowledge Base**: https://support.hostinger.com
 - **Ticket System**: hPanel → Help → Submit Request
 
 ### Database Issues
+
 - Use **phpMyAdmin** (hPanel → Databases) to inspect tables
 - Check table structure matches Prisma schema
 - Verify data was seeded correctly
 
 ### Application Logs
+
 - hPanel → Node.js → Your App → **Logs** tab
 - Shows server startup errors and runtime errors
 
@@ -541,12 +571,14 @@ Consider using Cloudflare for:
 Your Hindonix application is now live on Hostinger!
 
 **Next Steps:**
+
 - Set up regular backups (hPanel → Backups)
 - Monitor application logs
 - Test all features thoroughly
 - Share your site with stakeholders
 
 **Need Help?**
+
 - Check logs: hPanel → Node.js → Logs
 - Review this guide thoroughly
 - Contact Hostinger support if infrastructure issues persist

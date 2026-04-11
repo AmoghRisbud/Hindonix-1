@@ -35,21 +35,23 @@ router.post("/", upload.single("file"), async (req, res) => {
     const publicId = req.body.public_id as string | undefined;
     const overwrite = req.body.overwrite === "true";
 
-    const result = await new Promise<Record<string, unknown>>((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        {
-          folder,
-          ...(publicId && { public_id: publicId }),
-          overwrite,
-          resource_type: "image",
-        },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result as Record<string, unknown>);
-        },
-      );
-      stream.end(req.file!.buffer);
-    });
+    const result = await new Promise<Record<string, unknown>>(
+      (resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder,
+            ...(publicId && { public_id: publicId }),
+            overwrite,
+            resource_type: "image",
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result as Record<string, unknown>);
+          },
+        );
+        stream.end(req.file!.buffer);
+      },
+    );
 
     res.json({
       secure_url: result.secure_url,
@@ -67,7 +69,10 @@ router.post("/", upload.single("file"), async (req, res) => {
 // DELETE /api/upload/:publicId — delete an image from Cloudinary
 router.delete("/:publicId(*)", async (req, res) => {
   try {
-    const publicId = (req.params as Record<string, string>)[0] || (req.params as { publicId?: string }).publicId || "";
+    const publicId =
+      (req.params as Record<string, string>)[0] ||
+      (req.params as { publicId?: string }).publicId ||
+      "";
     await cloudinary.uploader.destroy(publicId);
     res.json({ success: true });
   } catch (error) {

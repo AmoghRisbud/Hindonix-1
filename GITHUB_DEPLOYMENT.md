@@ -21,6 +21,7 @@ This guide shows you how to deploy directly from your GitHub repository to Hosti
 ### 1.1 Remove Build Artifacts (Already Done)
 
 The `.gitignore` has been updated to exclude:
+
 - `dist/` (frontend build)
 - `server/dist/` (backend build)
 - `server/public/` (deployed frontend)
@@ -84,16 +85,19 @@ Click **Create** (don't start yet)
 In the Node.js application settings:
 
 **Build Command** (This runs on every deployment):
+
 ```bash
 npm run deploy:build
 ```
 
 **OR if that doesn't work, use individual commands**:
+
 ```bash
 npm install && npm run build && mkdir -p server/public && cp -r dist/* server/public/ && cd server && npm install --production && npm run build && npx prisma generate
 ```
 
 **Start Command**:
+
 ```bash
 npm start
 ```
@@ -119,15 +123,15 @@ CLOUDINARY_API_SECRET=your_secret_here
 VITE_CLERK_PUBLISHABLE_KEY=pk_live_xxxxxxxxxx
 ```
 
-**Note**: Frontend env vars (VITE_*) should be in `public/env-config.js` which you commit to Git:
+**Note**: Frontend env vars (VITE\_\*) should be in `public/env-config.js` which you commit to Git:
 
 ```javascript
 // public/env-config.js
 window.__ENV__ = {
-  VITE_CLOUDINARY_CLOUD_NAME: 'dlt9vf8qk',
-  VITE_CLOUDINARY_UPLOAD_PRESET: 'hindonix_unsigned',
-  VITE_CLOUDINARY_HERO_UPLOAD_PRESET: 'hindonix_hero',
-  VITE_CLERK_PUBLISHABLE_KEY: 'pk_live_xxxxxxxxxxxxxxxx',
+  VITE_CLOUDINARY_CLOUD_NAME: "dlt9vf8qk",
+  VITE_CLOUDINARY_UPLOAD_PRESET: "hindonix_unsigned",
+  VITE_CLOUDINARY_HERO_UPLOAD_PRESET: "hindonix_hero",
+  VITE_CLERK_PUBLISHABLE_KEY: "pk_live_xxxxxxxxxxxxxxxx",
 };
 ```
 
@@ -150,6 +154,7 @@ npm run deploy:setup
 ```
 
 This runs:
+
 - `npx prisma db push` - Creates tables
 - `npx prisma db seed` - Seeds initial data
 
@@ -248,10 +253,12 @@ npm start (server/dist/index.js)
 ### Build Fails
 
 **Check Build Logs**:
+
 - hPanel → Node.js → Your App → **Logs** tab
 - Look for errors in npm install or build commands
 
 **Common Issues**:
+
 - Node version mismatch → Set `.node-version` file to `20`
 - Missing dependencies → Check package.json
 - Build command syntax → Use `&&` to chain commands
@@ -280,6 +287,7 @@ npm start (server/dist/index.js)
 ### What to Commit to GitHub:
 
 ✅ Commit:
+
 - All source code (`src/`, `server/src/`)
 - `package.json` and lock files
 - Prisma schema (`server/prisma/schema.prisma`)
@@ -287,6 +295,7 @@ npm start (server/dist/index.js)
 - `.gitignore`, `.node-version`
 
 ❌ Don't Commit:
+
 - `node_modules/`
 - `dist/` or `server/dist/` (build artifacts)
 - `server/public/` (generated during deployment)
@@ -295,10 +304,12 @@ npm start (server/dist/index.js)
 ### Environment Variables Strategy:
 
 **Backend (Server-side)**:
+
 - Set in Hostinger hPanel → Node.js → Environment Variables
 - Never commit to GitHub
 
 **Frontend (Client-side)**:
+
 - Use `public/env-config.js`
 - Safe to commit (no secrets, just public keys)
 - Loaded at runtime in browser
