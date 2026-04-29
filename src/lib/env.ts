@@ -2,8 +2,6 @@
 // Supports both Vite build-time vars and Docker runtime vars
 
 interface EnvConfig {
-  VITE_UPSTASH_REDIS_REST_URL: string;
-  VITE_UPSTASH_REDIS_REST_TOKEN: string;
   VITE_CLOUDINARY_CLOUD_NAME: string;
   VITE_CLOUDINARY_UPLOAD_PRESET: string;
   VITE_CLERK_PUBLISHABLE_KEY: string;
@@ -33,12 +31,6 @@ export function getEnvVar(key: keyof EnvConfig): string {
 
 // Export individual env vars for convenience
 export const ENV = {
-  get UPSTASH_REDIS_REST_URL() {
-    return getEnvVar('VITE_UPSTASH_REDIS_REST_URL');
-  },
-  get UPSTASH_REDIS_REST_TOKEN() {
-    return getEnvVar('VITE_UPSTASH_REDIS_REST_TOKEN');
-  },
   get CLOUDINARY_CLOUD_NAME() {
     return getEnvVar('VITE_CLOUDINARY_CLOUD_NAME');
   },

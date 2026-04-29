@@ -40,7 +40,7 @@ import {
   setHeroImagesInRedis,
   getCaseStudyById,
   getProductById
-} from './redis';
+} from './api';
 
 // Taxonomy interfaces
 export interface Category {

@@ -1,9 +1,9 @@
-import { SignUp } from "@clerk/clerk-react";
+import { SignUp, useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { useAuth } from "@clerk/clerk-react";
+import { ENV } from "@/lib/env";
 
-const SignUpPage = () => {
+const ClerkSignUp = () => {
   const navigate = useNavigate();
   const { isSignedIn, isLoaded } = useAuth();
 
@@ -30,6 +30,20 @@ const SignUpPage = () => {
       </div>
     </main>
   );
+};
+
+const SignUpPage = () => {
+  if (!ENV.CLERK_PUBLISHABLE_KEY) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center p-4">
+        <p className="text-muted-foreground text-center">
+          Authentication is not configured.<br />
+          Add <code>VITE_CLERK_PUBLISHABLE_KEY</code> to your <code>.env.local</code> file.
+        </p>
+      </main>
+    );
+  }
+  return <ClerkSignUp />;
 };
 
 export default SignUpPage;

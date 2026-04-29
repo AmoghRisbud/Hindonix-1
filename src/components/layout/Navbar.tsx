@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { UserButton, useAuth } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ENV } from "@/lib/env";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -13,10 +14,9 @@ const navLinks = [
   { name: "Contact", path: "/contact" },
 ];
 
-export function Navbar() {
+function NavbarContent({ isSignedIn, showUserButton }: { isSignedIn: boolean; showUserButton: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { isSignedIn } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -120,14 +120,16 @@ export function Navbar() {
                 <Button variant="accent" size="default" asChild>
                   <Link to="/contact">Get a Quote</Link>
                 </Button>
-                <UserButton
-                  appearance={{
-                    elements: {
-                      avatarBox: "w-9 h-9",
-                    },
-                  }}
-                  afterSignOutUrl="/"
-                />
+                {showUserButton && (
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        avatarBox: "w-9 h-9",
+                      },
+                    }}
+                    afterSignOutUrl="/"
+                  />
+                )}
               </>
             )}
           </div>
@@ -201,14 +203,16 @@ export function Navbar() {
                     <Link to="/contact">Get a Quote</Link>
                   </Button>
                   <div className="flex items-center justify-center pt-2">
-                    <UserButton
-                      appearance={{
-                        elements: {
-                          avatarBox: "w-10 h-10",
-                        },
-                      }}
-                      afterSignOutUrl="/"
-                    />
+                    {showUserButton && (
+                      <UserButton
+                        appearance={{
+                          elements: {
+                            avatarBox: "w-10 h-10",
+                          },
+                        }}
+                        afterSignOutUrl="/"
+                      />
+                    )}
                   </div>
                 </>
               )}
@@ -218,4 +222,16 @@ export function Navbar() {
       </div>
     </nav>
   );
+}
+
+function NavbarWithClerk() {
+  const { isSignedIn } = useAuth();
+  return <NavbarContent isSignedIn={!!isSignedIn} showUserButton={true} />;
+}
+
+export function Navbar() {
+  if (!ENV.CLERK_PUBLISHABLE_KEY) {
+    return <NavbarContent isSignedIn={false} showUserButton={false} />;
+  }
+  return <NavbarWithClerk />;
 }
