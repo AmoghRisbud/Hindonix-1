@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "server": "tsx server/index.ts",
     "server:migrate": "tsx server/migrate.ts",
-    "server:build": "tsc -p tsconfig.server.json"
+    "server:build": "tsc -p tsconfig.server.json",
+    "start": "tsx server/index.ts"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.59.2",
