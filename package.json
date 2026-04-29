@@ -12,7 +12,7 @@
     "server": "tsx server/index.ts",
     "server:migrate": "tsx server/migrate.ts",
     "server:build": "tsc -p tsconfig.server.json",
-    "start": "tsx server/index.ts"
+    "build:all": "npm run build && npm run server:build"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.59.2",
