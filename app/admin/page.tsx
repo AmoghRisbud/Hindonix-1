@@ -384,13 +384,13 @@ const Admin = () => {
       setSelectedHeroImages((prev) => [...prev, ...uploadedUrls]);
       toast({
         title: "Images Uploaded",
-        description: `${files.length} image(s) uploaded. Click "Update Hero Images" to save.`,
+        description: `${files.length} image(s) uploaded to Cloudinary. Click "Update Hero Images" to save.`,
       });
     } catch (error) {
       console.error("Error uploading hero images:", error);
       toast({
-        title: "Upload Error",
-        description: "Failed to upload image(s). Please try again.",
+        title: "Cloudinary Upload Error",
+        description: error instanceof Error ? error.message : "Failed to upload image(s).",
         variant: "destructive",
       });
     } finally {
@@ -401,25 +401,23 @@ const Admin = () => {
   const handleSaveHeroImages = async () => {
     if (selectedHeroImages.length > 0) {
       try {
-        setLoading(true);
-        console.log('ðŸ’¾ Saving hero images:', selectedHeroImages);
-        console.log('ðŸ“Š Total images to save:', selectedHeroImages.length);
+        setUploading(true);
         await setHeroImages(selectedHeroImages);
         setHeroImagesState(selectedHeroImages);
         toast({
           title: "Hero Images Updated",
-          description: "The hero images have been successfully updated.",
+          description: "The hero images have been successfully saved.",
         });
         window.dispatchEvent(new Event("heroImageUpdated"));
       } catch (error) {
         console.error("Error saving hero images:", error);
         toast({
-          title: "Error",
-          description: "Failed to save hero images.",
+          title: "Save Error",
+          description: error instanceof Error ? error.message : "Failed to save hero images.",
           variant: "destructive",
         });
       } finally {
-        setLoading(false);
+        setUploading(false);
       }
     } else {
       toast({
@@ -1421,11 +1419,18 @@ const Admin = () => {
                   accept="image/*"
                   multiple
                   onChange={handleHeroImageUpload}
+                  disabled={uploading}
                   className="cursor-pointer mt-2"
                 />
-                {selectedHeroImages.length > 0 && (
+                {uploading && (
+                  <div className="flex items-center gap-2 mt-2 text-sm text-primary">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Uploading to Cloudinary...
+                  </div>
+                )}
+                {selectedHeroImages.length > 0 && !uploading && (
                   <p className="text-sm text-green-600 mt-2 font-medium">
-                    âœ“ {selectedHeroImages.length} image(s) selected
+                    ✓ {selectedHeroImages.length} image(s) ready
                   </p>
                 )}
                 {heroImages.length > 0 && (
@@ -1436,9 +1441,11 @@ const Admin = () => {
                 <div className="flex gap-2 mt-4">
                   <Button
                     onClick={handleSaveHeroImages}
-                    disabled={selectedHeroImages.length === 0}
+                    disabled={selectedHeroImages.length === 0 || uploading}
                   >
-                    Update Hero Images
+                    {uploading ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</>
+                    ) : "Update Hero Images"}
                   </Button>
                   {selectedHeroImages.length > 0 && (
                     <Button

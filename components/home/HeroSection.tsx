@@ -62,66 +62,62 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
   }, [carouselApi, heroImages]);
 
   return (
-    <section className="relative min-h-screen flex items-center bg-background">
-      <div className="container mx-auto px-6 lg:px-12 pt-28 pb-20">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* LEFT - TEXT CONTENT */}
-          <div className="text-center lg:text-left">
-            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-medium text-foreground leading-tight mb-6">
-              Precision-Crafted
-              <span className="block text-foreground">
-                Architectural Hardware
-              </span>
-            </h1>
-            <p className="text-lg lg:text-xl text-foreground/70 mb-8 max-w-xl mx-auto lg:mx-0">
-              Elevating spaces with meticulously designed knobs, door handles,
-              and pull handles. Where functionality meets timeless aesthetics.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 font-medium hover:bg-foreground/90 transition"
-              >
-                Request a Quote
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link
-                href="/products"
-                className="inline-flex items-center justify-center px-6 py-3 border border-foreground/30 text-foreground hover:bg-foreground/5 transition"
-              >
-                View Collection
-              </Link>
-            </div>
-          </div>
+    <section className="relative w-full" style={{ aspectRatio: "1920/1440" }}>
+      {/* FULL-BLEED IMAGE */}
+      <div className="absolute inset-0 w-full h-full">
+        {heroImages.length <= 1 ? (
+          <ImageDisplay
+            src={heroImages[0]}
+            alt="Architectural Hardware Collection"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <Carousel
+            setApi={setCarouselApi}
+            className="w-full h-full"
+            opts={{ loop: true, align: "center" }}
+          >
+            <CarouselContent className="h-full">
+              {heroImages.map((img, idx) => (
+                <CarouselItem key={idx} className="h-full">
+                  <ImageDisplay
+                    src={img}
+                    alt={`Hero ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        )}
+        {/* Dark overlay for text legibility */}
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
 
-          {/* RIGHT - IMAGE / CAROUSEL */}
-          <div className="relative w-full hidden lg:block">
-            {heroImages.length <= 1 ? (
-              <ImageDisplay
-                src={heroImages[0]}
-                alt="Architectural Hardware Collection"
-                className="w-full h-[450px] object-cover"
-              />
-            ) : (
-              <Carousel
-                setApi={setCarouselApi}
-                className="w-full"
-                opts={{ loop: true, align: "center" }}
-              >
-                <CarouselContent>
-                  {heroImages.map((img, idx) => (
-                    <CarouselItem key={idx}>
-                      <ImageDisplay
-                        src={img}
-                        alt={`Hero ${idx + 1}`}
-                        className="w-full h-[450px] object-cover"
-                      />
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-              </Carousel>
-            )}
-          </div>
+      {/* TEXT CONTENT OVERLAY */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 pt-28 pb-20 text-center">
+        <h1 className="font-heading text-4xl md:text-5xl lg:text-7xl font-medium text-white leading-tight mb-6">
+          Precision-Crafted
+          <span className="block">Architectural Hardware</span>
+        </h1>
+        <p className="text-lg lg:text-2xl text-white/80 mb-8 max-w-2xl">
+          Elevating spaces with meticulously designed knobs, door handles,
+          and pull handles. Where functionality meets timeless aesthetics.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-2 bg-white text-black px-8 py-4 font-medium hover:bg-white/90 transition"
+          >
+            Request a Quote
+            <ArrowRight className="w-5 h-5" />
+          </Link>
+          <Link
+            href="/products"
+            className="inline-flex items-center justify-center px-8 py-4 border border-white text-white hover:bg-white/10 transition"
+          >
+            View Collection
+          </Link>
         </div>
       </div>
     </section>

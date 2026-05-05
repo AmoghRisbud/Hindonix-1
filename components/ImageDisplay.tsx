@@ -1,7 +1,3 @@
-"use client";
-
-import { useState, useEffect } from "react";
-
 interface ImageDisplayProps {
   src: string;
   alt: string;
@@ -10,27 +6,20 @@ interface ImageDisplayProps {
 }
 
 export const ImageDisplay = ({ src, alt, className, style }: ImageDisplayProps) => {
-  const [imageSrc, setImageSrc] = useState<string>("");
+  const imgSrc = typeof src === "string" && src.length > 0 ? src : "/placeholder.svg";
 
-  useEffect(() => {
-    const srcString = typeof src === "string" ? src : "";
-    if (
-      srcString &&
-      (srcString.startsWith("product_image_") ||
-        srcString.startsWith("casestudy_image_") ||
-        srcString.startsWith("blog_image_") ||
-        srcString.startsWith("hero_image_"))
-    ) {
-      const storedImage = localStorage.getItem(srcString);
-      setImageSrc(storedImage ?? "/images/placeholder.jpg");
-    } else {
-      setImageSrc(srcString || "/images/placeholder.jpg");
-    }
-  }, [src]);
-
-  if (!imageSrc) {
-    return <div className={className} style={style}>Loading...</div>;
-  }
-
-  return <img src={imageSrc} alt={alt} className={className} style={style} />;
+  return (
+    <img
+      src={imgSrc}
+      alt={alt}
+      className={className}
+      style={style}
+      onError={(e) => {
+        const target = e.currentTarget;
+        if (!target.src.endsWith("/placeholder.svg")) {
+          target.src = "/placeholder.svg";
+        }
+      }}
+    />
+  );
 };
