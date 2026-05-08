@@ -33,37 +33,37 @@ export function TestimonialsSection({ initialTestimonials }: TestimonialsSection
   const prevSlide = () => setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
   return (
-    <section className="py-20 lg:py-28 bg-secondary">
+    <section className="py-20 lg:py-28" style={{ backgroundColor: '#f3f3f3' }}>
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-4">Client Testimonials</span>
-          <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground mb-6">Trusted by Businesses Worldwide</h2>
-          <p className="text-muted-foreground text-lg">Hear from our partners who have experienced the Hindonix difference.</p>
+          <span className="inline-block text-[#1a1a1a]/45 font-medium text-xs uppercase tracking-[0.25em] mb-4">Client Testimonials</span>
+          <h2 className="text-3xl lg:text-4xl font-semibold text-[#1a1a1a] mb-6 tracking-tight">Trusted by Businesses Worldwide</h2>
+          <p className="text-[#1a1a1a]/55 font-light">Hear from our partners who have experienced the Hindonix difference.</p>
         </div>
 
         <div className="relative max-w-4xl mx-auto">
-          <div className="bg-card rounded-3xl p-8 lg:p-12 shadow-card border border-border/50 relative overflow-hidden">
-            <div className="absolute top-8 right-8 opacity-10">
-              <Quote className="w-24 h-24 text-accent" />
+          <div className="bg-white p-8 lg:p-12 border border-[#1a1a1a]/8 relative overflow-hidden">
+            <div className="absolute top-8 right-8 opacity-5">
+              <Quote className="w-24 h-24 text-[#1a1a1a]" />
             </div>
             <div className="relative z-10">
-              <blockquote className="text-xl lg:text-2xl text-foreground font-medium leading-relaxed mb-8">
+              <blockquote className="text-lg lg:text-xl text-[#1a1a1a] font-light leading-relaxed mb-8">
                 &ldquo;{testimonials[activeIndex].content}&rdquo;
               </blockquote>
               <div className="flex items-center gap-4">
                 {testimonials[activeIndex].image ? (
-                  <div className="w-14 h-14 rounded-full overflow-hidden bg-secondary flex-shrink-0">
+                  <div className="w-12 h-12 overflow-hidden bg-[#eaeaea] flex-shrink-0">
                     <ImageDisplay src={testimonials[activeIndex].image as string} alt={testimonials[activeIndex].name} className="w-full h-full object-cover" />
                   </div>
                 ) : null}
                 <div>
-                  <div className="font-heading font-semibold text-foreground text-lg">{testimonials[activeIndex].name}</div>
-                  <div className="text-muted-foreground">{testimonials[activeIndex].role}, {testimonials[activeIndex].company}</div>
-                  <div className="text-accent text-sm font-medium">{testimonials[activeIndex].location}</div>
+                  <div className="font-semibold text-[#1a1a1a] tracking-wide">{testimonials[activeIndex].name}</div>
+                  <div className="text-[#1a1a1a]/50 text-sm font-light">{testimonials[activeIndex].role}, {testimonials[activeIndex].company}</div>
+                  <div className="text-[#1a1a1a]/40 text-xs uppercase tracking-widest mt-0.5">{testimonials[activeIndex].location}</div>
                   {testimonials[activeIndex].rating ? (
                     <div className="flex items-center gap-1 mt-2">
                       {Array.from({ length: testimonials[activeIndex].rating }).map((_, idx) => (
-                        <Star key={idx} className="w-4 h-4 fill-accent text-accent" />
+                        <Star key={idx} className="w-3.5 h-3.5 fill-[#1a1a1a]/60 text-[#1a1a1a]/60" />
                       ))}
                     </div>
                   ) : null}
@@ -73,16 +73,16 @@ export function TestimonialsSection({ initialTestimonials }: TestimonialsSection
           </div>
 
           <div className="flex items-center justify-center gap-4 mt-8">
-            <button onClick={prevSlide} className="w-12 h-12 rounded-full bg-card border border-border flex items-center justify-center hover:bg-accent hover:text-accent-foreground hover:border-accent transition-all duration-300 shadow-sm" aria-label="Previous testimonial">
-              <ChevronLeft className="w-5 h-5" />
+            <button onClick={prevSlide} className="w-10 h-10 border border-[#1a1a1a]/20 flex items-center justify-center hover:bg-[#1a1a1a] hover:text-[#eaeaea] hover:border-[#1a1a1a] transition-all duration-300 text-[#1a1a1a]" aria-label="Previous testimonial">
+              <ChevronLeft className="w-4 h-4" />
             </button>
             <div className="flex gap-2">
               {testimonials.map((_, index) => (
-                <button key={index} onClick={() => setActiveIndex(index)} className={cn("w-2.5 h-2.5 rounded-full transition-all duration-300", index === activeIndex ? "bg-accent w-8" : "bg-border hover:bg-muted-foreground")} aria-label={`Go to testimonial ${index + 1}`} />
+                <button key={index} onClick={() => setActiveIndex(index)} className={cn("h-[2px] transition-all duration-300", index === activeIndex ? "bg-[#1a1a1a] w-8" : "bg-[#1a1a1a]/20 hover:bg-[#1a1a1a]/40 w-4")} aria-label={`Go to testimonial ${index + 1}`} />
               ))}
             </div>
-            <button onClick={nextSlide} className="w-12 h-12 rounded-full bg-card border border-border flex items-center justify-center hover:bg-accent hover:text-accent-foreground hover:border-accent transition-all duration-300 shadow-sm" aria-label="Next testimonial">
-              <ChevronRight className="w-5 h-5" />
+            <button onClick={nextSlide} className="w-10 h-10 border border-[#1a1a1a]/20 flex items-center justify-center hover:bg-[#1a1a1a] hover:text-[#eaeaea] hover:border-[#1a1a1a] transition-all duration-300 text-[#1a1a1a]" aria-label="Next testimonial">
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>

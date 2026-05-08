@@ -11,24 +11,24 @@ const overviewCards = [
 
 export function OverviewSection() {
   return (
-    <section className="py-20 lg:py-28 bg-secondary">
+    <section className="py-20 lg:py-28" style={{ backgroundColor: '#eaeaea' }}>
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-4">Why Design Professionals Choose Us</span>
-          <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground mb-6">Exceptional Architectural Hardware</h2>
-          <p className="text-muted-foreground text-lg">From concept to installation, we provide premium hardware solutions with uncompromising quality, elegant design, and lasting durability.</p>
+          <span className="inline-block text-[#1a1a1a]/50 font-medium text-xs uppercase tracking-[0.25em] mb-4">Why Design Professionals Choose Us</span>
+          <h2 className="text-3xl lg:text-4xl font-semibold text-[#1a1a1a] mb-6 tracking-tight">Exceptional Architectural Hardware</h2>
+          <p className="text-[#1a1a1a]/60 text-base lg:text-lg font-light">From concept to installation, we provide premium hardware solutions with uncompromising quality, elegant design, and lasting durability.</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-px border border-[#1a1a1a]/10" style={{ backgroundColor: '#1a1a1a' }}>
           {overviewCards.map((card, index) => (
-            <div key={card.title} className={cn("group rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border", card.featured ? "bg-gradient-to-br from-accent to-accent/80 border-accent shadow-lg" : "bg-card border-border/50 hover:border-accent/30")} style={{ animationDelay: `${index * 0.1}s` }}>
-              <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-all duration-300", card.featured ? "bg-accent-foreground/10" : "bg-accent/10 group-hover:bg-accent")}>
-                <card.icon className={cn("w-7 h-7 transition-colors", card.featured ? "text-accent-foreground" : "text-accent group-hover:text-accent-foreground")} />
+            <div key={card.title} className={cn("group p-8 transition-all duration-300", card.featured ? "bg-[#1a1a1a] text-[#eaeaea]" : "bg-[#eaeaea] hover:bg-white")} style={{ animationDelay: `${index * 0.1}s` }}>
+              <div className={cn("w-12 h-12 flex items-center justify-center mb-6 transition-all duration-300", card.featured ? "text-[#f3f3f3]" : "text-[#1a1a1a]/40 group-hover:text-[#1a1a1a]")}>
+                <card.icon className="w-6 h-6" />
               </div>
-              <h3 className={cn("font-heading text-xl font-semibold mb-3", card.featured ? "text-accent-foreground" : "text-foreground")}>{card.title}</h3>
-              <p className={cn("text-sm mb-5 leading-relaxed", card.featured ? "text-accent-foreground/90" : "text-muted-foreground")}>{card.description}</p>
-              <div className={cn("pt-4 border-t", card.featured ? "border-accent-foreground/20" : "border-border")}>
-                <div className={cn("text-2xl font-heading font-bold", card.featured ? "text-accent-foreground" : "text-accent")}>{card.stat}</div>
-                <div className={cn("text-xs uppercase tracking-wider", card.featured ? "text-accent-foreground/80" : "text-muted-foreground")}>{card.statLabel}</div>
+              <h3 className={cn("text-base font-semibold mb-3 tracking-wide", card.featured ? "text-[#eaeaea]" : "text-[#1a1a1a]")}>{card.title}</h3>
+              <p className={cn("text-xs mb-6 leading-relaxed font-light", card.featured ? "text-[#f3f3f3]/70" : "text-[#1a1a1a]/55")}>{card.description}</p>
+              <div className={cn("pt-4 border-t", card.featured ? "border-[#f3f3f3]/20" : "border-[#1a1a1a]/10")}>
+                <div className={cn("text-2xl font-semibold", card.featured ? "text-[#f3f3f3]" : "text-[#1a1a1a]")}>{card.stat}</div>
+                <div className={cn("text-xs uppercase tracking-wider mt-0.5", card.featured ? "text-[#f3f3f3]/60" : "text-[#1a1a1a]/45")}>{card.statLabel}</div>
               </div>
             </div>
           ))}

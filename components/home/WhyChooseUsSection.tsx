@@ -17,61 +17,61 @@ const stats = [
 
 export function WhyChooseUsSection() {
   return (
-    <section className="py-16 lg:py-20 bg-background">
+    <section className="py-16 lg:py-20" style={{ backgroundColor: '#eaeaea' }}>
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-10 items-stretch">
-          <div className="bg-card rounded-3xl p-6 lg:p-8 shadow-card border border-border/50 flex flex-col justify-between">
+        <div className="grid lg:grid-cols-2 gap-8 items-stretch">
+          <div className="bg-white p-6 lg:p-10 flex flex-col justify-between border border-[#1a1a1a]/8">
             <div>
-              <span className="inline-block text-accent font-semibold text-xs uppercase tracking-wider mb-3">Industry Expertise</span>
-              <h3 className="font-heading text-2xl lg:text-3xl font-bold text-foreground mb-3">Specialized in Architectural Hardware</h3>
-              <p className="text-muted-foreground text-sm lg:text-base mb-5 leading-relaxed">Since 2025, we&apos;ve been crafting premium architectural hardware for luxury residential and commercial projects. Our expertise in material selection, finish quality, and ergonomic design ensures hardware that performs beautifully for decades.</p>
-              <div className="flex flex-wrap gap-2.5 mb-6">
+              <span className="inline-block text-[#1a1a1a]/45 font-medium text-xs uppercase tracking-[0.25em] mb-3">Industry Expertise</span>
+              <h3 className="text-2xl lg:text-3xl font-semibold text-[#1a1a1a] mb-3 tracking-tight">Specialized in Architectural Hardware</h3>
+              <p className="text-[#1a1a1a]/55 text-sm lg:text-base mb-5 leading-relaxed font-light">Since 2025, we&apos;ve been crafting premium architectural hardware for luxury residential and commercial projects. Our expertise in material selection, finish quality, and ergonomic design ensures hardware that performs beautifully for decades.</p>
+              <div className="flex flex-wrap gap-2 mb-6">
                 {["Brass Knobs", "Wooden Knobs", "Door Handles", "Pull Handles", "PVD Finishes", "Custom Solutions"].map((tag) => (
-                  <span key={tag} className="px-3 py-1.5 rounded-full text-xs font-semibold border border-accent/40 bg-accent/10 text-foreground shadow-sm shadow-accent/10 hover:bg-accent hover:text-accent-foreground transition-colors">{tag}</span>
+                  <span key={tag} className="px-3 py-1.5 text-xs font-medium border border-[#1a1a1a]/20 text-[#1a1a1a]/70 hover:border-[#1a1a1a] hover:text-[#1a1a1a] transition-colors cursor-default tracking-wide">{tag}</span>
                 ))}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-secondary rounded-2xl p-5 text-center">
-                <Factory className="w-10 h-10 text-accent mx-auto mb-3" />
-                <div className="text-xl font-heading font-bold text-foreground">10+</div>
-                <div className="text-xs text-muted-foreground">Years Experience</div>
+              <div className="bg-[#eaeaea] p-5 text-center">
+                <Factory className="w-8 h-8 text-[#1a1a1a]/40 mx-auto mb-3" />
+                <div className="text-xl font-semibold text-[#1a1a1a]">10+</div>
+                <div className="text-xs text-[#1a1a1a]/50 uppercase tracking-wider mt-1">Years Experience</div>
               </div>
-              <div className="bg-secondary rounded-2xl p-5 text-center">
-                <Shield className="w-10 h-10 text-accent mx-auto mb-3" />
-                <div className="text-xl font-heading font-bold text-foreground">100%</div>
-                <div className="text-xs text-muted-foreground">Quality Assured</div>
+              <div className="bg-[#eaeaea] p-5 text-center">
+                <Shield className="w-8 h-8 text-[#1a1a1a]/40 mx-auto mb-3" />
+                <div className="text-xl font-semibold text-[#1a1a1a]">100%</div>
+                <div className="text-xs text-[#1a1a1a]/50 uppercase tracking-wider mt-1">Quality Assured</div>
               </div>
-              <div className="bg-primary rounded-2xl p-5 text-center col-span-2">
-                <div className="text-lg font-heading font-bold text-primary-foreground mb-1">UK & UAE Markets</div>
-                <div className="text-xs text-primary-foreground/70">Serving B2B Partners Across Two Regions</div>
+              <div className="bg-[#1a1a1a] p-5 text-center col-span-2">
+                <div className="text-base font-semibold text-[#eaeaea] mb-1 tracking-wide">UK &amp; UAE Markets</div>
+                <div className="text-xs text-[#f3f3f3]/60 font-light">Serving B2B Partners Across Two Regions</div>
               </div>
             </div>
           </div>
 
-          <div className="bg-secondary rounded-3xl p-6 lg:p-8 shadow-card border border-border/50">
-            <span className="inline-block text-accent font-semibold text-xs uppercase tracking-wider mb-3">Why Choose Us</span>
-            <h2 className="font-heading text-3xl lg:text-3xl font-bold text-foreground mb-3">Craftsmanship Meets Design Excellence</h2>
-            <p className="text-muted-foreground text-sm lg:text-base mb-6">We combine traditional craftsmanship with modern design to deliver architectural hardware that enhances every space with beauty, function, and lasting quality.</p>
-            <div className="grid sm:grid-cols-2 gap-5 mb-6">
+          <div className="bg-[#f3f3f3] p-6 lg:p-10 border border-[#1a1a1a]/8">
+            <span className="inline-block text-[#1a1a1a]/45 font-medium text-xs uppercase tracking-[0.25em] mb-3">Why Choose Us</span>
+            <h2 className="text-2xl lg:text-3xl font-semibold text-[#1a1a1a] mb-3 tracking-tight">Craftsmanship Meets Design Excellence</h2>
+            <p className="text-[#1a1a1a]/55 text-sm lg:text-base mb-6 font-light">We combine traditional craftsmanship with modern design to deliver architectural hardware that enhances every space with beauty, function, and lasting quality.</p>
+            <div className="grid sm:grid-cols-2 gap-6 mb-6">
               {reasons.map((reason, index) => (
                 <div key={reason.title} className={cn("flex gap-4")} style={{ animationDelay: `${index * 0.1}s` }}>
-                  <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center">
-                    <reason.icon className="w-5 h-5 text-accent" />
+                  <div className="flex-shrink-0 w-10 h-10 bg-[#eaeaea] flex items-center justify-center">
+                    <reason.icon className="w-5 h-5 text-[#1a1a1a]/50" />
                   </div>
                   <div>
-                    <h3 className="font-heading font-semibold text-foreground mb-0.5">{reason.title}</h3>
-                    <p className="text-muted-foreground text-xs lg:text-sm leading-relaxed">{reason.description}</p>
+                    <h3 className="font-semibold text-[#1a1a1a] mb-0.5 text-sm tracking-wide">{reason.title}</h3>
+                    <p className="text-[#1a1a1a]/55 text-xs leading-relaxed font-light">{reason.description}</p>
                   </div>
                 </div>
               ))}
             </div>
             <div className="grid grid-cols-2 gap-3">
               {stats.map((stat) => (
-                <div key={stat.label} className="text-center p-5 rounded-2xl bg-card border border-border/60">
-                  <stat.icon className="w-6 h-6 text-accent mx-auto mb-2" />
-                  <div className="text-xl lg:text-2xl font-heading font-bold text-foreground mb-0.5">{stat.value}</div>
-                  <div className="text-xs text-muted-foreground">{stat.label}</div>
+                <div key={stat.label} className="text-center p-5 bg-white border border-[#1a1a1a]/8">
+                  <stat.icon className="w-5 h-5 text-[#1a1a1a]/35 mx-auto mb-2" />
+                  <div className="text-xl lg:text-2xl font-semibold text-[#1a1a1a] mb-0.5">{stat.value}</div>
+                  <div className="text-xs text-[#1a1a1a]/45 uppercase tracking-wider">{stat.label}</div>
                 </div>
               ))}
             </div>

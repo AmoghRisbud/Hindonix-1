@@ -35,15 +35,17 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-background text-foreground">
-      <div className="border-b border-foreground/10">
+    <footer style={{ backgroundColor: '#1a1a1a', color: '#eaeaea' }}>
+      {/* Top nav links row */}
+      <div className="border-b" style={{ borderColor: '#eaeaea14' }}>
         <div className="container mx-auto px-4 lg:px-8 py-6">
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
             {footerTopLinks.map((link) => (
               <Link
                 key={link.path}
                 href={link.path}
-                className="text-foreground/80 hover:text-foreground text-sm transition-colors"
+                className="text-xs font-medium tracking-[0.2em] uppercase transition-colors hover:text-white"
+                style={{ color: '#eaeaea99' }}
               >
                 {link.name}
               </Link>
@@ -52,48 +54,52 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 lg:px-8 py-12">
-        <div className="max-w-md mx-auto text-center space-y-6">
+      {/* Center brand block */}
+      <div className="container mx-auto px-4 lg:px-8 py-16">
+        <div className="max-w-md mx-auto text-center space-y-8">
           <h3
-            style={{ fontFamily: '"Times New Roman", Times, serif' }}
-            className="text-2xl font-normal text-foreground tracking-wide leading-none"
+            className="text-3xl font-normal leading-none tracking-[0.28em]"
+            style={{ fontFamily: '"Times New Roman", Times, serif', color: '#eaeaea' }}
           >
-            H I N D O N I X<sup className="text-xs ml-0.5">®</sup>
+            HINDONIX<sup className="text-xs ml-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>®</sup>
           </h3>
-          <div className="space-y-2">
-            <p className="flex items-center justify-center gap-2 text-foreground/80 text-sm">
-              <Phone className="w-4 h-4" />
-              <a href="tel:+918850765050" className="hover:text-foreground transition-colors">
+          <div className="space-y-2.5">
+            <p className="flex items-center justify-center gap-2 text-sm font-light" style={{ color: '#f3f3f399' }}>
+              <Phone className="w-4 h-4" style={{ color: '#f3f3f3' }} />
+              <a href="tel:+918850765050" className="hover:text-white transition-colors tracking-wide">
                 T: +91 8850765050
               </a>
             </p>
-            <p className="flex items-center justify-center gap-2 text-foreground/80 text-sm">
-              <Mail className="w-4 h-4" />
-              <a href="mailto:info@hindonix.com" className="hover:text-foreground transition-colors">
+            <p className="flex items-center justify-center gap-2 text-sm font-light" style={{ color: '#f3f3f399' }}>
+              <Mail className="w-4 h-4" style={{ color: '#f3f3f3' }} />
+              <a href="mailto:info@hindonix.com" className="hover:text-white transition-colors tracking-wide">
                 E: info@hindonix.com
               </a>
             </p>
           </div>
-          <div className="flex items-center justify-center gap-3 pt-4">
+          {/* Social icons */}
+          <div className="flex items-center justify-center gap-4 pt-2">
             {socialLinks.map((social) => (
               <a
                 key={social.name}
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-foreground/20 flex items-center justify-center hover:bg-foreground/30 transition-colors"
+                className="w-9 h-9 flex items-center justify-center transition-colors hover:bg-white/10"
+                style={{ color: '#f3f3f3', border: '1px solid #f3f3f322' }}
                 aria-label={social.name}
               >
-                <social.icon className="w-5 h-5" />
+                <social.icon className="w-4 h-4" />
               </a>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="border-t border-foreground/10">
-        <div className="container mx-auto px-4 lg:px-8 py-6">
-          <p className="text-foreground/60 text-xs text-center max-w-4xl mx-auto leading-relaxed">
+      {/* Copyright */}
+      <div className="border-t" style={{ borderColor: '#eaeaea14' }}>
+        <div className="container mx-auto px-4 lg:px-8 py-5">
+          <p className="text-xs text-center tracking-wide font-light" style={{ color: '#eaeaea40' }}>
             Hindonix is a registered trademark of Hindonix Architectural Hardware. © 2026. Hindonix all rights reserved.
           </p>
         </div>

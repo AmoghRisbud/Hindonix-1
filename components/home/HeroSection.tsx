@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getHeroImages } from "@/lib/data";
 import {
@@ -62,8 +61,8 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
   }, [carouselApi, heroImages]);
 
   return (
-    <section className="relative w-full" style={{ aspectRatio: "1920/1440" }}>
-      {/* FULL-BLEED IMAGE */}
+    <section className="relative w-full overflow-hidden" style={{ height: 'clamp(480px, 72vh, 820px)' }}>
+      {/* ── FULL-BLEED IMAGE ─────────────────────────────────────── */}
       <div className="absolute inset-0 w-full h-full">
         {heroImages.length <= 1 ? (
           <ImageDisplay
@@ -90,34 +89,58 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
             </CarouselContent>
           </Carousel>
         )}
-        {/* Dark overlay for text legibility */}
-        <div className="absolute inset-0 bg-black/40" />
+        {/* No overlay — match the clean look in the screenshot */}
       </div>
 
-      {/* TEXT CONTENT OVERLAY */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 pt-28 pb-20 text-center">
-        <h1 className="font-heading text-4xl md:text-5xl lg:text-7xl font-medium text-white leading-tight mb-6">
-          Precision-Crafted
-          <span className="block">Architectural Hardware</span>
-        </h1>
-        <p className="text-lg lg:text-2xl text-white/80 mb-8 max-w-2xl">
-          Elevating spaces with meticulously designed knobs, door handles,
-          and pull handles. Where functionality meets timeless aesthetics.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href="/contact"
-            className="inline-flex items-center gap-2 bg-white text-black px-8 py-4 font-medium hover:bg-white/90 transition"
+      {/* ── TEXT — centered-right, vertically centered ─────────── */}
+      <div className="relative z-10 h-full flex items-center justify-end px-8 md:px-16 pt-16">
+        <div className="text-center max-w-xl">
+          {/* Main title */}
+          <h1
+            className="text-[#1a1a1a] leading-tight mb-4"
+            style={{
+              fontFamily: '"Times New Roman", Times, serif',
+              letterSpacing: '0.18em',
+              fontSize: 'clamp(1.8rem, 3.5vw, 3rem)',
+              fontWeight: 400,
+            }}
           >
-            Request a Quote
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-          <Link
-            href="/products"
-            className="inline-flex items-center justify-center px-8 py-4 border border-white text-white hover:bg-white/10 transition"
+            ARCHITECTURAL DOORWARE
+          </h1>
+
+          {/* Subtitle — sentence case, no uppercase, matching image */}
+          <p
+            className="text-[#1a1a1a]/70 mb-10"
+            style={{
+              fontFamily: 'Montserrat, system-ui, sans-serif',
+              fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
+              fontWeight: 400,
+              letterSpacing: '0.02em',
+            }}
           >
-            View Collection
-          </Link>
+            Export Grade Craftsmanship
+          </p>
+
+          {/* Single pill container with both CTAs — exactly matching image */}
+          <div
+            className="inline-flex items-center rounded-full border border-[#1a1a1a]/20 bg-[#f3f3f3]/70 overflow-hidden"
+          >
+            <Link
+              href="/products"
+              className="px-7 py-2.5 text-sm text-[#1a1a1a]/80 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/60 transition-colors"
+              style={{ fontFamily: 'Montserrat, system-ui, sans-serif', letterSpacing: '0.01em' }}
+            >
+              View Collections
+            </Link>
+            <span className="text-[#1a1a1a]/30 text-base select-none px-0.5">|</span>
+            <Link
+              href="/contact"
+              className="px-7 py-2.5 text-sm text-[#1a1a1a]/80 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/60 transition-colors"
+              style={{ fontFamily: 'Montserrat, system-ui, sans-serif', letterSpacing: '0.01em' }}
+            >
+              Get Quote
+            </Link>
+          </div>
         </div>
       </div>
     </section>
