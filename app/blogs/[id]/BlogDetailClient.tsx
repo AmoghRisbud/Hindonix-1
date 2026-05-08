@@ -17,7 +17,7 @@ export function BlogDetailClient({ blog }: { blog: Blog }) {
           </Button>
           <div className="max-w-7xl mx-auto">
             <div className="rounded-2xl overflow-hidden">
-              <ImageDisplay src={blog.image} alt="Blog" className="w-full h-[500px] object-cover" />
+              <ImageDisplay src={blog.image} alt="Blog" className="w-full h-[240px] sm:h-[360px] md:h-[500px] object-cover" />
             </div>
             <div className="pt-8">
               <div className="prose prose-lg max-w-none">

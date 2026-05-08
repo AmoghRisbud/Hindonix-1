@@ -26,7 +26,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
                 {product.subcategory && <span className="px-3 py-1 bg-secondary rounded-full text-xs font-medium text-secondary-foreground">{product.subcategory}</span>}
                 <span className="px-3 py-1 bg-accent/10 text-accent rounded-full text-xs font-medium">{product.material}</span>
               </div>
-              <h1 className="font-heading text-4xl font-bold text-foreground mb-4">{product.name}</h1>
+              <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4">{product.name}</h1>
               {product.modelNumber && (
                 <p className="text-muted-foreground text-sm mb-6">Model: <span className="font-medium text-foreground">{product.modelNumber}</span></p>
               )}

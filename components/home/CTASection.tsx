@@ -19,7 +19,7 @@ export function CTASection() {
                 </Link>
                 <Link
                   href="/products"
-                  className="px-10 py-4 border-l border-[#eaeaea]/20 text-[#eaeaea] text-xs font-medium tracking-[0.2em] uppercase hover:bg-[#eaeaea]/10 transition-colors"
+                  className="px-10 py-4 border-t border-[#eaeaea]/20 sm:border-t-0 sm:border-l text-[#eaeaea] text-xs font-medium tracking-[0.2em] uppercase hover:bg-[#eaeaea]/10 transition-colors"
                 >
                   View Collection
                 </Link>

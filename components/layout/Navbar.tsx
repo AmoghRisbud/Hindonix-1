@@ -97,10 +97,10 @@ function NavbarContent({
           )}
         </div>
 
-        {/* Hamburger — right */}
+        {/* Hamburger — right (hidden on sm+ where desktop links are shown) */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-2 text-[#1a1a1a]"
+          className="sm:hidden p-2 text-[#1a1a1a]"
           aria-label="Toggle menu"
         >
           {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

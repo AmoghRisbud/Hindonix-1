@@ -92,9 +92,9 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
         {/* No overlay — match the clean look in the screenshot */}
       </div>
 
-      {/* ── TEXT — centered-right, vertically centered ─────────── */}
-      <div className="relative z-10 h-full flex items-center justify-end px-8 md:px-16 pt-16">
-        <div className="text-center max-w-xl">
+      {/* ── TEXT — centered on mobile, right-aligned on md+ ─────── */}
+      <div className="relative z-10 h-full flex items-center justify-center sm:justify-end px-5 sm:px-8 md:px-16 pt-16">
+        <div className="text-center max-w-xl w-full sm:w-auto">
           {/* Main title */}
           <h1
             className="text-[#1a1a1a] leading-tight mb-4"

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \".\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer, Length)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\AMOGH\\\\Freelancing\\\\Hindonix\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem -Path \"app\" -Recurse -Name)",
+      "Bash(Select-Object -First 30)",
+      "Bash(npm run *)",
+      "Bash(kill %1)"
+    ]
+  }
+}

@@ -18,7 +18,7 @@ export function OverviewSection() {
           <h2 className="text-3xl lg:text-4xl font-semibold text-[#1a1a1a] mb-6 tracking-tight">Exceptional Architectural Hardware</h2>
           <p className="text-[#1a1a1a]/60 text-base lg:text-lg font-light">From concept to installation, we provide premium hardware solutions with uncompromising quality, elegant design, and lasting durability.</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-px border border-[#1a1a1a]/10" style={{ backgroundColor: '#1a1a1a' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-px border border-[#1a1a1a]/10" style={{ backgroundColor: '#1a1a1a' }}>
           {overviewCards.map((card, index) => (
             <div key={card.title} className={cn("group p-8 transition-all duration-300", card.featured ? "bg-[#1a1a1a] text-[#eaeaea]" : "bg-[#eaeaea] hover:bg-white")} style={{ animationDelay: `${index * 0.1}s` }}>
               <div className={cn("w-12 h-12 flex items-center justify-center mb-6 transition-all duration-300", card.featured ? "text-[#f3f3f3]" : "text-[#1a1a1a]/40 group-hover:text-[#1a1a1a]")}>
