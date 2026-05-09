@@ -24,9 +24,7 @@ function NavbarContent({
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+  useEffect(() => { setIsOpen(false); }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
@@ -35,33 +33,29 @@ function NavbarContent({
 
   return (
     <>
-      {/* ── DESKTOP / TABLET TOP NAV ────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 lg:px-10 py-4 bg-[#eaeaea]/95 backdrop-blur-md">
+      {/* ── HORIZONTAL TOP NAV ─────────────────────────────────────── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 lg:px-10 py-4 bg-white border-b border-[#e8e8e8]">
         {/* Brand — left */}
-        <Link
-          href="/"
-          className="shrink-0"
-          aria-label="Hindonix home"
-        >
+        <Link href="/" aria-label="Hindonix home" className="shrink-0">
           <span
-            className="text-[#1a1a1a] text-lg leading-none tracking-[0.22em]"
-            style={{ fontFamily: '"Times New Roman", Times, serif' }}
+            className="text-[#1a1a1a] text-xl leading-none tracking-[0.12em]"
+            style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 400 }}
           >
-            HINDONIX<sup className="text-[9px] ml-0.5">®</sup>
+            HINDONIX<sup className="text-[10px] ml-0.5">®</sup>
           </span>
         </Link>
 
-        {/* Nav links — centre (hidden on small mobile) */}
-        <div className="hidden sm:flex items-center gap-1">
+        {/* Nav links — centre, grouped in a single pill (hidden on mobile) */}
+        <div className="hidden md:flex items-center rounded-full border border-[#e0e0e0] bg-[#f5f5f5] px-1 py-1 gap-0.5">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               href={link.path}
               className={cn(
-                "px-4 py-1.5 rounded-full text-sm font-medium transition-colors tracking-wide",
+                "px-4 py-1.5 rounded-full text-sm transition-colors tracking-wide",
                 pathname === link.path
-                  ? "bg-[#1a1a1a]/10 text-[#1a1a1a] font-semibold"
-                  : "text-[#1a1a1a]/65 hover:text-[#1a1a1a] hover:bg-[#1a1a1a]/8"
+                  ? "bg-white text-[#1a1a1a] shadow-sm font-medium"
+                  : "text-[#555] hover:text-[#1a1a1a] hover:bg-white/70"
               )}
             >
               {link.name}
@@ -71,10 +65,10 @@ function NavbarContent({
             <Link
               href="/admin"
               className={cn(
-                "px-4 py-1.5 rounded-full text-sm font-medium transition-colors tracking-wide",
+                "px-4 py-1.5 rounded-full text-sm transition-colors tracking-wide",
                 pathname === "/admin"
-                  ? "bg-[#1a1a1a]/10 text-[#1a1a1a] font-semibold"
-                  : "text-[#1a1a1a]/65 hover:text-[#1a1a1a] hover:bg-[#1a1a1a]/8"
+                  ? "bg-white text-[#1a1a1a] shadow-sm font-medium"
+                  : "text-[#555] hover:text-[#1a1a1a] hover:bg-white/70"
               )}
             >
               Admin
@@ -84,38 +78,46 @@ function NavbarContent({
             <Link
               href="/sign-in"
               className={cn(
-                "px-4 py-1.5 rounded-full text-sm font-medium transition-colors tracking-wide",
-                "text-[#1a1a1a]/65 hover:text-[#1a1a1a] hover:bg-[#1a1a1a]/8"
+                "px-4 py-1.5 rounded-full text-sm transition-colors tracking-wide",
+                pathname === "/sign-in"
+                  ? "bg-white text-[#1a1a1a] shadow-sm font-medium"
+                  : "text-[#555] hover:text-[#1a1a1a] hover:bg-white/70"
               )}
             >
               Login
             </Link>
           ) : (
             showUserButton && (
-              <UserButton appearance={{ elements: { avatarBox: "w-8 h-8" } }} />
+              <div className="px-2">
+                <UserButton appearance={{ elements: { avatarBox: "w-7 h-7" } }} />
+              </div>
             )
           )}
         </div>
 
-        {/* Hamburger — right (hidden on sm+ where desktop links are shown) */}
+        {/* Hamburger — right */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="sm:hidden p-2 text-[#1a1a1a]"
+          className="p-2 text-[#1a1a1a] flex flex-col gap-[5px]"
           aria-label="Toggle menu"
         >
-          {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {isOpen ? (
+            <X className="w-5 h-5" />
+          ) : (
+            <>
+              <span className="block w-6 h-[1.5px] bg-[#1a1a1a]" />
+              <span className="block w-6 h-[1.5px] bg-[#1a1a1a]" />
+            </>
+          )}
         </button>
       </nav>
 
-      {/* ── MOBILE / OVERFLOW DRAWER ────────────────────────────────── */}
+      {/* ── MOBILE DRAWER (right slide-in) ──────────────────────────── */}
       {isOpen && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setIsOpen(false)}
-        >
-          <div className="absolute inset-0 bg-[#1a1a1a]/50" />
+        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}>
+          <div className="absolute inset-0 bg-[#1a1a1a]/40" />
           <div
-            className="absolute right-0 top-0 h-full w-64 bg-[#eaeaea] flex flex-col py-16 px-6 gap-1"
+            className="absolute right-0 top-0 h-full w-64 bg-white flex flex-col py-16 px-6 gap-1"
             onClick={(e) => e.stopPropagation()}
           >
             {navLinks.map((link) => (
@@ -123,10 +125,10 @@ function NavbarContent({
                 key={link.path}
                 href={link.path}
                 className={cn(
-                  "block px-3 py-3 text-sm font-medium border-b border-[#1a1a1a]/10 tracking-widest uppercase",
+                  "block px-3 py-3 text-sm font-medium border-b border-[#e8e8e8] tracking-widest uppercase",
                   pathname === link.path
                     ? "text-[#1a1a1a] font-semibold"
-                    : "text-[#1a1a1a]/60 hover:text-[#1a1a1a]"
+                    : "text-[#777] hover:text-[#1a1a1a]"
                 )}
               >
                 {link.name}
@@ -136,10 +138,10 @@ function NavbarContent({
               <Link
                 href="/admin"
                 className={cn(
-                  "block px-3 py-3 text-sm font-medium border-b border-[#1a1a1a]/10 tracking-widest uppercase",
+                  "block px-3 py-3 text-sm font-medium border-b border-[#e8e8e8] tracking-widest uppercase",
                   pathname === "/admin"
                     ? "text-[#1a1a1a] font-semibold"
-                    : "text-[#1a1a1a]/60 hover:text-[#1a1a1a]"
+                    : "text-[#777] hover:text-[#1a1a1a]"
                 )}
               >
                 Admin
@@ -149,7 +151,7 @@ function NavbarContent({
               {!isSignedIn ? (
                 <Link
                   href="/sign-in"
-                  className="block px-3 py-3 text-sm font-medium tracking-widest uppercase text-[#1a1a1a]/60 hover:text-[#1a1a1a]"
+                  className="block px-3 py-3 text-sm font-medium tracking-widest uppercase text-[#777] hover:text-[#1a1a1a]"
                 >
                   Login
                 </Link>

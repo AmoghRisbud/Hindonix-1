@@ -61,14 +61,15 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
   }, [carouselApi, heroImages]);
 
   return (
-    <section className="relative w-full overflow-hidden" style={{ height: 'clamp(480px, 72vh, 820px)' }}>
-      {/* ── FULL-BLEED IMAGE ─────────────────────────────────────── */}
+    /* Offset top by navbar height (≈ 65px) */
+    <section className="relative w-full overflow-hidden" style={{ height: 'calc(100vh - 65px)', minHeight: '520px' }}>
+      {/* ── FULL-BLEED IMAGE ──────────────────────────────────────── */}
       <div className="absolute inset-0 w-full h-full">
         {heroImages.length <= 1 ? (
           <ImageDisplay
             src={heroImages[0]}
             alt="Architectural Hardware Collection"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-left"
           />
         ) : (
           <Carousel
@@ -82,61 +83,58 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
                   <ImageDisplay
                     src={img}
                     alt={`Hero ${idx + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-left"
                   />
                 </CarouselItem>
               ))}
             </CarouselContent>
           </Carousel>
         )}
-        {/* No overlay — match the clean look in the screenshot */}
       </div>
 
-      {/* ── TEXT — centered on mobile, right-aligned on md+ ─────── */}
-      <div className="relative z-10 h-full flex items-center justify-center sm:justify-end px-5 sm:px-8 md:px-16 pt-16">
-        <div className="text-center max-w-xl w-full sm:w-auto">
+      {/* ── TEXT — right-aligned, vertically centered ─────────────── */}
+      <div className="relative z-10 h-full flex items-center justify-end pr-12 lg:pr-20">
+        <div className="text-right max-w-lg">
           {/* Main title */}
           <h1
-            className="text-[#1a1a1a] leading-tight mb-4"
+            className="text-[#1a1a1a] leading-tight mb-3"
             style={{
               fontFamily: '"Times New Roman", Times, serif',
-              letterSpacing: '0.18em',
-              fontSize: 'clamp(1.8rem, 3.5vw, 3rem)',
+              letterSpacing: '0.22em',
+              fontSize: 'clamp(1.6rem, 3.2vw, 2.8rem)',
               fontWeight: 400,
             }}
           >
             ARCHITECTURAL DOORWARE
           </h1>
 
-          {/* Subtitle — sentence case, no uppercase, matching image */}
+          {/* Subtitle */}
           <p
-            className="text-[#1a1a1a]/70 mb-10"
+            className="text-[#1a1a1a]/65 mb-8"
             style={{
-              fontFamily: 'Montserrat, system-ui, sans-serif',
-              fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
+              fontFamily: 'Georgia, "Times New Roman", serif',
+              fontSize: 'clamp(0.85rem, 1.1vw, 1rem)',
               fontWeight: 400,
-              letterSpacing: '0.02em',
+              letterSpacing: '0.03em',
             }}
           >
             Export Grade Craftsmanship
           </p>
 
-          {/* Single pill container with both CTAs — exactly matching image */}
-          <div
-            className="inline-flex items-center rounded-full border border-[#1a1a1a]/20 bg-[#f3f3f3]/70 overflow-hidden"
-          >
+          {/* Single pill with both CTAs separated by | */}
+          <div className="inline-flex items-center rounded-full border border-[#bbb] bg-[#f2f2f2]/80 overflow-hidden">
             <Link
               href="/products"
-              className="px-7 py-2.5 text-sm text-[#1a1a1a]/80 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/60 transition-colors"
-              style={{ fontFamily: 'Montserrat, system-ui, sans-serif', letterSpacing: '0.01em' }}
+              className="px-6 py-2.5 text-sm text-[#1a1a1a]/75 hover:text-[#1a1a1a] hover:bg-[#e8e8e8]/60 transition-colors whitespace-nowrap"
+              style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.01em' }}
             >
               View Collections
             </Link>
-            <span className="text-[#1a1a1a]/30 text-base select-none px-0.5">|</span>
+            <span className="text-[#aaa] text-sm select-none">|</span>
             <Link
               href="/contact"
-              className="px-7 py-2.5 text-sm text-[#1a1a1a]/80 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/60 transition-colors"
-              style={{ fontFamily: 'Montserrat, system-ui, sans-serif', letterSpacing: '0.01em' }}
+              className="px-6 py-2.5 text-sm text-[#1a1a1a]/75 hover:text-[#1a1a1a] hover:bg-[#e8e8e8]/60 transition-colors whitespace-nowrap"
+              style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.01em' }}
             >
               Get Quote
             </Link>

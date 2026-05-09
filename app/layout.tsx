@@ -28,7 +28,7 @@ export default function RootLayout({
             <TooltipProvider>
               <ScrollToTop />
               <Navbar />
-              <main>{children}</main>
+              <main className="pt-[65px]">{children}</main>
               <Footer />
               <Toaster />
               <Sonner />
