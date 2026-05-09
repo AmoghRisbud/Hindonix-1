@@ -6,10 +6,9 @@ import pool from './db.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-async function migrate() {
-  const sql = readFileSync(join(__dirname, 'migrations/init.sql'), 'utf8');
-  // Split on semicolons (ignoring empty statements)
-  const statements = sql
+function loadStatements(filePath: string): string[] {
+  const sql = readFileSync(filePath, 'utf8');
+  return sql
     .split(';')
     .map((s) =>
       s
@@ -19,13 +18,24 @@ async function migrate() {
         .trim()
     )
     .filter((s) => s.length > 0);
+}
+
+async function migrate() {
+  const migrationFiles = [
+    join(__dirname, 'migrations/init.sql'),
+    join(__dirname, 'migrations/002_add_categories_hero_images.sql'),
+  ];
 
   const conn = await pool.getConnection();
   try {
-    for (const statement of statements) {
-      await conn.query(statement);
+    for (const file of migrationFiles) {
+      const statements = loadStatements(file);
+      for (const statement of statements) {
+        await conn.query(statement);
+      }
+      console.log(`✅ Applied: ${file.split('/').pop()}`);
     }
-    console.log('✅ Migration complete');
+    console.log('✅ All migrations complete');
   } catch (err) {
     console.error('❌ Migration failed:', err);
     process.exit(1);
