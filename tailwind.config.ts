@@ -28,8 +28,6 @@ export default {
         "off-white": "#eaeaea",
         "charcoal": "#1a1a1a",
         "icon-grey": "#f3f3f3",
-      },
-      colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
