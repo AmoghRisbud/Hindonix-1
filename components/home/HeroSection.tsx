@@ -62,14 +62,15 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
 
   return (
     /* Offset top by navbar height (≈ 70px) */
-    <section className="relative w-full overflow-hidden bg-white" style={{ height: 'calc(100vh - 70px)', minHeight: '540px' }}>
+    <section className="relative w-full overflow-hidden bg-[#eaeaea]" style={{ height: 'calc(100vh - 70px)', minHeight: '540px' }}>
       {/* ── FULL-BLEED IMAGE ──────────────────────────────────────── */}
       <div className="absolute inset-0 w-full h-full">
         {heroImages.length <= 1 ? (
           <ImageDisplay
             src={heroImages[0]}
             alt="Architectural Hardware Collection"
-            className="w-full h-full object-cover object-left"
+            className="w-full h-full object-cover"
+            style={{ objectPosition: 'left 70%' }}
           />
         ) : (
           <Carousel
@@ -83,7 +84,8 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
                   <ImageDisplay
                     src={img}
                     alt={`Hero ${idx + 1}`}
-                    className="w-full h-full object-cover object-left"
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: 'left 70%' }}
                   />
                 </CarouselItem>
               ))}
@@ -93,7 +95,9 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
       </div>
 
       {/* ── TEXT — right-aligned, vertically centered ─────────────── */}
-      <div className="relative z-10 h-full flex items-center justify-end" style={{ paddingRight: 'clamp(2rem, 5vw, 7rem)' }}>
+      {/* pt-[70px] corrects centering: section starts at y=0 (behind fixed nav),   */}
+      {/* so items-center must account for the 70px overlap to hit true visual center */}
+      <div className="relative z-10 h-full flex items-center justify-end" style={{ paddingTop: '70px', paddingRight: 'clamp(2rem, 5vw, 7rem)' }}>
         <div className="text-right">
           {/* Main title */}
           <h1
