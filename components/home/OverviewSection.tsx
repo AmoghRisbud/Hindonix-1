@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 const overviewCards = [
   { icon: Package, title: "Premium Hardware", description: "Precision-crafted architectural hardware with exceptional quality and attention to detail.", stat: "1000+", statLabel: "Products" },
-  { icon: Truck, title: "UK & UAE Delivery", description: "Reliable logistics ensuring timely delivery to UK and UAE markets with careful handling.", stat: "98%", statLabel: "On-Time Delivery" },
+  { icon: Truck, title: "UAE & USA Delivery", description: "Reliable logistics ensuring timely delivery to UK and UAE markets with careful handling.", stat: "98%", statLabel: "On-Time Delivery" },
   { icon: Settings, title: "Customizations", description: "Bespoke hardware tailored to your exact specifications with personalized finishes and designs.", stat: "100%", statLabel: "Customizable", featured: true },
   { icon: Users, title: "B2B Partners", description: "Building lasting relationships with architects, designers, and construction professionals.", stat: "200+", statLabel: "Trade Partners" },
   { icon: Globe, title: "Premium Finishes", description: "Extensive range of finishes including PVD, brass, and premium metal options.", stat: "11+", statLabel: "Finish Options" },
@@ -14,7 +14,7 @@ export function OverviewSection() {
     <section className="py-20 lg:py-28" style={{ backgroundColor: '#eaeaea' }}>
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block text-[#1a1a1a]/50 font-medium text-xs uppercase tracking-[0.25em] mb-4">Why Design Professionals Choose Us</span>
+          <span className="inline-block text-[#1a1a1a]/50 font-normal text-xs tracking-[0.05em] mb-4" style={{ fontFamily: 'Montserrat, system-ui, sans-serif' }}>Why Design Professionals Choose Us</span>
           <h2 className="text-3xl lg:text-4xl font-semibold text-[#1a1a1a] mb-6 tracking-tight">Exceptional Architectural Hardware</h2>
           <p className="text-[#1a1a1a]/60 text-base lg:text-lg font-light">From concept to installation, we provide premium hardware solutions with uncompromising quality, elegant design, and lasting durability.</p>
         </div>

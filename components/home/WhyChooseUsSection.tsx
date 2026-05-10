@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 const reasons = [
   { icon: Clock, title: "Responsive Service", description: "Quick quotes, sample availability, and dedicated support for all your hardware needs." },
-  { icon: Globe, title: "UK & UAE Focus", description: "Dedicated service to UK and UAE markets with local understanding and support." },
+  { icon: Globe, title: "UAE & USA Focus", description: "Dedicated service to UK and UAE markets with local understanding and support." },
   { icon: Handshake, title: "B2B Partnership", description: "Tailored solutions for architects, designers, and construction professionals." },
   { icon: Award, title: "10+ Years Expertise", description: "Decade of experience crafting premium architectural hardware for luxury projects." },
 ];
@@ -22,7 +22,7 @@ export function WhyChooseUsSection() {
         <div className="grid lg:grid-cols-2 gap-8 items-stretch">
           <div className="bg-white p-6 lg:p-10 flex flex-col justify-between border border-[#1a1a1a]/8">
             <div>
-              <span className="inline-block text-[#1a1a1a]/45 font-medium text-xs uppercase tracking-[0.25em] mb-3">Industry Expertise</span>
+              <span className="inline-block text-[#1a1a1a]/45 font-normal text-xs tracking-[0.05em] mb-3" style={{ fontFamily: 'Montserrat, system-ui, sans-serif' }}>Industry Expertise</span>
               <h3 className="text-2xl lg:text-3xl font-semibold text-[#1a1a1a] mb-3 tracking-tight">Specialized in Architectural Hardware</h3>
               <p className="text-[#1a1a1a]/55 text-sm lg:text-base mb-5 leading-relaxed font-light">Since 2025, we&apos;ve been crafting premium architectural hardware for luxury residential and commercial projects. Our expertise in material selection, finish quality, and ergonomic design ensures hardware that performs beautifully for decades.</p>
               <div className="flex flex-wrap gap-2 mb-6">
@@ -50,7 +50,7 @@ export function WhyChooseUsSection() {
           </div>
 
           <div className="bg-[#f3f3f3] p-6 lg:p-10 border border-[#1a1a1a]/8">
-            <span className="inline-block text-[#1a1a1a]/45 font-medium text-xs uppercase tracking-[0.25em] mb-3">Why Choose Us</span>
+            <span className="inline-block text-[#1a1a1a]/45 font-normal text-xs tracking-[0.05em] mb-3" style={{ fontFamily: 'Montserrat, system-ui, sans-serif' }}>Why Choose Us</span>
             <h2 className="text-2xl lg:text-3xl font-semibold text-[#1a1a1a] mb-3 tracking-tight">Craftsmanship Meets Design Excellence</h2>
             <p className="text-[#1a1a1a]/55 text-sm lg:text-base mb-6 font-light">We combine traditional craftsmanship with modern design to deliver architectural hardware that enhances every space with beauty, function, and lasting quality.</p>
             <div className="grid sm:grid-cols-2 gap-6 mb-6">

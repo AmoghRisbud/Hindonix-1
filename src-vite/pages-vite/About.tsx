@@ -78,7 +78,7 @@ const About = () => {
             </h1>
             <p className="text-lg text-primary-foreground/80 mb-8">
               Since 2025, Hindonix has been crafting premium architectural
-              hardware, delivering exceptional quality and design to UK & UAE
+              hardware, delivering exceptional quality and design to UAE & USA
               markets with integrity and expertise.
             </p>
           </div>

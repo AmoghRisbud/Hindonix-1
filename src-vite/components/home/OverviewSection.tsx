@@ -20,9 +20,9 @@ const overviewCards = [
   },
   {
     icon: Truck,
-    title: "UK & UAE Delivery",
+    title: "UAE & USA Delivery",
     description:
-      "Reliable logistics ensuring timely delivery to UK and UAE markets with careful handling.",
+      "Reliable logistics ensuring timely delivery to UAE and USA markets with careful handling.",
     stat: "98%",
     statLabel: "On-Time Delivery",
   },

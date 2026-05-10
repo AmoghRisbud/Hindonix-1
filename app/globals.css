@@ -147,6 +147,14 @@
     @apply font-semibold tracking-tight;
   }
 
+  /* Force form elements to inherit Montserrat — browsers don't do this by default */
+  button,
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+  }
+
   /* Brand name class — Times New Roman with wide letter spacing */
   .font-brand {
     font-family: 'Times New Roman', Times, serif;

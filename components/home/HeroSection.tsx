@@ -111,7 +111,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
           className="text-[#1a1a1a] leading-none mb-4 tracking-[0.1em] md:whitespace-nowrap md:tracking-[0.2em]"
           style={{
             fontFamily: '"Times New Roman", Times, serif',
-            fontSize: 'clamp(1.3rem, 2.8vw, 3.6rem)',
+            fontSize: 'clamp(1.2rem, 2.5vw, 3.2rem)',
             fontWeight: 400,
           }}
         >
@@ -123,7 +123,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
           className="text-[#1a1a1a]/70 mb-6 md:mb-8"
           style={{
             fontFamily: 'Montserrat, system-ui, sans-serif',
-            fontSize: 'clamp(0.75rem, 1.1vw, 1rem)',
+            fontSize: 'clamp(0.85rem, 1.1vw, 1.1rem)',
             fontWeight: 400,
             letterSpacing: '0.06em',
           }}

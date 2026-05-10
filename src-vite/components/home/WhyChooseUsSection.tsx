@@ -19,9 +19,9 @@ const reasons = [
   },
   {
     icon: Globe,
-    title: "UK & UAE Focus",
+    title: "UAE & USA Focus",
     description:
-      "Dedicated service to UK and UAE markets with local understanding and support.",
+      "Dedicated service to UAE and USA markets with local understanding and support.",
   },
   {
     icon: Handshake,
@@ -103,7 +103,7 @@ export function WhyChooseUsSection() {
               </div>
               <div className="bg-primary rounded-2xl p-5 text-center col-span-2">
                 <div className="text-lg font-heading font-bold text-primary-foreground mb-1">
-                  UK & UAE Markets
+                  UAE & USA Markets
                 </div>
                 <div className="text-xs text-primary-foreground/70">
                   Serving B2B Partners Across Two Regions
