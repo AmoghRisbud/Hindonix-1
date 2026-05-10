@@ -62,18 +62,16 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
 
   return (
     /*
-     * layout.tsx puts pt-[65px] on <main>, so this section starts exactly
-     * at the bottom edge of the fixed navbar. Height fills the rest of the viewport.
-     * Image uses object-contain + left center — zero cropping ever.
-     * The photo background is #eaeaea, matching the section bg, so no bars appear.
-     * Text overlays the right side — product lives in left half of photo so no overlap.
+     * Mobile  (< md): flex-col — image on top (52vw tall), text stacked below, all centered
+     * Desktop (≥ md): relative block — image absolute full-bleed, text absolute right overlay
      */
     <section
-      className="relative w-full overflow-hidden bg-[#eaeaea]"
-      style={{ height: 'calc(100vh - 65px)', minHeight: '500px' }}
+      className="w-full bg-[#eaeaea] overflow-hidden flex flex-col md:relative md:block md:h-[calc(100vh-65px)] md:min-h-[500px]"
     >
-      {/* ── IMAGE: full section, object-contain, left-anchored ──────── */}
-      <div className="absolute inset-0 w-full h-full">
+      {/* IMAGE ─────────────────────────────────────────────────────────
+          Mobile : proportional height (52vw), capped at 60vh, in normal flow
+          Desktop: absolute inset-0, fills entire section                */}
+      <div className="w-full h-[52vw] max-h-[60vh] flex-shrink-0 md:absolute md:inset-0 md:h-full md:max-h-none">
         {heroImages.length <= 1 ? (
           <ImageDisplay
             src={heroImages[0]}
@@ -103,31 +101,29 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
         )}
       </div>
 
-      {/* TEXT: absolutely positioned from 44% left. Center-aligned to match template. */}
-      <div
-        className="absolute z-10 flex flex-col items-center justify-center h-full text-center"
-        style={{
-          left: '42%',
-          right: 'clamp(1rem, 3vw, 4rem)',
-        }}
-      >
+      {/* TEXT ──────────────────────────────────────────────────────────
+          Mobile : centered column below image, px-6 padding
+          Desktop: absolute right overlay starting at 42% from left     */}
+      <div className="flex flex-col items-center justify-center text-center px-6 py-10 md:absolute md:z-10 md:top-0 md:bottom-0 md:h-full md:left-[42%] md:right-16 md:px-0 md:py-0">
+
+        {/* Heading — wraps on mobile, single line on desktop */}
         <h1
-          className="text-[#1a1a1a] leading-none mb-4 whitespace-nowrap"
+          className="text-[#1a1a1a] leading-none mb-4 tracking-[0.1em] md:whitespace-nowrap md:tracking-[0.2em]"
           style={{
             fontFamily: '"Times New Roman", Times, serif',
-            letterSpacing: '0.2em',
-            fontSize: 'clamp(1.4rem, 2.8vw, 3.6rem)',
+            fontSize: 'clamp(1.3rem, 2.8vw, 3.6rem)',
             fontWeight: 400,
           }}
         >
           ARCHITECTURAL DOORWARE
         </h1>
 
+        {/* Subtitle */}
         <p
-          className="text-[#1a1a1a]/70 mb-8"
+          className="text-[#1a1a1a]/70 mb-6 md:mb-8"
           style={{
             fontFamily: 'Montserrat, system-ui, sans-serif',
-            fontSize: 'clamp(0.85rem, 1.1vw, 1.1rem)',
+            fontSize: 'clamp(0.75rem, 1.1vw, 1rem)',
             fontWeight: 400,
             letterSpacing: '0.06em',
           }}
@@ -135,10 +131,11 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
           Export Grade Craftsmanship
         </p>
 
+        {/* CTA pill */}
         <div className="inline-flex items-center rounded-full border border-[#c8c8c8] bg-[#f4f4f4]/90 overflow-hidden">
           <Link
             href="/products"
-            className="px-7 py-3 text-[0.85rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
+            className="px-5 py-2.5 md:px-7 md:py-3 text-sm md:text-[0.85rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
             style={{ fontFamily: 'Montserrat, system-ui, sans-serif', letterSpacing: '0.01em' }}
           >
             View Collections
@@ -146,7 +143,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
           <span className="text-[#c0c0c0] text-xs select-none px-0.5">|</span>
           <Link
             href="/contact"
-            className="px-7 py-3 text-[0.85rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
+            className="px-5 py-2.5 md:px-7 md:py-3 text-sm md:text-[0.85rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
             style={{ fontFamily: 'Montserrat, system-ui, sans-serif', letterSpacing: '0.01em' }}
           >
             Get Quote
