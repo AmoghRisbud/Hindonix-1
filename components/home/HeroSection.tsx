@@ -61,63 +61,66 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
   }, [carouselApi, heroImages]);
 
   return (
-    /* Grid layout: image owns left 55% | text owns right 45% — no overlap possible */
+    /*
+     * layout.tsx puts pt-[65px] on <main>, so this section starts exactly
+     * at the bottom edge of the fixed navbar. Height fills the rest of the viewport.
+     * Image uses object-contain + left center — zero cropping ever.
+     * The photo background is #eaeaea, matching the section bg, so no bars appear.
+     * Text overlays the right side — product lives in left half of photo so no overlap.
+     */
     <section
-      className="w-full bg-[#eaeaea]"
-      style={{ height: 'calc(100vh - 70px)', minHeight: '540px' }}
+      className="relative w-full overflow-hidden bg-[#eaeaea]"
+      style={{ height: 'calc(100vh - 65px)', minHeight: '500px' }}
     >
-      <div className="grid h-full" style={{ gridTemplateColumns: '55% 45%' }}>
+      {/* ── IMAGE: full section, object-contain, left-anchored ──────── */}
+      <div className="absolute inset-0 w-full h-full">
+        {heroImages.length <= 1 ? (
+          <ImageDisplay
+            src={heroImages[0]}
+            alt="Architectural Hardware Collection"
+            className="w-full h-full object-contain"
+            style={{ objectPosition: 'left center' }}
+          />
+        ) : (
+          <Carousel
+            setApi={setCarouselApi}
+            className="w-full h-full"
+            opts={{ loop: true, align: "center" }}
+          >
+            <CarouselContent className="h-full">
+              {heroImages.map((img, idx) => (
+                <CarouselItem key={idx} className="h-full">
+                  <ImageDisplay
+                    src={img}
+                    alt={`Hero ${idx + 1}`}
+                    className="w-full h-full object-contain"
+                    style={{ objectPosition: 'left center' }}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        )}
+      </div>
 
-        {/* ── LEFT: full product image — object-contain, zero cropping ── */}
-        <div className="h-full overflow-hidden">
-          {heroImages.length <= 1 ? (
-            <ImageDisplay
-              src={heroImages[0]}
-              alt="Architectural Hardware Collection"
-              className="w-full h-full object-contain"
-              style={{ objectPosition: 'left bottom' }}
-            />
-          ) : (
-            <Carousel
-              setApi={setCarouselApi}
-              className="w-full h-full"
-              opts={{ loop: true, align: "center" }}
-            >
-              <CarouselContent className="h-full">
-                {heroImages.map((img, idx) => (
-                  <CarouselItem key={idx} className="h-full">
-                    <ImageDisplay
-                      src={img}
-                      alt={`Hero ${idx + 1}`}
-                      className="w-full h-full object-contain"
-                      style={{ objectPosition: 'left bottom' }}
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
-          )}
-        </div>
-
-        {/* ── RIGHT: text block — vertically centered, no overlap ────── */}
-        <div
-          className="flex flex-col items-end justify-center text-right"
-          style={{ paddingRight: 'clamp(2rem, 5vw, 6rem)', paddingLeft: '1rem' }}
-        >
-          {/* Main title */}
+      {/* ── TEXT: right side overlay, truly centered in visible area ─── */}
+      <div
+        className="relative z-10 h-full flex items-center justify-end"
+        style={{ paddingRight: 'clamp(2rem, 5vw, 6rem)' }}
+      >
+        <div className="text-right">
           <h1
-            className="text-[#1a1a1a] leading-none mb-5"
+            className="text-[#1a1a1a] leading-none mb-5 whitespace-nowrap"
             style={{
               fontFamily: '"Times New Roman", Times, serif',
               letterSpacing: '0.2em',
-              fontSize: 'clamp(1.4rem, 2.6vw, 3.5rem)',
+              fontSize: 'clamp(1.2rem, 2vw, 2.8rem)',
               fontWeight: 400,
             }}
           >
             ARCHITECTURAL DOORWARE
           </h1>
 
-          {/* Subtitle */}
           <p
             className="text-[#1a1a1a]/50 mb-9"
             style={{
@@ -130,7 +133,6 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
             Export Grade Craftsmanship
           </p>
 
-          {/* Single pill CTA */}
           <div className="inline-flex items-center rounded-full border border-[#c8c8c8] bg-[#f4f4f4]/90 overflow-hidden">
             <Link
               href="/products"
@@ -149,7 +151,6 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
             </Link>
           </div>
         </div>
-
       </div>
     </section>
   );
