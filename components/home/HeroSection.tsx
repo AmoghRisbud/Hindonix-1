@@ -107,7 +107,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
       <div
         className="absolute z-10 flex flex-col items-center justify-center h-full text-center"
         style={{
-          left: '44%',
+          left: '40%',
           right: 'clamp(1rem, 3vw, 4rem)',
         }}
       >
@@ -116,7 +116,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
           style={{
             fontFamily: '"Times New Roman", Times, serif',
             letterSpacing: '0.2em',
-            fontSize: 'clamp(1rem, 2.2vw, 2.8rem)',
+            fontSize: 'clamp(1.4rem, 2.8vw, 3.6rem)',
             fontWeight: 400,
           }}
         >
@@ -124,10 +124,10 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
         </h1>
 
         <p
-          className="text-[#1a1a1a]/50 mb-8"
+          className="text-[#1a1a1a]/70 mb-8"
           style={{
             fontFamily: 'Montserrat, system-ui, sans-serif',
-            fontSize: 'clamp(0.65rem, 0.8vw, 0.85rem)',
+            fontSize: 'clamp(0.78rem, 1vw, 1rem)',
             fontWeight: 400,
             letterSpacing: '0.06em',
           }}
@@ -138,7 +138,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
         <div className="inline-flex items-center rounded-full border border-[#c8c8c8] bg-[#f4f4f4]/90 overflow-hidden">
           <Link
             href="/products"
-            className="px-5 py-2 text-[0.8rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
+            className="px-7 py-3 text-[0.85rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
             style={{ fontFamily: 'Montserrat, system-ui, sans-serif', letterSpacing: '0.01em' }}
           >
             View Collections
@@ -146,7 +146,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
           <span className="text-[#c0c0c0] text-xs select-none px-0.5">|</span>
           <Link
             href="/contact"
-            className="px-5 py-2 text-[0.8rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
+            className="px-7 py-3 text-[0.85rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
             style={{ fontFamily: 'Montserrat, system-ui, sans-serif', letterSpacing: '0.01em' }}
           >
             Get Quote

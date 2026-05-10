@@ -46,13 +46,13 @@ function NavbarContent({
         </Link>
 
         {/* Nav links — centre, grouped in a single pill (hidden on mobile) */}
-        <div className="hidden md:flex items-center rounded-full border border-[#e0e0e0] bg-[#f5f5f5] px-1 py-1 gap-0.5">
+        <div className="hidden md:flex items-center rounded-full border border-[#e0e0e0] bg-[#f5f5f5] px-2 py-1.5 gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               href={link.path}
               className={cn(
-                "px-4 py-1.5 rounded-full text-sm transition-colors tracking-wide",
+                "px-5 py-2 rounded-full text-base transition-colors tracking-wide",
                 pathname === link.path
                   ? "bg-white text-[#1a1a1a] shadow-sm font-medium"
                   : "text-[#555] hover:text-[#1a1a1a] hover:bg-white/70"
@@ -65,7 +65,7 @@ function NavbarContent({
             <Link
               href="/admin"
               className={cn(
-                "px-4 py-1.5 rounded-full text-sm transition-colors tracking-wide",
+                "px-5 py-2 rounded-full text-base transition-colors tracking-wide",
                 pathname === "/admin"
                   ? "bg-white text-[#1a1a1a] shadow-sm font-medium"
                   : "text-[#555] hover:text-[#1a1a1a] hover:bg-white/70"
@@ -78,7 +78,7 @@ function NavbarContent({
             <Link
               href="/sign-in"
               className={cn(
-                "px-4 py-1.5 rounded-full text-sm transition-colors tracking-wide",
+                "px-5 py-2 rounded-full text-base transition-colors tracking-wide",
                 pathname === "/sign-in"
                   ? "bg-white text-[#1a1a1a] shadow-sm font-medium"
                   : "text-[#555] hover:text-[#1a1a1a] hover:bg-white/70"
