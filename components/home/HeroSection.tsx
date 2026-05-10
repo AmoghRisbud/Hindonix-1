@@ -107,7 +107,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
       <div
         className="absolute z-10 flex flex-col items-center justify-center h-full text-center"
         style={{
-          left: '40%',
+          left: '42%',
           right: 'clamp(1rem, 3vw, 4rem)',
         }}
       >
@@ -127,7 +127,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
           className="text-[#1a1a1a]/70 mb-8"
           style={{
             fontFamily: 'Montserrat, system-ui, sans-serif',
-            fontSize: 'clamp(0.78rem, 1vw, 1rem)',
+            fontSize: 'clamp(0.85rem, 1.1vw, 1.1rem)',
             fontWeight: 400,
             letterSpacing: '0.06em',
           }}
