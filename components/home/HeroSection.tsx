@@ -103,13 +103,12 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
         )}
       </div>
 
-      {/* TEXT: absolutely positioned, starts at 48% from left (right beside image),
-           extends to right edge with padding. All children right-aligned. */}
+      {/* TEXT: absolutely positioned from 44% left. Center-aligned to match template. */}
       <div
-        className="absolute z-10 flex flex-col items-end justify-center h-full text-right"
+        className="absolute z-10 flex flex-col items-center justify-center h-full text-center"
         style={{
-          left: '48%',
-          right: 'clamp(1.5rem, 4vw, 5rem)',
+          left: '44%',
+          right: 'clamp(1rem, 3vw, 4rem)',
         }}
       >
         <h1
