@@ -61,15 +61,15 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
   }, [carouselApi, heroImages]);
 
   return (
-    /* Offset top by navbar height (≈ 65px) */
-    <section className="relative w-full overflow-hidden bg-[#eaeaea]" style={{ height: 'calc(100vh - 65px)', minHeight: '520px' }}>
+    /* Offset top by navbar height (≈ 70px) */
+    <section className="relative w-full overflow-hidden bg-white" style={{ height: 'calc(100vh - 70px)', minHeight: '540px' }}>
       {/* ── FULL-BLEED IMAGE ──────────────────────────────────────── */}
       <div className="absolute inset-0 w-full h-full">
         {heroImages.length <= 1 ? (
           <ImageDisplay
             src={heroImages[0]}
             alt="Architectural Hardware Collection"
-            className="w-full h-full object-contain object-left"
+            className="w-full h-full object-cover object-left"
           />
         ) : (
           <Carousel
@@ -83,7 +83,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
                   <ImageDisplay
                     src={img}
                     alt={`Hero ${idx + 1}`}
-                    className="w-full h-full object-contain object-left"
+                    className="w-full h-full object-cover object-left"
                   />
                 </CarouselItem>
               ))}
@@ -93,15 +93,15 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
       </div>
 
       {/* ── TEXT — right-aligned, vertically centered ─────────────── */}
-      <div className="relative z-10 h-full flex items-center justify-end pr-12 lg:pr-20">
+      <div className="relative z-10 h-full flex items-center justify-end" style={{ paddingRight: 'clamp(2rem, 5vw, 7rem)' }}>
         <div className="text-right">
           {/* Main title */}
           <h1
-            className="text-[#1a1a1a] leading-tight mb-3 whitespace-nowrap"
+            className="text-[#1a1a1a] leading-none mb-5 whitespace-nowrap"
             style={{
               fontFamily: '"Times New Roman", Times, serif',
               letterSpacing: '0.2em',
-              fontSize: 'clamp(1.2rem, 2.4vw, 2.2rem)',
+              fontSize: 'clamp(1.6rem, 3vw, 4rem)',
               fontWeight: 400,
             }}
           >
@@ -110,30 +110,30 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
 
           {/* Subtitle */}
           <p
-            className="text-[#1a1a1a]/65 mb-8"
+            className="text-[#1a1a1a]/50 mb-9"
             style={{
               fontFamily: 'Georgia, "Times New Roman", serif',
-              fontSize: 'clamp(0.85rem, 1.1vw, 1rem)',
+              fontSize: 'clamp(0.7rem, 0.85vw, 0.88rem)',
               fontWeight: 400,
-              letterSpacing: '0.03em',
+              letterSpacing: '0.06em',
             }}
           >
             Export Grade Craftsmanship
           </p>
 
           {/* Single pill with both CTAs separated by | */}
-          <div className="inline-flex items-center rounded-full border border-[#bbb] bg-[#f2f2f2]/80 overflow-hidden">
+          <div className="inline-flex items-center rounded-full border border-[#c8c8c8] bg-[#f4f4f4]/90 overflow-hidden">
             <Link
               href="/products"
-              className="px-6 py-2.5 text-sm text-[#1a1a1a]/75 hover:text-[#1a1a1a] hover:bg-[#e8e8e8]/60 transition-colors whitespace-nowrap"
+              className="px-5 py-2 text-[0.8rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
               style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.01em' }}
             >
               View Collections
             </Link>
-            <span className="text-[#aaa] text-sm select-none">|</span>
+            <span className="text-[#c0c0c0] text-xs select-none px-0.5">|</span>
             <Link
               href="/contact"
-              className="px-6 py-2.5 text-sm text-[#1a1a1a]/75 hover:text-[#1a1a1a] hover:bg-[#e8e8e8]/60 transition-colors whitespace-nowrap"
+              className="px-5 py-2 text-[0.8rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
               style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.01em' }}
             >
               Get Quote
