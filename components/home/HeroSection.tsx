@@ -126,7 +126,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
         <p
           className="text-[#1a1a1a]/50 mb-8"
           style={{
-            fontFamily: 'Georgia, "Times New Roman", serif',
+            fontFamily: 'Montserrat, system-ui, sans-serif',
             fontSize: 'clamp(0.65rem, 0.8vw, 0.85rem)',
             fontWeight: 400,
             letterSpacing: '0.06em',
@@ -139,7 +139,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
           <Link
             href="/products"
             className="px-5 py-2 text-[0.8rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
-            style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.01em' }}
+            style={{ fontFamily: 'Montserrat, system-ui, sans-serif', letterSpacing: '0.01em' }}
           >
             View Collections
           </Link>
@@ -147,7 +147,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
           <Link
             href="/contact"
             className="px-5 py-2 text-[0.8rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
-            style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.01em' }}
+            style={{ fontFamily: 'Montserrat, system-ui, sans-serif', letterSpacing: '0.01em' }}
           >
             Get Quote
           </Link>
