@@ -38,7 +38,7 @@ function NavbarContent({
         {/* Brand — left */}
         <Link href="/" aria-label="Hindonix home" className="shrink-0">
           <span
-            className="text-[#1a1a1a] text-xl leading-none"
+            className="text-[#1a1a1a] text-2xl leading-none"
             style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 400, letterSpacing: '0.2em' }}
           >
             HINDONIX<sup className="text-[10px] ml-0.5">®</sup>

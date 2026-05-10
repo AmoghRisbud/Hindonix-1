@@ -103,53 +103,55 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
         )}
       </div>
 
-      {/* ── TEXT: right side overlay, truly centered in visible area ─── */}
+      {/* TEXT: absolutely positioned, starts at 48% from left (right beside image),
+           extends to right edge with padding. All children right-aligned. */}
       <div
-        className="relative z-10 h-full flex items-center justify-end"
-        style={{ paddingRight: 'clamp(2rem, 5vw, 6rem)' }}
+        className="absolute z-10 flex flex-col items-end justify-center h-full text-right"
+        style={{
+          left: '48%',
+          right: 'clamp(1.5rem, 4vw, 5rem)',
+        }}
       >
-        <div className="text-right">
-          <h1
-            className="text-[#1a1a1a] leading-none mb-5 whitespace-nowrap"
-            style={{
-              fontFamily: '"Times New Roman", Times, serif',
-              letterSpacing: '0.2em',
-              fontSize: 'clamp(1.2rem, 2vw, 2.8rem)',
-              fontWeight: 400,
-            }}
-          >
-            ARCHITECTURAL DOORWARE
-          </h1>
+        <h1
+          className="text-[#1a1a1a] leading-none mb-4 whitespace-nowrap"
+          style={{
+            fontFamily: '"Times New Roman", Times, serif',
+            letterSpacing: '0.2em',
+            fontSize: 'clamp(1rem, 2.2vw, 2.8rem)',
+            fontWeight: 400,
+          }}
+        >
+          ARCHITECTURAL DOORWARE
+        </h1>
 
-          <p
-            className="text-[#1a1a1a]/50 mb-9"
-            style={{
-              fontFamily: 'Georgia, "Times New Roman", serif',
-              fontSize: 'clamp(0.7rem, 0.85vw, 0.88rem)',
-              fontWeight: 400,
-              letterSpacing: '0.06em',
-            }}
-          >
-            Export Grade Craftsmanship
-          </p>
+        <p
+          className="text-[#1a1a1a]/50 mb-8"
+          style={{
+            fontFamily: 'Georgia, "Times New Roman", serif',
+            fontSize: 'clamp(0.65rem, 0.8vw, 0.85rem)',
+            fontWeight: 400,
+            letterSpacing: '0.06em',
+          }}
+        >
+          Export Grade Craftsmanship
+        </p>
 
-          <div className="inline-flex items-center rounded-full border border-[#c8c8c8] bg-[#f4f4f4]/90 overflow-hidden">
-            <Link
-              href="/products"
-              className="px-5 py-2 text-[0.8rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
-              style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.01em' }}
-            >
-              View Collections
-            </Link>
-            <span className="text-[#c0c0c0] text-xs select-none px-0.5">|</span>
-            <Link
-              href="/contact"
-              className="px-5 py-2 text-[0.8rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
-              style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.01em' }}
-            >
-              Get Quote
-            </Link>
-          </div>
+        <div className="inline-flex items-center rounded-full border border-[#c8c8c8] bg-[#f4f4f4]/90 overflow-hidden">
+          <Link
+            href="/products"
+            className="px-5 py-2 text-[0.8rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
+            style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.01em' }}
+          >
+            View Collections
+          </Link>
+          <span className="text-[#c0c0c0] text-xs select-none px-0.5">|</span>
+          <Link
+            href="/contact"
+            className="px-5 py-2 text-[0.8rem] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:bg-[#eaeaea]/70 transition-colors whitespace-nowrap"
+            style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.01em' }}
+          >
+            Get Quote
+          </Link>
         </div>
       </div>
     </section>
