@@ -61,51 +61,56 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
   }, [carouselApi, heroImages]);
 
   return (
-    /* Offset top by navbar height (≈ 70px) */
-    <section className="relative w-full overflow-hidden bg-[#eaeaea]" style={{ height: 'calc(100vh - 70px)', minHeight: '540px' }}>
-      {/* ── FULL-BLEED IMAGE ──────────────────────────────────────── */}
-      <div className="absolute inset-0 w-full h-full">
-        {heroImages.length <= 1 ? (
-          <ImageDisplay
-            src={heroImages[0]}
-            alt="Architectural Hardware Collection"
-            className="w-full h-full object-cover"
-            style={{ objectPosition: 'left 70%' }}
-          />
-        ) : (
-          <Carousel
-            setApi={setCarouselApi}
-            className="w-full h-full"
-            opts={{ loop: true, align: "center" }}
-          >
-            <CarouselContent className="h-full">
-              {heroImages.map((img, idx) => (
-                <CarouselItem key={idx} className="h-full">
-                  <ImageDisplay
-                    src={img}
-                    alt={`Hero ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                    style={{ objectPosition: 'left 70%' }}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-        )}
-      </div>
+    /* Grid layout: image owns left 55% | text owns right 45% — no overlap possible */
+    <section
+      className="w-full bg-[#eaeaea]"
+      style={{ height: 'calc(100vh - 70px)', minHeight: '540px' }}
+    >
+      <div className="grid h-full" style={{ gridTemplateColumns: '55% 45%' }}>
 
-      {/* ── TEXT — right-aligned, vertically centered ─────────────── */}
-      {/* pt-[70px] corrects centering: section starts at y=0 (behind fixed nav),   */}
-      {/* so items-center must account for the 70px overlap to hit true visual center */}
-      <div className="relative z-10 h-full flex items-center justify-end" style={{ paddingTop: '70px', paddingRight: 'clamp(2rem, 5vw, 7rem)' }}>
-        <div className="text-right">
+        {/* ── LEFT: full product image — object-contain, zero cropping ── */}
+        <div className="h-full overflow-hidden">
+          {heroImages.length <= 1 ? (
+            <ImageDisplay
+              src={heroImages[0]}
+              alt="Architectural Hardware Collection"
+              className="w-full h-full object-contain"
+              style={{ objectPosition: 'left bottom' }}
+            />
+          ) : (
+            <Carousel
+              setApi={setCarouselApi}
+              className="w-full h-full"
+              opts={{ loop: true, align: "center" }}
+            >
+              <CarouselContent className="h-full">
+                {heroImages.map((img, idx) => (
+                  <CarouselItem key={idx} className="h-full">
+                    <ImageDisplay
+                      src={img}
+                      alt={`Hero ${idx + 1}`}
+                      className="w-full h-full object-contain"
+                      style={{ objectPosition: 'left bottom' }}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          )}
+        </div>
+
+        {/* ── RIGHT: text block — vertically centered, no overlap ────── */}
+        <div
+          className="flex flex-col items-end justify-center text-right"
+          style={{ paddingRight: 'clamp(2rem, 5vw, 6rem)', paddingLeft: '1rem' }}
+        >
           {/* Main title */}
           <h1
-            className="text-[#1a1a1a] leading-none mb-5 whitespace-nowrap"
+            className="text-[#1a1a1a] leading-none mb-5"
             style={{
               fontFamily: '"Times New Roman", Times, serif',
               letterSpacing: '0.2em',
-              fontSize: 'clamp(1.6rem, 3vw, 4rem)',
+              fontSize: 'clamp(1.4rem, 2.6vw, 3.5rem)',
               fontWeight: 400,
             }}
           >
@@ -125,7 +130,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
             Export Grade Craftsmanship
           </p>
 
-          {/* Single pill with both CTAs separated by | */}
+          {/* Single pill CTA */}
           <div className="inline-flex items-center rounded-full border border-[#c8c8c8] bg-[#f4f4f4]/90 overflow-hidden">
             <Link
               href="/products"
@@ -144,6 +149,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
             </Link>
           </div>
         </div>
+
       </div>
     </section>
   );
