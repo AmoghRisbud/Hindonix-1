@@ -34,12 +34,12 @@ function NavbarContent({
   return (
     <>
       {/* ── HORIZONTAL TOP NAV ─────────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 lg:px-10 py-4 bg-white border-b border-[#e8e8e8]">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 lg:px-10 py-4 bg-[#eaeaea] border-b border-[#d5d5d5]">
         {/* Brand — left */}
         <Link href="/" aria-label="Hindonix home" className="shrink-0">
           <span
-            className="text-[#1a1a1a] text-xl leading-none tracking-[0.12em]"
-            style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 400 }}
+            className="text-[#1a1a1a] text-xl leading-none"
+            style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 400, letterSpacing: '0.2em' }}
           >
             HINDONIX<sup className="text-[10px] ml-0.5">®</sup>
           </span>
@@ -117,7 +117,7 @@ function NavbarContent({
         <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}>
           <div className="absolute inset-0 bg-[#1a1a1a]/40" />
           <div
-            className="absolute right-0 top-0 h-full w-64 bg-white flex flex-col py-16 px-6 gap-1"
+            className="absolute right-0 top-0 h-full w-64 bg-[#eaeaea] flex flex-col py-16 px-6 gap-1"
             onClick={(e) => e.stopPropagation()}
           >
             {navLinks.map((link) => (

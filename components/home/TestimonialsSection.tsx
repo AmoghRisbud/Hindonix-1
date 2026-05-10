@@ -33,7 +33,7 @@ export function TestimonialsSection({ initialTestimonials }: TestimonialsSection
   const prevSlide = () => setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
   return (
-    <section className="py-20 lg:py-28" style={{ backgroundColor: '#f3f3f3' }}>
+    <section className="py-20 lg:py-28" style={{ backgroundColor: '#eaeaea' }}>
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="inline-block text-[#1a1a1a]/45 font-medium text-xs uppercase tracking-[0.25em] mb-4">Client Testimonials</span>

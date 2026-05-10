@@ -62,14 +62,14 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
 
   return (
     /* Offset top by navbar height (≈ 65px) */
-    <section className="relative w-full overflow-hidden" style={{ height: 'calc(100vh - 65px)', minHeight: '520px' }}>
+    <section className="relative w-full overflow-hidden bg-[#eaeaea]" style={{ height: 'calc(100vh - 65px)', minHeight: '520px' }}>
       {/* ── FULL-BLEED IMAGE ──────────────────────────────────────── */}
       <div className="absolute inset-0 w-full h-full">
         {heroImages.length <= 1 ? (
           <ImageDisplay
             src={heroImages[0]}
             alt="Architectural Hardware Collection"
-            className="w-full h-full object-cover object-left"
+            className="w-full h-full object-contain object-left"
           />
         ) : (
           <Carousel
@@ -83,7 +83,7 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
                   <ImageDisplay
                     src={img}
                     alt={`Hero ${idx + 1}`}
-                    className="w-full h-full object-cover object-left"
+                    className="w-full h-full object-contain object-left"
                   />
                 </CarouselItem>
               ))}
@@ -94,14 +94,14 @@ export function HeroSection({ initialImages }: HeroSectionProps) {
 
       {/* ── TEXT — right-aligned, vertically centered ─────────────── */}
       <div className="relative z-10 h-full flex items-center justify-end pr-12 lg:pr-20">
-        <div className="text-right max-w-lg">
+        <div className="text-right">
           {/* Main title */}
           <h1
-            className="text-[#1a1a1a] leading-tight mb-3"
+            className="text-[#1a1a1a] leading-tight mb-3 whitespace-nowrap"
             style={{
               fontFamily: '"Times New Roman", Times, serif',
-              letterSpacing: '0.22em',
-              fontSize: 'clamp(1.6rem, 3.2vw, 2.8rem)',
+              letterSpacing: '0.2em',
+              fontSize: 'clamp(1.2rem, 2.4vw, 2.2rem)',
               fontWeight: 400,
             }}
           >
