@@ -150,6 +150,8 @@ const Admin = () => {
 
   // Image file states
   const [productImageFile, setProductImageFile] = useState<File | null>(null);
+  const [productExtraImageFiles, setProductExtraImageFiles] = useState<File[]>([]);
+  const [productVideoFiles, setProductVideoFiles] = useState<File[]>([]);
   const [blogImageFile, setBlogImageFile] = useState<File | null>(null);
   const [testimonialImageFile, setTestimonialImageFile] = useState<File | null>(
     null
@@ -233,6 +235,8 @@ const Admin = () => {
     modelNumber: "",
     longDescription: "",
     image: "",
+    images: [] as string[],
+    videos: [] as string[],
     finishIds: [] as number[],
   });
 
@@ -312,8 +316,43 @@ const Admin = () => {
     }
   };
 
-  const handleBlogImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+  const handleProductExtraImagesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    try {
+      setUploading(true);
+      setProductExtraImageFiles(files);
+      const urls: string[] = [];
+      for (const file of files) {
+        const res = await uploadImageToCloudinary(file);
+        urls.push(res.secure_url);
+      }
+      setProductForm((prev) => ({ ...prev, images: [...prev.images, ...urls] }));
+      toast({ title: "Images Uploaded", description: `${files.length} image(s) added.` });
+    } catch {
+      toast({ title: "Upload Error", description: "Failed to upload images.", variant: "destructive" });
+    } finally { setUploading(false); }
+  };
+
+  const handleProductVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    try {
+      setUploading(true);
+      setProductVideoFiles(files);
+      const urls: string[] = [];
+      for (const file of files) {
+        const res = await uploadImageToCloudinary(file);
+        urls.push(res.secure_url);
+      }
+      setProductForm((prev) => ({ ...prev, videos: [...prev.videos, ...urls] }));
+      toast({ title: "Videos Uploaded", description: `${files.length} video(s) added.` });
+    } catch {
+      toast({ title: "Upload Error", description: "Failed to upload videos.", variant: "destructive" });
+    } finally { setUploading(false); }
+  };
+
+  const handleBlogImageUpload = async (    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -440,6 +479,8 @@ const Admin = () => {
   const handleAddProduct = () => {
     setEditingProduct(null);
     setProductImageFile(null);
+    setProductExtraImageFiles([]);
+    setProductVideoFiles([]);
     setProductForm({
       name: "",
       categoryId: undefined,
@@ -449,6 +490,8 @@ const Admin = () => {
       modelNumber: "",
       longDescription: "",
       image: "",
+      images: [],
+      videos: [],
       finishIds: [],
     });
     setProductDialogOpen(true);
@@ -488,6 +531,8 @@ const Admin = () => {
       modelNumber: product.modelNumber || "",
       longDescription: product.longDescription || "",
       image: product.image,
+      images: product.images || [],
+      videos: product.videos || [],
       finishIds,
     });
     setProductDialogOpen(true);
@@ -576,6 +621,8 @@ const Admin = () => {
           modelNumber: productForm.modelNumber,
           longDescription: productForm.longDescription,
           image: productForm.image,
+          images: productForm.images,
+          videos: productForm.videos,
           finishIds: productForm.finishIds,
           // legacy string fields
           category: catName,
@@ -610,6 +657,8 @@ const Admin = () => {
           modelNumber: productForm.modelNumber,
           longDescription: productForm.longDescription,
           image: productForm.image,
+          images: productForm.images,
+          videos: productForm.videos,
           finishIds: productForm.finishIds,
           // legacy string fields
           category: catName,
@@ -627,6 +676,8 @@ const Admin = () => {
       setProducts(updatedProducts);
       setProductDialogOpen(false);
       setProductImageFile(null);
+      setProductExtraImageFiles([]);
+      setProductVideoFiles([]);
     } catch (error) {
       console.error("Error saving product:", error);
       toast({
@@ -2193,7 +2244,7 @@ const Admin = () => {
               />
             </div>
             <div>
-              <Label htmlFor="image">Product Image</Label>
+              <Label htmlFor="image">Thumbnail Image (main)</Label>
               <Input
                 id="image"
                 type="file"
@@ -2212,6 +2263,58 @@ const Admin = () => {
                 <p className="text-sm text-muted-foreground mt-1">
                   URL: {productForm.image}
                 </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="extra-images">Additional Images (up to 3–4, optional)</Label>
+              <Input
+                id="extra-images"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleProductExtraImagesUpload}
+                className="cursor-pointer mt-1"
+                disabled={uploading}
+              />
+              {productForm.images.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {productForm.images.map((url, i) => (
+                    <div key={i} className="relative group w-16 h-16 rounded-lg overflow-hidden border border-border">
+                      <img src={url} alt="" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setProductForm((prev) => ({ ...prev, images: prev.images.filter((_, idx) => idx !== i) }))}
+                        className="absolute inset-0 bg-black/50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center text-xs transition-opacity"
+                      >✕</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="product-videos">Product Videos (1–2, optional)</Label>
+              <Input
+                id="product-videos"
+                type="file"
+                accept="video/*"
+                multiple
+                onChange={handleProductVideoUpload}
+                className="cursor-pointer mt-1"
+                disabled={uploading}
+              />
+              {productForm.videos.length > 0 && (
+                <div className="space-y-1 mt-2">
+                  {productForm.videos.map((url, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span className="truncate flex-1">{url.split('/').pop()}</span>
+                      <button
+                        type="button"
+                        onClick={() => setProductForm((prev) => ({ ...prev, videos: prev.videos.filter((_, idx) => idx !== i) }))}
+                        className="text-destructive hover:underline text-xs"
+                      >Remove</button>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
             <div>

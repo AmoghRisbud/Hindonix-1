@@ -90,6 +90,8 @@ export interface Product {
   modelNumber?: string;
   longDescription?: string;
   image: string;
+  images?: string[];
+  videos?: string[];
   finishes: string[];
   finishIds?: number[];
 }
