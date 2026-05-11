@@ -14,7 +14,6 @@ const values = [
 
 const team = [
   { name: "Sarvesh Todkari", role: "Founder & CEO", image: "/images/about/Sarvesh_cropped.PNG", bio: "Hindonix International" },
-  { name: "Makrand Gangan", role: "Sales Executive", image: "/images/about/Makrand_cropped.PNG", bio: "Hindonix International" },
 ];
 
 const certifications = [
@@ -95,7 +94,7 @@ export default function AboutPage() {
             <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground mb-6">Meet Our Team</h2>
             <p className="text-muted-foreground text-lg">Experienced professionals dedicated to your success in global trade.</p>
           </div>
-          <div className="grid md:grid-cols-2 gap-10 place-items-center">
+          <div className="flex justify-center">
             {team.map((member) => (
               <div key={member.name} className="flex flex-col items-center text-center gap-4">
                 <div className="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden border border-border/60 shadow-card">
