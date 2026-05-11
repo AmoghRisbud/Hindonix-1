@@ -35,17 +35,19 @@ function NavbarContent({
     <>
       {/* ── HORIZONTAL TOP NAV ─────────────────────────────────────── */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 lg:px-8 py-5 bg-[#eaeaea]">
-        {/* Brand — left */}
-        <Link href="/" aria-label="Hindonix home" className="shrink-0">
-          <span
-            className="text-[#1a1a1a] text-2xl md:text-3xl leading-none"
-            style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 400, letterSpacing: '0.2em' }}
-          >
-            HINDONIX<sup className="text-[10px] ml-0.5">®</sup>
-          </span>
-        </Link>
+        {/* Brand — left, flex-1 so it balances the right spacer */}
+        <div className="flex-1">
+          <Link href="/" aria-label="Hindonix home" className="shrink-0 inline-block">
+            <span
+              className="text-[#1a1a1a] text-2xl md:text-3xl leading-none"
+              style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 400, letterSpacing: '0.2em' }}
+            >
+              HINDONIX<sup className="text-[10px] ml-0.5">®</sup>
+            </span>
+          </Link>
+        </div>
 
-        {/* Nav links — centre, grouped in a single pill (hidden on mobile) */}
+        {/* Nav links — centre pill (hidden on mobile) */}
         <div className="hidden md:flex items-center rounded-full border border-[#e0e0e0] bg-[#f5f5f5] px-2 py-1 gap-1">
           {navLinks.map((link) => (
             <Link
@@ -95,7 +97,8 @@ function NavbarContent({
           )}
         </div>
 
-        {/* Hamburger — right */}
+        {/* Right spacer — flex-1 mirrors brand side to keep pill centred; shows hamburger on mobile */}
+        <div className="flex-1 flex justify-end">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="md:hidden p-2 text-[#1a1a1a] flex flex-col gap-[5px]"
@@ -110,6 +113,7 @@ function NavbarContent({
             </>
           )}
         </button>
+        </div>
       </nav>
 
       {/* ── MOBILE DRAWER (right slide-in) ──────────────────────────── */}
