@@ -34,7 +34,7 @@ function NavbarContent({
   return (
     <>
       {/* ── HORIZONTAL TOP NAV ─────────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 lg:px-8 py-5 bg-[#eaeaea] relative">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 lg:px-8 py-5 bg-[#eaeaea]">
         {/* Brand — left */}
         <Link href="/" aria-label="Hindonix home" className="shrink-0">
           <span
@@ -46,7 +46,7 @@ function NavbarContent({
         </Link>
 
         {/* Nav links — centre, grouped in a single pill (hidden on mobile) */}
-        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center rounded-full border border-[#e0e0e0] bg-[#f5f5f5] px-2 py-1 gap-1">
+        <div className="hidden md:flex items-center rounded-full border border-[#e0e0e0] bg-[#f5f5f5] px-2 py-1 gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.path}
