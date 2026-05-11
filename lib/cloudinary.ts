@@ -2,8 +2,10 @@ export interface CloudinaryUploadResponse {
   secure_url: string;
   public_id: string;
   format: string;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
+  resource_type?: string;
+  duration?: number;
 }
 
 export const uploadImageToCloudinary = async (
@@ -18,13 +20,16 @@ export const uploadImageToCloudinary = async (
     );
   }
 
+  const isVideo = file.type.startsWith("video/");
+  const resourceType = isVideo ? "video" : "image";
+
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", uploadPreset);
   formData.append("folder", "hindonix");
 
   const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
     { method: "POST", body: formData }
   );
 
