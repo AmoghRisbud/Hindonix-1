@@ -29,24 +29,29 @@ export function CTASection({ initialBgImage }: CTASectionProps) {
   }, [initialBgImage]);
 
   const bgStyle = bgImage
-    ? {
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }
+    ? {}
     : { backgroundColor: "#1a1a1a" };
 
   return (
     <section className="py-20 lg:py-28" style={{ backgroundColor: '#eaeaea' }}>
       <div className="container mx-auto px-4 lg:px-8">
         <div className="relative overflow-hidden" style={bgStyle}>
-          {/* Dark overlay — always present to keep text readable; slightly lighter when no bg image */}
+          {/* Background image as <img> — more reliable than CSS background-image on iOS Safari */}
+          {bgImage && (
+            <img
+              src={bgImage}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+              style={{ zIndex: 0 }}
+            />
+          )}
+          {/* Dark overlay */}
           <div
-            className="absolute inset-0 z-0"
-            style={{ backgroundColor: bgImage ? "rgba(0,0,0,0.60)" : "#1a1a1a" }}
+            className="absolute inset-0"
+            style={{ backgroundColor: bgImage ? "rgba(0,0,0,0.20)" : "#1a1a1a", zIndex: 1 }}
           />
-          <div className="relative z-10 px-8 py-16 lg:px-16 lg:py-24">
+          <div className="relative px-8 py-16 lg:px-16 lg:py-24" style={{ zIndex: 2 }}>
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl lg:text-5xl font-semibold text-[#eaeaea] mb-6 tracking-tight">Ready to Elevate Your Next Project?</h2>
               <p className="text-base lg:text-lg text-[#f3f3f3]/70 mb-10 max-w-2xl mx-auto font-light">Discover how our premium architectural hardware can bring sophistication and functionality to your residential or commercial space.</p>
