@@ -32,6 +32,8 @@ import {
   deleteTestimonial,
   getHeroImages,
   setHeroImages,
+  getCTAImage,
+  setCTAImage,
   getCategories,
   addCategory,
   updateCategory,
@@ -116,6 +118,10 @@ const Admin = () => {
   const [heroImages, setHeroImagesState] = useState<string[]>([]);
   const [selectedHeroImages, setSelectedHeroImages] = useState<string[]>([]);
 
+  const [ctaImage, setCTAImageState] = useState<string>("");
+  const [ctaImageFile, setCTAImageFile] = useState<File | null>(null);
+  const [ctaImagePreview, setCTAImagePreview] = useState<string>("");
+
   // Controlled tabs state to persist current selection
   const [mainTab, setMainTab] = useState<string>("products");
   const [taxonomyTab, setTaxonomyTab] = useState<string>("categories");
@@ -176,6 +182,7 @@ const Admin = () => {
           finishesData,
           finishCategoriesData,
           heroImagesData,
+          ctaImageData,
         ] = await Promise.all([
           getProducts(),
           getBlogs(),
@@ -186,6 +193,7 @@ const Admin = () => {
           getFinishes(),
           getFinishCategories(),
           getHeroImages(),
+          getCTAImage(),
         ]);
 
         setProducts(productsData);
@@ -198,6 +206,8 @@ const Admin = () => {
         setFinishCategoriesList(finishCategoriesData);
         setHeroImagesState(heroImagesData);
         setSelectedHeroImages(heroImagesData);
+        setCTAImageState(ctaImageData);
+        setCTAImagePreview(ctaImageData);
       } catch (error) {
         console.error("Error loading data:", error);
         toast({
@@ -475,7 +485,71 @@ const Admin = () => {
     setSelectedHeroImages([]);
   };
 
-  // Product handlers
+  // CTA Image handlers
+  const handleCTAImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploading(true);
+      setCTAImageFile(file);
+      const response = await uploadImageToCloudinary(file);
+      setCTAImagePreview(response.secure_url);
+      toast({
+        title: "Image Uploaded",
+        description: "CTA background image uploaded. Click \"Save CTA Image\" to apply.",
+      });
+    } catch (error) {
+      toast({
+        title: "Upload Error",
+        description: error instanceof Error ? error.message : "Failed to upload image.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSaveCTAImage = async () => {
+    if (!ctaImagePreview) {
+      toast({ title: "Error", description: "Please upload an image first.", variant: "destructive" });
+      return;
+    }
+    try {
+      setUploading(true);
+      await setCTAImage(ctaImagePreview);
+      setCTAImageState(ctaImagePreview);
+      toast({ title: "CTA Image Saved", description: "The CTA background image has been updated." });
+      window.dispatchEvent(new Event("ctaImageUpdated"));
+    } catch (error) {
+      toast({
+        title: "Save Error",
+        description: error instanceof Error ? error.message : "Failed to save CTA image.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveCTAImage = async () => {
+    try {
+      setUploading(true);
+      await setCTAImage("");
+      setCTAImageState("");
+      setCTAImagePreview("");
+      setCTAImageFile(null);
+      toast({ title: "CTA Image Removed", description: "Background image removed from CTA section." });
+      window.dispatchEvent(new Event("ctaImageUpdated"));
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to remove CTA image.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
   const handleAddProduct = () => {
     setEditingProduct(null);
     setProductImageFile(null);
@@ -1535,6 +1609,75 @@ const Admin = () => {
                           </button>
                         </div>
                       ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Section Background Image */}
+          <div className="mb-12 bg-card rounded-xl p-8 border border-border/50">
+            <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
+              CTA Section Background Image
+            </h2>
+            <p className="text-sm text-muted-foreground mb-6">
+              Upload a background image for the &ldquo;Ready to Elevate Your Next Project?&rdquo; section.
+              Recommended size: <strong>1920 × 600 px</strong>. A dark overlay is applied automatically so all text stays readable.
+            </p>
+            <div className="grid lg:grid-cols-2 gap-8">
+              <div>
+                <Label htmlFor="cta-image">Background Image</Label>
+                <Input
+                  id="cta-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCTAImageUpload}
+                  disabled={uploading}
+                  className="cursor-pointer mt-2"
+                />
+                {uploading && (
+                  <div className="flex items-center gap-2 mt-2 text-sm text-primary">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Uploading to Cloudinary...
+                  </div>
+                )}
+                {ctaImagePreview && !uploading && (
+                  <p className="text-sm text-green-600 mt-2 font-medium">✓ Image ready to save</p>
+                )}
+                {ctaImage && (
+                  <p className="text-sm text-muted-foreground mt-1">Current: image set</p>
+                )}
+                <div className="flex gap-2 mt-4">
+                  <Button
+                    onClick={handleSaveCTAImage}
+                    disabled={!ctaImagePreview || uploading}
+                  >
+                    {uploading ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</>
+                    ) : "Save CTA Image"}
+                  </Button>
+                  {ctaImage && (
+                    <Button variant="outline" onClick={handleRemoveCTAImage} disabled={uploading}>
+                      Remove Image
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <div>
+                <Label>Preview</Label>
+                <div className="mt-2 rounded-lg overflow-hidden h-36 relative" style={{ backgroundColor: "#1a1a1a" }}>
+                  {ctaImagePreview ? (
+                    <>
+                      <img src={ctaImagePreview} alt="CTA Preview" className="w-full h-full object-cover" />
+                      <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.60)" }} />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <p className="text-white text-xs tracking-widest uppercase opacity-70">CTA Section Preview</p>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+                      No image set (dark background will be used)
                     </div>
                   )}
                 </div>

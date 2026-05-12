@@ -25,6 +25,7 @@ async function migrate() {
     join(__dirname, 'migrations/init.sql'),
     join(__dirname, 'migrations/002_add_categories_hero_images.sql'),
     join(__dirname, 'migrations/003_add_product_images_videos.sql'),
+    join(__dirname, 'migrations/004_add_cta_image.sql'),
   ];
 
   const conn = await pool.getConnection();

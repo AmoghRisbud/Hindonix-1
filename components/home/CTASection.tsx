@@ -1,11 +1,51 @@
+"use client";
+
 import Link from "next/link";
 import { Phone, Mail } from "lucide-react";
+import { useState, useEffect } from "react";
+import { getCTAImage } from "@/lib/data";
 
-export function CTASection() {
+interface CTASectionProps {
+  initialBgImage?: string;
+}
+
+export function CTASection({ initialBgImage }: CTASectionProps) {
+  const [bgImage, setBgImage] = useState<string>(initialBgImage || "");
+
+  useEffect(() => {
+    if (!initialBgImage) {
+      getCTAImage()
+        .then((url) => { if (url) setBgImage(url); })
+        .catch(console.error);
+    }
+
+    const handleUpdate = () => {
+      getCTAImage()
+        .then((url) => setBgImage(url || ""))
+        .catch(console.error);
+    };
+    window.addEventListener("ctaImageUpdated", handleUpdate);
+    return () => window.removeEventListener("ctaImageUpdated", handleUpdate);
+  }, [initialBgImage]);
+
+  const bgStyle = bgImage
+    ? {
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }
+    : { backgroundColor: "#1a1a1a" };
+
   return (
     <section className="py-20 lg:py-28" style={{ backgroundColor: '#eaeaea' }}>
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="relative overflow-hidden" style={{ backgroundColor: '#1a1a1a' }}>
+        <div className="relative overflow-hidden" style={bgStyle}>
+          {/* Dark overlay — always present to keep text readable; slightly lighter when no bg image */}
+          <div
+            className="absolute inset-0 z-0"
+            style={{ backgroundColor: bgImage ? "rgba(0,0,0,0.60)" : "#1a1a1a" }}
+          />
           <div className="relative z-10 px-8 py-16 lg:px-16 lg:py-24">
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl lg:text-5xl font-semibold text-[#eaeaea] mb-6 tracking-tight">Ready to Elevate Your Next Project?</h2>

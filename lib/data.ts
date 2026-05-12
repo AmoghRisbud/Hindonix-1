@@ -37,6 +37,8 @@ import {
   deleteFinishCategoryFromRedis,
   getHeroImagesFromRedis,
   setHeroImagesInRedis,
+  getCTAImageFromDB,
+  setCTAImageInDB,
   getCaseStudyById,
   getProductById,
 } from "./api";
@@ -152,6 +154,9 @@ export const deleteCaseStudy = async (id: number): Promise<boolean> => deleteCas
 
 export const getHeroImages = async (): Promise<string[]> => getHeroImagesFromRedis();
 export const setHeroImages = async (images: string[]): Promise<string[]> => setHeroImagesInRedis(images);
+
+export const getCTAImage = async (): Promise<string> => getCTAImageFromDB();
+export const setCTAImage = async (url: string): Promise<string> => setCTAImageInDB(url);
 
 export const getCategories = async (): Promise<Category[]> => getAllCategories();
 export const addCategory = async (category: Omit<Category, "id">): Promise<Category> => addCategoryToRedis(category);

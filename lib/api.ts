@@ -211,3 +211,13 @@ export const getHeroImagesFromRedis = (): Promise<string[]> =>
 
 export const setHeroImagesInRedis = (urls: string[]): Promise<string[]> =>
   apiFetch<string[]>("/hero-images", { method: "PUT", body: JSON.stringify({ urls }) });
+
+// ============================================
+// CTA IMAGE
+// ============================================
+
+export const getCTAImageFromDB = (): Promise<string> =>
+  apiFetch<{ url: string }>("/cta-image").then((r) => r.url || "");
+
+export const setCTAImageInDB = (url: string): Promise<string> =>
+  apiFetch<{ url: string }>("/cta-image", { method: "PUT", body: JSON.stringify({ url }) }).then((r) => r.url || "");

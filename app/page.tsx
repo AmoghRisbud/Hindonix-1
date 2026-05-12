@@ -21,10 +21,21 @@ async function getHeroImagesFromDB(): Promise<string[]> {
   }
 }
 
+async function getCTAImageFromDB(): Promise<string> {
+  try {
+    const [rows] = await pool.query("SELECT url FROM cta_image ORDER BY id ASC LIMIT 1");
+    const r = (rows as any[])[0];
+    return r?.url || "";
+  } catch {
+    return "";
+  }
+}
+
 export default async function HomePage() {
-  const [heroImages, testimonials] = await Promise.all([
+  const [heroImages, testimonials, ctaBgImage] = await Promise.all([
     getHeroImagesFromDB(),
     getTestimonials().catch(() => []),
+    getCTAImageFromDB(),
   ]);
 
   return (
@@ -33,7 +44,7 @@ export default async function HomePage() {
       <OverviewSection />
       <WhyChooseUsSection />
       <TestimonialsSection initialTestimonials={testimonials} />
-      <CTASection />
+      <CTASection initialBgImage={ctaBgImage} />
     </main>
   );
 }
