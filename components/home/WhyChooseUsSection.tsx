@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 const reasons = [
   { icon: Clock, title: "Responsive Service", description: "Quick quotes, sample availability, and dedicated support for all your hardware needs." },
-  { icon: Globe, title: "UAE & USA Focus", description: "Dedicated service to UK and UAE markets with local understanding and support." },
+  { icon: Globe, title: "UAE & USA Focus", description: "Dedicated service to UAE and USA markets with local understanding and support." },
   { icon: Handshake, title: "B2B Partnership", description: "Tailored solutions for architects, designers, and construction professionals." },
   { icon: Award, title: "10+ Years Expertise", description: "Decade of experience crafting premium architectural hardware for luxury projects." },
 ];
@@ -43,7 +43,7 @@ export function WhyChooseUsSection() {
                 <div className="text-xs text-[#1a1a1a]/50 uppercase tracking-wider mt-1">Quality Assured</div>
               </div>
               <div className="bg-[#1a1a1a] p-5 text-center col-span-2">
-                <div className="text-base font-semibold text-[#eaeaea] mb-1 tracking-wide">UK &amp; UAE Markets</div>
+                <div className="text-base font-semibold text-[#eaeaea] mb-1 tracking-wide">UAE &amp; USA Markets</div>
                 <div className="text-xs text-[#f3f3f3]/60 font-light">Serving B2B Partners Across Two Regions</div>
               </div>
             </div>

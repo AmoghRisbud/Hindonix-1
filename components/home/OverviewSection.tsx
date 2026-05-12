@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const overviewCards = [
   { icon: Package, title: "Premium Hardware", description: "Precision-crafted architectural hardware with exceptional quality and attention to detail.", stat: "1000+", statLabel: "Products" },
-  { icon: Truck, title: "UAE & USA Delivery", description: "Reliable logistics ensuring timely delivery to UK and UAE markets with careful handling.", stat: "98%", statLabel: "On-Time Delivery" },
+  { icon: Truck, title: "UAE & USA Delivery", description: "Reliable logistics ensuring timely delivery to UAE and USA markets with careful handling.", stat: "98%", statLabel: "On-Time Delivery" },
   { icon: Settings, title: "Customizations", description: "Bespoke hardware tailored to your exact specifications with personalized finishes and designs.", stat: "100%", statLabel: "Customizable", featured: true },
   { icon: Users, title: "B2B Partners", description: "Building lasting relationships with architects, designers, and construction professionals.", stat: "200+", statLabel: "Trade Partners" },
   { icon: Globe, title: "Premium Finishes", description: "Extensive range of finishes including PVD, brass, and premium metal options.", stat: "11+", statLabel: "Finish Options" },
