@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 
 
@@ -616,18 +616,26 @@ const Admin = () => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         setLoading(true);
-        await deleteProduct(id);
+        const success = await deleteProduct(id);
+        if (!success) {
+          toast({
+            title: "Error",
+            description: "Failed to delete product from database.",
+            variant: "destructive",
+          });
+          return;
+        }
         const updatedProducts = await getProducts();
         setProducts(updatedProducts);
         toast({
           title: "Product Deleted",
           description: "The product has been successfully deleted.",
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error deleting product:", error);
         toast({
           title: "Error",
-          description: "Failed to delete product.",
+          description: error?.message || "Failed to delete product. Please try again.",
           variant: "destructive",
         });
       } finally {
@@ -816,11 +824,11 @@ const Admin = () => {
           title: "Testimonial Deleted",
           description: "The testimonial has been successfully deleted.",
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error deleting testimonial:", error);
         toast({
           title: "Error",
-          description: "Failed to delete testimonial. Please try again.",
+          description: error?.message || "Failed to delete testimonial. Please try again.",
           variant: "destructive",
         });
       } finally {
@@ -849,11 +857,11 @@ const Admin = () => {
           title: "Blog Deleted",
           description: "The blog has been successfully deleted.",
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error deleting blog:", error);
         toast({
           title: "Error",
-          description: "Failed to delete blog. Please try again.",
+          description: error?.message || "Failed to delete blog. Please try again.",
           variant: "destructive",
         });
       } finally {

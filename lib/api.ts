@@ -40,10 +40,10 @@ export const addProductToRedis = (product: Omit<Product, "id">): Promise<Product
 export const updateProductInRedis = (id: number, updates: Partial<Product>): Promise<Product | null> =>
   apiFetch<Product>(`/products/${id}`, { method: "PUT", body: JSON.stringify(updates) }).catch(() => null);
 
-export const deleteProductFromRedis = (id: number): Promise<boolean> =>
-  apiFetch<{ success: boolean }>(`/products/${id}`, { method: "DELETE" })
-    .then((r) => r.success)
-    .catch(() => false);
+export const deleteProductFromRedis = async (id: number): Promise<boolean> => {
+  const r = await apiFetch<{ success: boolean }>(`/products/${id}`, { method: "DELETE" });
+  return r.success;
+};
 
 export const getAllProductIds = async (): Promise<number[]> => {
   const products = await getAllProducts();
@@ -66,10 +66,10 @@ export const addCaseStudyToRedis = (caseStudy: Omit<CaseStudy, "id">): Promise<C
 export const updateCaseStudyInRedis = (id: number, updates: Partial<CaseStudy>): Promise<CaseStudy | null> =>
   apiFetch<CaseStudy>(`/case-studies/${id}`, { method: "PUT", body: JSON.stringify(updates) }).catch(() => null);
 
-export const deleteCaseStudyFromRedis = (id: number): Promise<boolean> =>
-  apiFetch<{ success: boolean }>(`/case-studies/${id}`, { method: "DELETE" })
-    .then((r) => r.success)
-    .catch(() => false);
+export const deleteCaseStudyFromRedis = async (id: number): Promise<boolean> => {
+  const r = await apiFetch<{ success: boolean }>(`/case-studies/${id}`, { method: "DELETE" });
+  return r.success;
+};
 
 export const getAllCaseStudyIds = async (): Promise<number[]> => {
   const cs = await getAllCaseStudies();
@@ -89,10 +89,10 @@ export const addBlogToRedis = (blog: Omit<Blog, "id">): Promise<Blog> =>
 export const updateBlogInRedis = (id: number, updates: Partial<Blog>): Promise<Blog | null> =>
   apiFetch<Blog>(`/blogs/${id}`, { method: "PUT", body: JSON.stringify(updates) }).catch(() => null);
 
-export const deleteBlogFromRedis = (id: number): Promise<boolean> =>
-  apiFetch<{ success: boolean }>(`/blogs/${id}`, { method: "DELETE" })
-    .then((r) => r.success)
-    .catch(() => false);
+export const deleteBlogFromRedis = async (id: number): Promise<boolean> => {
+  const r = await apiFetch<{ success: boolean }>(`/blogs/${id}`, { method: "DELETE" });
+  return r.success;
+};
 
 // ============================================
 // TESTIMONIAL OPERATIONS
@@ -107,10 +107,10 @@ export const addTestimonialToRedis = (testimonial: Omit<Testimonial, "id">): Pro
 export const updateTestimonialInRedis = (id: number, updates: Partial<Testimonial>): Promise<Testimonial | null> =>
   apiFetch<Testimonial>(`/testimonials/${id}`, { method: "PUT", body: JSON.stringify(updates) }).catch(() => null);
 
-export const deleteTestimonialFromRedis = (id: number): Promise<boolean> =>
-  apiFetch<{ success: boolean }>(`/testimonials/${id}`, { method: "DELETE" })
-    .then((r) => r.success)
-    .catch(() => false);
+export const deleteTestimonialFromRedis = async (id: number): Promise<boolean> => {
+  const r = await apiFetch<{ success: boolean }>(`/testimonials/${id}`, { method: "DELETE" });
+  return r.success;
+};
 
 // ============================================
 // CATEGORY OPERATIONS
@@ -125,10 +125,10 @@ export const addCategoryToRedis = (category: Omit<Category, "id">): Promise<Cate
 export const updateCategoryInRedis = (id: number, updates: Partial<Category>): Promise<Category | null> =>
   apiFetch<Category>(`/categories/${id}`, { method: "PUT", body: JSON.stringify(updates) }).catch(() => null);
 
-export const deleteCategoryFromRedis = (id: number): Promise<boolean> =>
-  apiFetch<{ success: boolean }>(`/categories/${id}`, { method: "DELETE" })
-    .then((r) => r.success)
-    .catch(() => false);
+export const deleteCategoryFromRedis = async (id: number): Promise<boolean> => {
+  const r = await apiFetch<{ success: boolean }>(`/categories/${id}`, { method: "DELETE" });
+  return r.success;
+};
 
 // ============================================
 // SUBCATEGORY OPERATIONS
@@ -143,10 +143,10 @@ export const addSubcategoryToRedis = (subcategory: Omit<Subcategory, "id">): Pro
 export const updateSubcategoryInRedis = (id: number, updates: Partial<Subcategory>): Promise<Subcategory | null> =>
   apiFetch<Subcategory>(`/subcategories/${id}`, { method: "PUT", body: JSON.stringify(updates) }).catch(() => null);
 
-export const deleteSubcategoryFromRedis = (id: number): Promise<boolean> =>
-  apiFetch<{ success: boolean }>(`/subcategories/${id}`, { method: "DELETE" })
-    .then((r) => r.success)
-    .catch(() => false);
+export const deleteSubcategoryFromRedis = async (id: number): Promise<boolean> => {
+  const r = await apiFetch<{ success: boolean }>(`/subcategories/${id}`, { method: "DELETE" });
+  return r.success;
+};
 
 // ============================================
 // MATERIAL OPERATIONS
@@ -161,10 +161,10 @@ export const addMaterialToRedis = (material: Omit<Material, "id">): Promise<Mate
 export const updateMaterialInRedis = (id: number, updates: Partial<Material>): Promise<Material | null> =>
   apiFetch<Material>(`/materials/${id}`, { method: "PUT", body: JSON.stringify(updates) }).catch(() => null);
 
-export const deleteMaterialFromRedis = (id: number): Promise<boolean> =>
-  apiFetch<{ success: boolean }>(`/materials/${id}`, { method: "DELETE" })
-    .then((r) => r.success)
-    .catch(() => false);
+export const deleteMaterialFromRedis = async (id: number): Promise<boolean> => {
+  const r = await apiFetch<{ success: boolean }>(`/materials/${id}`, { method: "DELETE" });
+  return r.success;
+};
 
 // ============================================
 // FINISH CATEGORY OPERATIONS
@@ -179,10 +179,10 @@ export const addFinishCategoryToRedis = (fc: Omit<FinishCategory, "id">): Promis
 export const updateFinishCategoryInRedis = (id: number, updates: Partial<FinishCategory>): Promise<FinishCategory | null> =>
   apiFetch<FinishCategory>(`/finish-categories/${id}`, { method: "PUT", body: JSON.stringify(updates) }).catch(() => null);
 
-export const deleteFinishCategoryFromRedis = (id: number): Promise<boolean> =>
-  apiFetch<{ success: boolean }>(`/finish-categories/${id}`, { method: "DELETE" })
-    .then((r) => r.success)
-    .catch(() => false);
+export const deleteFinishCategoryFromRedis = async (id: number): Promise<boolean> => {
+  const r = await apiFetch<{ success: boolean }>(`/finish-categories/${id}`, { method: "DELETE" });
+  return r.success;
+};
 
 // ============================================
 // FINISH OPERATIONS
@@ -197,10 +197,10 @@ export const addFinishToRedis = (finish: Omit<Finish, "id">): Promise<Finish> =>
 export const updateFinishInRedis = (id: number, updates: Partial<Finish>): Promise<Finish | null> =>
   apiFetch<Finish>(`/finishes/${id}`, { method: "PUT", body: JSON.stringify(updates) }).catch(() => null);
 
-export const deleteFinishFromRedis = (id: number): Promise<boolean> =>
-  apiFetch<{ success: boolean }>(`/finishes/${id}`, { method: "DELETE" })
-    .then((r) => r.success)
-    .catch(() => false);
+export const deleteFinishFromRedis = async (id: number): Promise<boolean> => {
+  const r = await apiFetch<{ success: boolean }>(`/finishes/${id}`, { method: "DELETE" });
+  return r.success;
+};
 
 // ============================================
 // HERO IMAGES
