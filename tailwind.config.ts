@@ -20,10 +20,14 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Space Grotesk", "system-ui", "sans-serif"],
-        heading: ["Space Grotesk", "system-ui", "sans-serif"],
+        sans: ["Montserrat", "system-ui", "sans-serif"],
+        heading: ["Montserrat", "system-ui", "sans-serif"],
+        brand: ['"Times New Roman"', "Times", "serif"],
       },
       colors: {
+        "off-white": "#eaeaea",
+        "charcoal": "#1a1a1a",
+        "icon-grey": "#f3f3f3",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

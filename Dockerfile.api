@@ -1,0 +1,18 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install all deps (need devDeps for tsx)
+RUN npm ci
+
+# Copy server source
+COPY server/ ./server/
+COPY tsconfig.server.json ./
+
+# Run the server with tsx
+EXPOSE 3001
+
+CMD ["npx", "tsx", "server/index.ts"]
